@@ -12,6 +12,7 @@ import { Faq } from "@/components/site/faq";
 import { Notes } from "@/components/site/notes";
 import { Careers } from "@/components/site/careers";
 import { Contact } from "@/components/site/contact";
+import { CommandPalette } from "@/components/site/palette";
 
 export default function Home() {
   return (
@@ -30,6 +31,7 @@ export default function Home() {
       <Notes />
       <Careers />
       <Contact />
+      <CommandPalette />
     </main>
   );
 }

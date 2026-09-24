@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Mail, Phone, MapPin, ArrowUpRight, Github, Linkedin, Twitter } from "lucide-react";
+import { Menu, X, Mail, Phone, MapPin, ArrowUpRight, Github, Linkedin, Twitter, Command as CommandIcon } from "lucide-react";
 import { Logo } from "./logo";
 import { RollButton } from "./primitives";
 import { cn } from "@/lib/utils";
@@ -154,6 +154,17 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
+            {/* ⌘K command palette trigger — desktop chip */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("abw:palette-open"))}
+              aria-label="Open command palette (Ctrl or Cmd + K)"
+              title="Command palette — ⌘K"
+              className="hidden md:inline-flex h-9 items-center gap-2 border border-hairline px-3 font-mono text-xs text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+            >
+              <CommandIcon className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+              K
+            </button>
             <RollButton href="#contact" variant="primary" arrow className="hidden sm:inline-flex h-10 px-5 text-[13px]">
               Start a Project
             </RollButton>
@@ -190,6 +201,21 @@ export function Header() {
                 <ArrowUpRight className="size-4" strokeWidth={1.5} />
               </a>
             ))}
+            {/* ⌘K command palette trigger — mobile row */}
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                window.dispatchEvent(new CustomEvent("abw:palette-open"));
+              }}
+              className="mt-4 flex w-full items-center justify-between border border-hairline px-4 py-3 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+            >
+              <span className="inline-flex items-center gap-2">
+                <CommandIcon className="size-3.5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                Quick actions
+              </span>
+              <kbd className="border border-hairline bg-white px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+            </button>
             <RollButton href="#contact" variant="primary" arrow className="mt-5 w-full" onClick={() => setOpen(false)}>
               Start a Project
             </RollButton>

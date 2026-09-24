@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LoaderCircle, Send, CheckCircle2 } from "lucide-react";
+import { LoaderCircle, Send, CheckCircle2, Command as CommandIcon } from "lucide-react";
 import { Logo } from "./logo";
 import { SocialRow } from "./header";
 import { Reveal, RollButton } from "./primitives";
@@ -206,6 +206,20 @@ export function Footer() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 pr-20 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-xs text-muted-foreground sm:flex-row sm:pr-6">
           <p className="max-w-[calc(100vw-7.5rem)] sm:max-w-none">© {new Date().getFullYear()} ABWcurious™. All rights reserved.</p>
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+            {/* ⌘K quick actions trigger — sits beside the Studio Console link */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("abw:palette-open"))}
+              aria-label="Open command palette quick actions (Ctrl or Cmd + K)"
+              title="Quick actions — ⌘K"
+              className="focus-carbon inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-ibm-bright"
+            >
+              <CommandIcon className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+              Quick actions
+              <kbd className="border border-hairline bg-white px-1 py-0.5 text-[10px]" aria-hidden="true">
+                ⌘K
+              </kbd>
+            </button>
             <StudioConsole />
             <p className="flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-ibm-success" aria-hidden="true" />

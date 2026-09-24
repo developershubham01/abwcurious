@@ -1,0 +1,1015 @@
+     1→"use client";
+     2→
+     3→import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+     4→import {
+     5→  Activity,
+     6→  Archive,
+     7→  ArchiveRestore,
+     8→  Check,
+     9→  Copy,
+    10→  Download,
+    11→  Inbox,
+    12→  LoaderCircle,
+    13→  Lock,
+    14→  LockKeyhole,
+    15→  Mail,
+    16→  MailOpen,
+    17→  RefreshCw,
+    18→  Search,
+    19→  SearchX,
+    20→  Terminal,
+    21→  Trash2,
+    22→  Users,
+    23→} from "lucide-react";
+    24→import {
+    25→  Dialog,
+    26→  DialogContent,
+    27→  DialogDescription,
+    28→  DialogHeader,
+    29→  DialogTitle,
+    30→  DialogTrigger,
+    31→} from "@/components/ui/dialog";
+    32→import { useToast } from "@/hooks/use-toast";
+    33→import { cn } from "@/lib/utils";
+    34→
+    35→/* ---------------- types ---------------- */
+    36→
+    37→type MessageStatus = "new" | "read" | "archived";
+    38→
+    39→interface StatsPayload {
+    40→  ok: boolean;
+    41→  totals: { contacts: number; subscribers: number; activity7d: number; services: number; unread: number };
+    42→  byService: { service: string; count: number }[];
+    43→  bySource: { source: string; count: number }[];
+    44→  days: { date: string; label: string; contacts: number; subscribers: number }[];
+    45→  generatedAt: string;
+    46→}
+    47→
+    48→interface MessageRow {
+    49→  id: string;
+    50→  name: string;
+    51→  email: string;
+    52→  service: string;
+    53→  message: string;
+    54→  status: MessageStatus;
+    55→  createdAt: string;
+    56→}
+    57→
+    58→interface SubRow {
+    59→  id: string;
+    60→  email: string;
+    61→  source: string;
+    62→  createdAt: string;
+    63→}
+    64→
+    65→/* ---------------- helpers ---------------- */
+    66→
+    67→function timeAgo(iso: string) {
+    68→  const diff = Date.now() - new Date(iso).getTime();
+    69→  const mins = Math.floor(diff / 60000);
+    70→  if (mins < 1) return "just now";
+    71→  if (mins < 60) return `${mins}m ago`;
+    72→  const hours = Math.floor(mins / 60);
+    73→  if (hours < 24) return `${hours}h ago`;
+    74→  const days = Math.floor(hours / 24);
+    75→  return `${days}d ago`;
+    76→}
+    77→
+    78→/* Carbon-style eased count-up for stat tiles */
+    79→function useCountUp(target: number | undefined, active: boolean) {
+    80→  const [display, setDisplay] = useState(0);
+    81→  const fromRef = useRef(0);
+    82→  useEffect(() => {
+    83→    if (!active || typeof target !== "number") return;
+    84→    const from = fromRef.current;
+    85→    const duration = 550;
+    86→    const t0 = performance.now();
+    87→    let raf = 0;
+    88→    const tick = (t: number) => {
+    89→      const p = Math.min(1, (t - t0) / duration);
+    90→      const eased = 1 - Math.pow(1 - p, 3);
+    91→      setDisplay(Math.round(from + (target - from) * eased));
+    92→      if (p < 1) {
+    93→        raf = requestAnimationFrame(tick);
+    94→      } else {
+    95→        fromRef.current = target;
+    96→      }
+    97→    };
+    98→    raf = requestAnimationFrame(tick);
+    99→    return () => cancelAnimationFrame(raf);
+   100→  }, [target, active]);
+   101→  return display;
+   102→}
+   103→
+   104→/* ---------------- Studio Console (admin view) ---------------- */
+   105→
+   106→const KEY_STORAGE = "abw-console-key";
+   107→const CONFIRM_WINDOW_MS = 3500;
+   108→
+   109→type TabId = "overview" | "inbox" | "subscribers";
+   110→type InboxFilter = "all" | MessageStatus;
+   111→
+   112→export function StudioConsole() {
+   113→  const [open, setOpen] = useState(false);
+   114→  const [tab, setTab] = useState<TabId>("overview");
+   115→  const [data, setData] = useState<StatsPayload | null>(null);
+   116→  const [messages, setMessages] = useState<MessageRow[] | null>(null);
+   117→  const [subs, setSubs] = useState<SubRow[] | null>(null);
+   118→  const [loading, setLoading] = useState(false);
+   119→  const [error, setError] = useState<string | null>(null);
+   120→  const [inboxFilter, setInboxFilter] = useState<InboxFilter>("all");
+   121→  const [subQuery, setSubQuery] = useState("");
+   122→  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+   123→  const confirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+   124→  const { toast } = useToast();
+   125→
+   126→  /* passcode gate — key lives in sessionStorage for the browser session */
+   127→  const [key, setKey] = useState<string | null>(null);
+   128→  const keyRef = useRef<string | null>(null);
+   129→  const [needKey, setNeedKey] = useState(false);
+   130→  const [passcode, setPasscode] = useState("");
+   131→  const [keyError, setKeyError] = useState<string | null>(null);
+   132→  const [unlocking, setUnlocking] = useState(false);
+   133→
+   134→  const handle401 = useCallback((json: { error?: string } | null) => {
+   135→    sessionStorage.removeItem(KEY_STORAGE);
+   136→    keyRef.current = null;
+   137→    setKey(null);
+   138→    setNeedKey(true);
+   139→    setKeyError(json?.error || "Console key required.");
+   140→  }, []);
+   141→
+   142→  const load = useCallback(
+   143→    async (k?: string | null) => {
+   144→      const kk = k !== undefined ? k : keyRef.current;
+   145→      setLoading(true);
+   146→      setError(null);
+   147→      try {
+   148→        const res = await fetch("/api/stats", {
+   149→          cache: "no-store",
+   150→          headers: kk ? { "x-console-key": kk } : undefined,
+   151→        });
+   152→        const json = await res.json();
+   153→        if (res.status === 401) {
+   154→          handle401(json);
+   155→          return;
+   156→        }
+   157→        if (!res.ok || !json.ok) throw new Error(json.error || "Failed to load stats");
+   158→        setData(json);
+   159→      } catch (err) {
+   160→        setError(err instanceof Error ? err.message : "Failed to load stats");
+   161→      } finally {
+   162→        setLoading(false);
+   163→      }
+   164→    },
+   165→    [handle401]
+   166→  );
+   167→
+   168→  const loadInbox = useCallback(
+   169→    async (k?: string | null) => {
+   170→      const kk = k !== undefined ? k : keyRef.current;
+   171→      if (!kk) return;
+   172→      try {
+   173→        const res = await fetch("/api/messages", {
+   174→          cache: "no-store",
+   175→          headers: { "x-console-key": kk },
+   176→        });
+   177→        const json = await res.json();
+   178→        if (res.status === 401) {
+   179→          handle401(json);
+   180→          return;
+   181→        }
+   182→        if (!res.ok || !json.ok) throw new Error(json.error || "Failed to load inbox");
+   183→        setMessages(json.messages as MessageRow[]);
+   184→      } catch (err) {
+   185→        setError(err instanceof Error ? err.message : "Failed to load inbox");
+   186→      }
+   187→    },
+   188→    [handle401]
+   189→  );
+   190→
+   191→  const loadSubs = useCallback(
+   192→    async (k?: string | null) => {
+   193→      const kk = k !== undefined ? k : keyRef.current;
+   194→      if (!kk) return;
+   195→      try {
+   196→        const res = await fetch("/api/subscribers", {
+   197→          cache: "no-store",
+   198→          headers: { "x-console-key": kk },
+   199→        });
+   200→        const json = await res.json();
+   201→        if (res.status === 401) {
+   202→          handle401(json);
+   203→          return;
+   204→        }
+   205→        if (!res.ok || !json.ok) throw new Error(json.error || "Failed to load subscribers");
+   206→        setSubs(json.subscribers as SubRow[]);
+   207→      } catch (err) {
+   208→        setError(err instanceof Error ? err.message : "Failed to load subscribers");
+   209→      }
+   210→    },
+   211→    [handle401]
+   212→  );
+   213→
+   214→  const loadAll = useCallback(async () => {
+   215→    await Promise.all([load(), loadInbox(), loadSubs()]);
+   216→  }, [load, loadInbox, loadSubs]);
+   217→
+   218→  /* Load on open (with saved session key) + refresh every 30s while open */
+   219→  useEffect(() => {
+   220→    if (!open) return;
+   221→    const saved = sessionStorage.getItem(KEY_STORAGE);
+   222→    if (saved) {
+   223→      keyRef.current = saved;
+   224→      setKey(saved);
+   225→      setNeedKey(false);
+   226→      loadAll();
+   227→    } else {
+   228→      setNeedKey(true);
+   229→    }
+   230→    const t = setInterval(() => {
+   231→      if (keyRef.current) loadAll();
+   232→    }, 30000);
+   233→    return () => clearInterval(t);
+   234→  }, [open, loadAll]);
+   235→
+   236→  /* Keyboard shortcut: Ctrl/Cmd + Shift + K */
+   237→  useEffect(() => {
+   238→    const onKey = (e: KeyboardEvent) => {
+   239→      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "k") {
+   240→        e.preventDefault();
+   241→        setOpen((v) => !v);
+   242→      }
+   243→    };
+   244→    window.addEventListener("keydown", onKey);
+   245→    return () => window.removeEventListener("keydown", onKey);
+   246→  }, []);
+   247→
+   248→  /* Clear any pending remove-confirmation when the dialog closes */
+   249→  useEffect(() => {
+   250→    if (!open) {
+   251→      setConfirmRemoveId(null);
+   252→      setSubQuery("");
+   253→      setInboxFilter("all");
+   254→    }
+   255→  }, [open]);
+   256→
+   257→  const maxDay = data ? Math.max(1, ...data.days.map((d) => d.contacts + d.subscribers)) : 1;
+   258→  const maxService = data ? Math.max(1, ...data.byService.map((s) => s.count)) : 1;
+   259→
+   260→  function exportCsv(type: "contacts" | "subscribers") {
+   261→    /* Direct navigation triggers the Content-Disposition download; the
+   262→       console key rides along as ?key= for the gate. */
+   263→    const k = keyRef.current ? `&key=${encodeURIComponent(keyRef.current)}` : "";
+   264→    window.location.href = `/api/export?type=${type}${k}`;
+   265→  }
+   266→
+   267→  async function patchStatus(row: MessageRow, status: MessageStatus) {
+   268→    if (!keyRef.current) return;
+   269→    const prev = messages;
+   270→    setMessages((rows) => (rows ?? []).map((r) => (r.id === row.id ? { ...r, status } : r)));
+   271→    try {
+   272→      const res = await fetch("/api/messages", {
+   273→        method: "PATCH",
+   274→        headers: { "Content-Type": "application/json", "x-console-key": keyRef.current },
+   275→        body: JSON.stringify({ id: row.id, status }),
+   276→      });
+   277→      const json = await res.json();
+   278→      if (res.status === 401) {
+   279→        handle401(json);
+   280→        return;
+   281→      }
+   282→      if (!res.ok || !json.ok) throw new Error(json.error || "Update failed");
+   283→      const label = status === "archived" ? "archived" : status === "read" ? "marked read" : "marked new";
+   284→      toast({ title: `Message ${label}`, description: `${row.name} · ${row.service}` });
+   285→      load(); // refresh tiles quietly
+   286→    } catch (err) {
+   287→      setMessages(prev ?? null); // roll back optimistic update
+   288→      toast({
+   289→        title: "Could not update message",
+   290→        description: err instanceof Error ? err.message : "Try again",
+   291→        variant: "destructive",
+   292→      });
+   293→    }
+   294→  }
+   295→
+   296→  async function removeSubscriber(row: SubRow) {
+   297→    if (!keyRef.current) return;
+   298→    try {
+   299→      const res = await fetch("/api/subscribers", {
+   300→        method: "DELETE",
+   301→        headers: { "Content-Type": "application/json", "x-console-key": keyRef.current },
+   302→        body: JSON.stringify({ id: row.id }),
+   303→      });
+   304→      const json = await res.json();
+   305→      if (res.status === 401) {
+   306→        handle401(json);
+   307→        return;
+   308→      }
+   309→      if (!res.ok || !json.ok) throw new Error(json.error || "Remove failed");
+   310→      setSubs((rows) => (rows ?? []).filter((r) => r.id !== row.id));
+   311→      toast({ title: "Subscriber removed", description: `${row.email} is off the list.` });
+   312→      load(); // refresh tiles quietly
+   313→    } catch (err) {
+   314→      toast({
+   315→        title: "Could not remove subscriber",
+   316→        description: err instanceof Error ? err.message : "Try again",
+   317→        variant: "destructive",
+   318→      });
+   319→    }
+   320→  }
+   321→
+   322→  function armConfirm(row: SubRow) {
+   323→    if (confirmTimer.current) clearTimeout(confirmTimer.current);
+   324→    if (confirmRemoveId === row.id) {
+   325→      setConfirmRemoveId(null);
+   326→      removeSubscriber(row);
+   327→      return;
+   328→    }
+   329→    setConfirmRemoveId(row.id);
+   330→    confirmTimer.current = setTimeout(() => setConfirmRemoveId(null), CONFIRM_WINDOW_MS);
+   331→  }
+   332→
+   333→  async function unlock(e: React.FormEvent<HTMLFormElement>) {
+   334→    e.preventDefault();
+   335→    const k = passcode.trim();
+   336→    if (!k || unlocking) return;
+   337→    setUnlocking(true);
+   338→    setKeyError(null);
+   339→    try {
+   340→      const res = await fetch("/api/stats", {
+   341→        cache: "no-store",
+   342→        headers: { "x-console-key": k },
+   343→      });
+   344→      const json = await res.json();
+   345→      if (!res.ok || !json.ok) {
+   346→        throw new Error(res.status === 401 ? "Invalid console key — try again." : json.error || "Unlock failed");
+   347→      }
+   348→      sessionStorage.setItem(KEY_STORAGE, k);
+   349→      keyRef.current = k;
+   350→      setKey(k);
+   351→      setNeedKey(false);
+   352→      setPasscode("");
+   353→      setData(json);
+   354→      loadInbox(k);
+   355→      loadSubs(k);
+   356→    } catch (err) {
+   357→      setKeyError(err instanceof Error ? err.message : "Invalid console key.");
+   358→    } finally {
+   359→      setUnlocking(false);
+   360→    }
+   361→  }
+   362→
+   363→  function lockConsole() {
+   364→    sessionStorage.removeItem(KEY_STORAGE);
+   365→    keyRef.current = null;
+   366→    setKey(null);
+   367→    setData(null);
+   368→    setMessages(null);
+   369→    setSubs(null);
+   370→    setNeedKey(true);
+   371→    setPasscode("");
+   372→    setKeyError(null);
+   373→    setTab("overview");
+   374→  }
+   375→
+   376→  /* ---------------- derived ---------------- */
+   377→
+   378→  const filteredMessages = useMemo(() => {
+   379→    const rows = messages ?? [];
+   380→    if (inboxFilter === "all") return rows;
+   381→    return rows.filter((r) => r.status === inboxFilter);
+   382→  }, [messages, inboxFilter]);
+   383→
+   384→  const inboxCounts = useMemo(() => {
+   385→    const rows = messages ?? [];
+   386→    return {
+   387→      all: rows.length,
+   388→      new: rows.filter((r) => r.status === "new").length,
+   389→      read: rows.filter((r) => r.status === "read").length,
+   390→      archived: rows.filter((r) => r.status === "archived").length,
+   391→    };
+   392→  }, [messages]);
+   393→
+   394→  const filteredSubs = useMemo(() => {
+   395→    const rows = subs ?? [];
+   396→    const q = subQuery.trim().toLowerCase();
+   397→    if (!q) return rows;
+   398→    return rows.filter((r) => r.email.toLowerCase().includes(q) || r.source.toLowerCase().includes(q));
+   399→  }, [subs, subQuery]);
+   400→
+   401→  const tiles = [
+   402→    { icon: Inbox, label: "Contact messages", value: data?.totals.contacts },
+   403→    { icon: Users, label: "Newsletter subs", value: data?.totals.subscribers },
+   404→    { icon: Activity, label: "Activity · 7 days", value: data?.totals.activity7d },
+   405→    { icon: MailOpen, label: "Unread inbox", value: data?.totals.unread },
+   406→  ];
+   407→
+   408→  const tabs: { id: TabId; label: string }[] = [
+   409→    { id: "overview", label: "Overview" },
+   410→    { id: "inbox", label: "Inbox" },
+   411→    { id: "subscribers", label: "Subscribers" },
+   412→  ];
+   413→
+   414→  const filters: { id: InboxFilter; label: string; count: number }[] = [
+   415→    { id: "all", label: "All", count: inboxCounts.all },
+   416→    { id: "new", label: "New", count: inboxCounts.new },
+   417→    { id: "read", label: "Read", count: inboxCounts.read },
+   418→    { id: "archived", label: "Archived", count: inboxCounts.archived },
+   419→  ];
+   420→
+   421→  return (
+   422→    <Dialog open={open} onOpenChange={setOpen}>
+   423→      <DialogTrigger asChild>
+   424→        <button
+   425→          type="button"
+   426→          className="focus-carbon inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-ibm-bright"
+   427→          title="Studio console — Ctrl/Cmd + Shift + K"
+   428→          aria-label="Open studio console"
+   429→        >
+   430→          <Terminal className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   431→          Studio Console
+   432→        </button>
+   433→      </DialogTrigger>
+   434→
+   435→      <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto rounded-none border-hairline-strong bg-background p-0 sm:max-w-3xl">
+   436→        <DialogHeader className="border-b border-hairline bg-card px-6 py-5">
+   437→          <div className="flex items-center justify-between gap-4 pr-8">
+   438→            <div>
+   439→              <DialogTitle className="flex items-center gap-2.5 font-mono text-sm uppercase tracking-[0.22em]">
+   440→                <Terminal className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   441→                Studio Console
+   442→              </DialogTitle>
+   443→              <DialogDescription className="mt-1.5 font-mono text-xs text-muted-foreground">
+   444→                Live signals from abwcurious.com — press{" "}
+   445→                <kbd className="border border-hairline bg-background px-1 py-0.5 text-[10px]">
+   446→                  ⌘/Ctrl + ⇧ + K
+   447→                </kbd>{" "}
+   448→                anytime
+   449→              </DialogDescription>
+   450→            </div>
+   451→            <button
+   452→              type="button"
+   453→              onClick={loadAll}
+   454→              disabled={loading || needKey}
+   455→              aria-label="Refresh console data"
+   456→              className="focus-carbon flex size-9 shrink-0 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright disabled:opacity-50"
+   457→            >
+   458→              {loading ? (
+   459→                <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+   460→              ) : (
+   461→                <RefreshCw className="size-4" strokeWidth={1.5} aria-hidden="true" />
+   462→              )}
+   463→            </button>
+   464→            {key && (
+   465→              <button
+   466→                type="button"
+   467→                onClick={lockConsole}
+   468→                aria-label="Lock console (clear session key)"
+   469→                title="Lock console"
+   470→                className="focus-carbon flex size-9 shrink-0 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
+   471→              >
+   472→                <Lock className="size-4" strokeWidth={1.5} aria-hidden="true" />
+   473→              </button>
+   474→            )}
+   475→          </div>
+   476→        </DialogHeader>
+   477→
+   478→        <div className="px-6 py-6">
+   479→          {needKey ? (
+   480→            /* Passcode gate — Carbon restricted-access screen */
+   481→            <div className="mx-auto flex max-w-sm flex-col items-center py-8 text-center">
+   482→              <span className="flex size-12 items-center justify-center border border-hairline-strong bg-card">
+   483→                <LockKeyhole className="size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   484→              </span>
+   485→              <h3 className="mt-5 font-mono text-sm uppercase tracking-[0.22em]">
+   486→                Restricted console
+   487→              </h3>
+   488→              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+   489→                Studio signals are behind a passcode. Enter the console key to
+   490→                read messages, exports and live activity.
+   491→              </p>
+   492→              <form onSubmit={unlock} className="mt-6 w-full">
+   493→                <label htmlFor="console-key" className="sr-only">
+   494→                  Console key
+   495→                </label>
+   496→                <div className="flex border border-hairline-strong bg-white focus-within:border-ibm-bright">
+   497→                  <input
+   498→                    id="console-key"
+   499→                    type="password"
+   500→                    autoComplete="off"
+   501→                    autoFocus
+   502→                    value={passcode}
+   503→                    onChange={(e) => setPasscode(e.target.value)}
+   504→                    placeholder="console key"
+   505→                    className="h-11 w-full min-w-0 bg-transparent px-4 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+   506→                  />
+   507→                  <button
+   508→                    type="submit"
+   509→                    disabled={unlocking}
+   510→                    className="flex h-11 shrink-0 items-center gap-2 bg-primary px-4 font-mono text-xs uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-ibm-blue-hover focus-carbon disabled:opacity-60"
+   511→                  >
+   512→                    {unlocking ? (
+   513→                      <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
+   514→                    ) : (
+   515→                      "Unlock"
+   516→                    )}
+   517→                  </button>
+   518→                </div>
+   519→                {keyError && (
+   520→                  <p
+   521→                    role="alert"
+   522→                    className="mt-3 border border-ibm-error/40 bg-ibm-error/[0.06] px-3 py-2 font-mono text-xs text-ibm-error"
+   523→                  >
+   524→                    {keyError}
+   525→                  </p>
+   526→                )}
+   527→                <p className="mt-4 font-mono text-[10px] leading-relaxed text-muted-foreground">
+   528→                  Demo key: <span className="text-ibm-soft">abw-2026</span> — set
+   529→                  CONSOLE_PASSCODE env to change.
+   530→                </p>
+   531→              </form>
+   532→            </div>
+   533→          ) : (
+   534→            <div className="space-y-6">
+   535→              {error && (
+   536→                <div className="border border-ibm-error/40 bg-ibm-error/[0.06] px-4 py-3 font-mono text-xs text-ibm-error">
+   537→                  {error}
+   538→                </div>
+   539→              )}
+   540→
+   541→              {/* Stat tiles — count-up on change */}
+   542→              <div className="grid grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-4">
+   543→                {tiles.map((t) => (
+   544→                  <StatTile key={t.label} icon={t.icon} label={t.label} value={t.value} loading={loading && data === null} />
+   545→                ))}
+   546→              </div>
+   547→
+   548→              {/* Tabs — Carbon equal-cell tablist */}
+   549→              <div
+   550→                role="tablist"
+   551→                aria-label="Console views"
+   552→                className="grid grid-cols-3 gap-px border border-hairline bg-hairline"
+   553→              >
+   554→                {tabs.map((tb) => {
+   555→                  const badge =
+   556→                    tb.id === "inbox" && inboxCounts.new > 0
+   557→                      ? inboxCounts.new
+   558→                      : null;
+   559→                  return (
+   560→                    <button
+   561→                      key={tb.id}
+   562→                      role="tab"
+   563→                      aria-selected={tab === tb.id}
+   564→                      aria-controls={`console-panel-${tb.id}`}
+   565→                      id={`console-tab-${tb.id}`}
+   566→                      type="button"
+   567→                      onClick={() => {
+   568→                        setTab(tb.id);
+   569→                        /* quiet refresh on tab switch so lists are never stale */
+   570→                        if (!needKey && keyRef.current) {
+   571→                          if (tb.id === "inbox") loadInbox();
+   572→                          if (tb.id === "subscribers") loadSubs();
+   573→                        }
+   574→                      }}
+   575→                      className={cn(
+   576→                        "focus-carbon relative flex min-w-0 items-center justify-center gap-1.5 bg-card px-1.5 py-3 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors sm:gap-2 sm:px-3 sm:text-xs sm:tracking-[0.16em]",
+   577→                        tab === tb.id
+   578→                          ? "text-ibm-bright"
+   579→                          : "text-muted-foreground hover:text-foreground"
+   580→                      )}
+   581→                    >
+   582→                      {tb.label}
+   583→                      {badge !== null && (
+   584→                        <span className="inline-flex min-w-5 items-center justify-center bg-primary px-1 font-mono text-[10px] leading-5 text-primary-foreground">
+   585→                          {badge}
+   586→                        </span>
+   587→                      )}
+   588→                      <span
+   589→                        aria-hidden="true"
+   590→                        className={cn(
+   591→                          "absolute inset-x-0 bottom-0 h-0.5 bg-primary transition-opacity",
+   592→                          tab === tb.id ? "opacity-100" : "opacity-0"
+   593→                        )}
+   594→                      />
+   595→                    </button>
+   596→                  );
+   597→                })}
+   598→              </div>
+   599→
+   600→              {/* ---------------- Overview ---------------- */}
+   601→              {tab === "overview" && (
+   602→                <div role="tabpanel" id="console-panel-overview" aria-labelledby="console-tab-overview" className="space-y-6">
+   603→                  {/* 7-day activity */}
+   604→                  <div className="border border-hairline">
+   605→                    <div className="border-b border-hairline bg-card px-4 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+   606→                      Last 7 days
+   607→                    </div>
+   608→                    <div className="flex h-40 items-end gap-2 px-4 pb-3 pt-4">
+   609→                      {(data?.days ?? []).map((d) => {
+   610→                        const total = d.contacts + d.subscribers;
+   611→                        /* px heights — % heights collapse inside auto-height flex columns */
+   612→                        const h = Math.max(4, Math.round((total / maxDay) * 72));
+   613→                        return (
+   614→                          <div key={d.date} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
+   615→                            <span className="font-mono text-[10px] text-muted-foreground">{total || ""}</span>
+   616→                            <div
+   617→                              className={cn(
+   618→                                "w-full transition-all duration-500",
+   619→                                total > 0 ? "bg-gradient-to-t from-ibm-blue to-ibm-cyan" : "bg-hairline"
+   620→                              )}
+   621→                              style={{ height: `${h}px` }}
+   622→                              title={`${d.label}: ${d.contacts} contacts, ${d.subscribers} subs`}
+   623→                            />
+   624→                            <span className="font-mono text-[10px] text-muted-foreground">{d.label}</span>
+   625→                          </div>
+   626→                        );
+   627→                      })}
+   628→                      {!data && !error && (
+   629→                        <div className="flex h-full w-full items-center justify-center font-mono text-xs text-muted-foreground">
+   630→                          Loading…
+   631→                        </div>
+   632→                      )}
+   633→                    </div>
+   634→                  </div>
+   635→
+   636→                  <div className="grid gap-6 lg:grid-cols-2">
+   637→                    {/* Demand mix */}
+   638→                    <div className="border border-hairline">
+   639→                      <div className="border-b border-hairline bg-card px-4 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+   640→                        Demand mix · by service
+   641→                      </div>
+   642→                      <div className="space-y-3 px-4 py-4">
+   643→                        {(data?.byService ?? []).length === 0 && !loading && (
+   644→                          <p className="font-mono text-xs text-muted-foreground">No messages yet.</p>
+   645→                        )}
+   646→                        {(data?.byService ?? []).map((s) => (
+   647→                          <div key={s.service}>
+   648→                            <div className="flex items-baseline justify-between gap-3">
+   649→                              <span className="truncate text-xs text-foreground">{s.service}</span>
+   650→                              <span className="font-mono text-xs text-ibm-bright">{s.count}</span>
+   651→                            </div>
+   652→                            <div className="mt-1 h-1.5 w-full bg-hairline">
+   653→                              <div
+   654→                                className="h-full bg-gradient-to-r from-ibm-blue to-ibm-cyan transition-all duration-500"
+   655→                                style={{ width: `${(s.count / maxService) * 100}%` }}
+   656→                              />
+   657→                            </div>
+   658→                          </div>
+   659→                        ))}
+   660→                        {loading && data === null && (
+   661→                          <p className="font-mono text-xs text-muted-foreground">Loading…</p>
+   662→                        )}
+   663→                      </div>
+   664→                    </div>
+   665→
+   666→                    {/* Subscribers by source */}
+   667→                    <div className="border border-hairline">
+   668→                      <div className="border-b border-hairline bg-card px-4 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+   669→                        Newsletter · by source
+   670→                      </div>
+   671→                      <div className="space-y-3 px-4 py-4">
+   672→                        {(data?.bySource ?? []).length === 0 && !loading && (
+   673→                          <p className="font-mono text-xs text-muted-foreground">No subscribers yet.</p>
+   674→                        )}
+   675→                        {(data?.bySource ?? []).map((s) => (
+   676→                          <div key={s.source}>
+   677→                            <div className="flex items-baseline justify-between gap-3">
+   678→                              <span className="truncate font-mono text-xs text-foreground">{s.source}</span>
+   679→                              <span className="font-mono text-xs text-ibm-bright">{s.count}</span>
+   680→                            </div>
+   681→                            <div className="mt-1 h-1.5 w-full bg-hairline">
+   682→                              <div
+   683→                                className="h-full bg-gradient-to-r from-ibm-cyan to-ibm-blue transition-all duration-500"
+   684→                                style={{ width: `${(s.count / maxService) * 100}%` }}
+   685→                              />
+   686→                            </div>
+   687→                          </div>
+   688→                        ))}
+   689→                        {loading && data === null && (
+   690→                          <p className="font-mono text-xs text-muted-foreground">Loading…</p>
+   691→                        )}
+   692→                      </div>
+   693→                    </div>
+   694→                  </div>
+   695→                </div>
+   696→              )}
+   697→
+   698→              {/* ---------------- Inbox ---------------- */}
+   699→              {tab === "inbox" && (
+   700→                <div role="tabpanel" id="console-panel-inbox" aria-labelledby="console-tab-inbox" className="space-y-4">
+   701→                  {/* Filter chips */}
+   702→                  <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter messages by status">
+   703→                    {filters.map((f) => (
+   704→                      <button
+   705→                        key={f.id}
+   706→                        type="button"
+   707→                        onClick={() => setInboxFilter(f.id)}
+   708→                        aria-pressed={inboxFilter === f.id}
+   709→                        className={cn(
+   710→                          "focus-carbon inline-flex items-center gap-1.5 border px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
+   711→                          inboxFilter === f.id
+   712→                            ? "border-primary bg-primary text-primary-foreground"
+   713→                            : "border-hairline bg-card text-muted-foreground hover:border-ibm-bright hover:text-ibm-bright"
+   714→                        )}
+   715→                      >
+   716→                        {f.label}
+   717→                        <span className={cn("text-[10px]", inboxFilter === f.id ? "text-primary-foreground/80" : "text-muted-foreground/70")}>
+   718→                          {f.count}
+   719→                        </span>
+   720→                      </button>
+   721→                    ))}
+   722→                  </div>
+   723→
+   724→                  <div className="border border-hairline">
+   725→                    <div className="border-b border-hairline bg-card px-4 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+   726→                      Messages · {filteredMessages.length} shown
+   727→                    </div>
+   728→                    <div className="max-h-[420px] overflow-y-auto">
+   729→                      <ul>
+   730→                        {filteredMessages.map((m) => {
+   731→                          const unread = m.status === "new";
+   732→                          return (
+   733→                            <li
+   734→                              key={m.id}
+   735→                              className={cn(
+   736→                                "border-b border-hairline/60 py-3 pl-4 pr-3 last:border-b-0",
+   737→                                unread ? "border-l-2 border-l-primary bg-ibm-blue/[0.03]" : "border-l-2 border-l-transparent"
+   738→                              )}
+   739→                            >
+   740→                              <div className="flex items-start justify-between gap-3">
+   741→                                <div className="min-w-0 flex-1">
+   742→                                  <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+   743→                                    <span className={cn("text-sm", unread ? "font-semibold text-foreground" : "text-foreground")}>
+   744→                                      {m.name}
+   745→                                    </span>
+   746→                                    <span className="font-mono text-[11px] text-ibm-soft">{m.service}</span>
+   747→                                    {m.status === "archived" && (
+   748→                                      <span className="border border-hairline px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+   749→                                        archived
+   750→                                      </span>
+   751→                                    )}
+   752→                                  </div>
+   753→                                  <button
+   754→                                    type="button"
+   755→                                    onClick={() => {
+   756→                                      navigator.clipboard?.writeText(m.email);
+   757→                                      toast({ title: "Email copied", description: m.email });
+   758→                                    }}
+   759→                                    className="focus-carbon mt-0.5 inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground transition-colors hover:text-ibm-bright"
+   760→                                    title="Copy email address"
+   761→                                  >
+   762→                                    {m.email}
+   763→                                    <Copy className="size-3" strokeWidth={1.5} aria-hidden="true" />
+   764→                                  </button>
+   765→                                  <p
+   766→                                    className={cn(
+   767→                                      "mt-1.5 max-w-[52ch] truncate text-xs leading-relaxed",
+   768→                                      m.status === "archived" ? "text-muted-foreground/60" : "text-muted-foreground"
+   769→                                    )}
+   770→                                    title={m.message}
+   771→                                  >
+   772→                                    {m.message}
+   773→                                  </p>
+   774→                                </div>
+   775→                                <div className="flex shrink-0 flex-col items-end gap-2">
+   776→                                  <span className="font-mono text-[10px] text-muted-foreground">{timeAgo(m.createdAt)}</span>
+   777→                                  <div className="flex items-center gap-1.5">
+   778→                                    <button
+   779→                                      type="button"
+   780→                                      onClick={() => patchStatus(m, unread ? "read" : "new")}
+   781→                                      aria-label={unread ? `Mark message from ${m.name} as read` : `Mark message from ${m.name} as new`}
+   782→                                      title={unread ? "Mark read" : "Mark new"}
+   783→                                      className="focus-carbon flex size-7 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
+   784→                                    >
+   785→                                      {unread ? (
+   786→                                        <MailOpen className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   787→                                      ) : (
+   788→                                        <Mail className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   789→                                      )}
+   790→                                    </button>
+   791→                                    <button
+   792→                                      type="button"
+   793→                                      onClick={() => patchStatus(m, m.status === "archived" ? "read" : "archived")}
+   794→                                      aria-label={
+   795→                                        m.status === "archived"
+   796→                                          ? `Restore message from ${m.name} to the inbox`
+   797→                                          : `Archive message from ${m.name}`
+   798→                                      }
+   799→                                      title={m.status === "archived" ? "Restore" : "Archive"}
+   800→                                      className="focus-carbon flex size-7 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
+   801→                                    >
+   802→                                      {m.status === "archived" ? (
+   803→                                        <ArchiveRestore className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   804→                                      ) : (
+   805→                                        <Archive className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   806→                                      )}
+   807→                                    </button>
+   808→                                  </div>
+   809→                                </div>
+   810→                              </div>
+   811→                            </li>
+   812→                          );
+   813→                        })}
+   814→                        {messages && filteredMessages.length === 0 && (
+   815→                          <li className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+   816→                            <SearchX className="size-5 text-muted-foreground/50" strokeWidth={1.5} aria-hidden="true" />
+   817→                            <p className="font-mono text-xs text-muted-foreground">
+   818→                              {inboxFilter === "all" ? "Inbox zero. For now." : `No ${inboxFilter} messages.`}
+   819→                            </p>
+   820→                          </li>
+   821→                        )}
+   822→                        {!messages && !error && (
+   823→                          <li className="px-4 py-10 text-center font-mono text-xs text-muted-foreground">Loading…</li>
+   824→                        )}
+   825→                      </ul>
+   826→                    </div>
+   827→                  </div>
+   828→                </div>
+   829→              )}
+   830→
+   831→              {/* ---------------- Subscribers ---------------- */}
+   832→              {tab === "subscribers" && (
+   833→                <div role="tabpanel" id="console-panel-subscribers" aria-labelledby="console-tab-subscribers" className="space-y-4">
+   834→                  {/* Search */}
+   835→                  <div className="flex items-center gap-3">
+   836→                    <div className="relative flex-1">
+   837→                      <Search
+   838→                        className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+   839→                        strokeWidth={1.5}
+   840→                        aria-hidden="true"
+   841→                      />
+   842→                      <label htmlFor="subscriber-search" className="sr-only">
+   843→                        Search subscribers by email or source
+   844→                      </label>
+   845→                      <input
+   846→                        id="subscriber-search"
+   847→                        type="text"
+   848→                        value={subQuery}
+   849→                        onChange={(e) => setSubQuery(e.target.value)}
+   850→                        placeholder="Search by email or source…"
+   851→                        className="focus-carbon h-10 w-full border border-hairline bg-card pl-9 pr-3 font-mono text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-ibm-bright focus:outline-none"
+   852→                      />
+   853→                    </div>
+   854→                    <p aria-live="polite" className="shrink-0 font-mono text-[11px] text-muted-foreground">
+   855→                      {filteredSubs.length}/{subs?.length ?? 0}
+   856→                    </p>
+   857→                  </div>
+   858→
+   859→                  <div className="border border-hairline">
+   860→                    <div className="flex items-center justify-between border-b border-hairline bg-card px-4 py-2.5">
+   861→                      <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+   862→                        Newsletter list
+   863→                      </span>
+   864→                      <button
+   865→                        type="button"
+   866→                        onClick={() => exportCsv("subscribers")}
+   867→                        className="focus-carbon inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-bright"
+   868→                        title="Download all newsletter subscribers as CSV"
+   869→                      >
+   870→                        <Download className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   871→                        Export CSV
+   872→                      </button>
+   873→                    </div>
+   874→                    <div className="max-h-[420px] overflow-y-auto">
+   875→                      <table className="w-full text-left text-xs">
+   876→                        <thead className="sticky top-0 bg-card">
+   877→                          <tr className="border-b border-hairline font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+   878→                            <th className="px-4 py-2 font-medium" scope="col">Email</th>
+   879→                            <th className="hidden px-4 py-2 font-medium sm:table-cell" scope="col">Source</th>
+   880→                            <th className="hidden px-4 py-2 font-medium md:table-cell" scope="col">Joined</th>
+   881→                            <th className="px-4 py-2 text-right font-medium" scope="col">
+   882→                              <span className="sr-only">Actions</span>
+   883→                            </th>
+   884→                          </tr>
+   885→                        </thead>
+   886→                        <tbody>
+   887→                          {filteredSubs.map((s) => {
+   888→                            const confirming = confirmRemoveId === s.id;
+   889→                            return (
+   890→                              <tr key={s.id} className="border-b border-hairline/60 transition-colors last:border-b-0 hover:bg-ibm-bright/[0.03]">
+   891→                                <td className="px-4 py-2.5 font-mono text-[11px] text-foreground">
+   892→                                  <span className="flex items-center gap-1.5">
+   893→                                    <span className="truncate">{s.email}</span>
+   894→                                    <button
+   895→                                      type="button"
+   896→                                      onClick={() => {
+   897→                                        navigator.clipboard?.writeText(s.email);
+   898→                                        toast({ title: "Email copied", description: s.email });
+   899→                                      }}
+   900→                                      aria-label={`Copy email address ${s.email}`}
+   901→                                      className="focus-carbon shrink-0 text-muted-foreground transition-colors hover:text-ibm-bright"
+   902→                                    >
+   903→                                      <Copy className="size-3" strokeWidth={1.5} aria-hidden="true" />
+   904→                                    </button>
+   905→                                  </span>
+   906→                                </td>
+   907→                                <td className="hidden px-4 py-2.5 sm:table-cell">
+   908→                                  <span className="border border-hairline px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+   909→                                    {s.source}
+   910→                                  </span>
+   911→                                </td>
+   912→                                <td className="hidden px-4 py-2.5 font-mono text-[10px] text-muted-foreground md:table-cell">
+   913→                                  {new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+   914→                                  <span className="ml-1.5 text-muted-foreground/60">{timeAgo(s.createdAt)}</span>
+   915→                                </td>
+   916→                                <td className="px-3 py-2.5 text-right">
+   917→                                  <button
+   918→                                    type="button"
+   919→                                    onClick={() => armConfirm(s)}
+   920→                                    onBlur={() => confirming && setTimeout(() => setConfirmRemoveId((cur) => (cur === s.id ? null : cur)), 0)}
+   921→                                    aria-label={confirming ? `Confirm removing ${s.email}` : `Remove subscriber ${s.email}`}
+   922→                                    title={confirming ? "Click again to confirm" : "Remove subscriber"}
+   923→                                    className={cn(
+   924→                                      "focus-carbon inline-flex items-center gap-1.5 border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors",
+   925→                                      confirming
+   926→                                        ? "border-ibm-error bg-ibm-error text-white"
+   927→                                        : "border-hairline text-muted-foreground hover:border-ibm-error hover:text-ibm-error"
+   928→                                    )}
+   929→                                  >
+   930→                                    {confirming ? (
+   931→                                      <>
+   932→                                        <Check className="size-3" strokeWidth={2} aria-hidden="true" />
+   933→                                        Confirm
+   934→                                      </>
+   935→                                    ) : (
+   936→                                      <>
+   937→                                        <Trash2 className="size-3" strokeWidth={1.5} aria-hidden="true" />
+   938→                                        Remove
+   939→                                      </>
+   940→                                    )}
+   941→                                  </button>
+   942→                                </td>
+   943→                              </tr>
+   944→                            );
+   945→                          })}
+   946→                          {subs && filteredSubs.length === 0 && (
+   947→                            <tr>
+   948→                              <td colSpan={4} className="px-4 py-8 text-center">
+   949→                                <SearchX className="mx-auto size-5 text-muted-foreground/50" strokeWidth={1.5} aria-hidden="true" />
+   950→                                <p className="mt-2 font-mono text-xs text-muted-foreground">
+   951→                                  {subQuery ? "No subscribers match the search." : "No subscribers yet."}
+   952→                                </p>
+   953→                                {subQuery && (
+   954→                                  <button
+   955→                                    type="button"
+   956→                                    onClick={() => setSubQuery("")}
+   957→                                    className="focus-carbon mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ibm-bright hover:underline"
+   958→                                  >
+   959→                                    Clear the search
+   960→                                  </button>
+   961→                                )}
+   962→                              </td>
+   963→                            </tr>
+   964→                          )}
+   965→                          {!subs && !error && (
+   966→                            <tr>
+   967→                              <td colSpan={4} className="px-4 py-8 text-center font-mono text-xs text-muted-foreground">
+   968→                                Loading…
+   969→                              </td>
+   970→                            </tr>
+   971→                          )}
+   972→                        </tbody>
+   973→                      </table>
+   974→                    </div>
+   975→                  </div>
+   976→                </div>
+   977→              )}
+   978→
+   979→              <p className="text-center font-mono text-[10px] text-muted-foreground">
+   980→                {data ? `Synced ${timeAgo(data.generatedAt)} · auto-refresh 30s` : "—"}
+   981→              </p>
+   982→            </div>
+   983→          )}
+   984→        </div>
+   985→      </DialogContent>
+   986→    </Dialog>
+   987→  );
+   988→}
+   989→
+   990→/* ---------------- stat tile with count-up ---------------- */
+   991→
+   992→function StatTile({
+   993→  icon: Icon,
+   994→  label,
+   995→  value,
+   996→  loading,
+   997→}: {
+   998→  icon: React.ComponentType<{ className?: string; strokeWidth?: number; "aria-hidden"?: boolean | "true" }>;
+   999→  label: string;
+  1000→  value: number | undefined;
+  1001→  loading: boolean;
+  1002→}) {
+  1003→  const show = !loading || typeof value === "number";
+  1004→  const display = useCountUp(typeof value === "number" ? value : 0, show);
+  1005→  return (
+  1006→    <div className="bg-card px-4 py-4">
+  1007→      <Icon className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+  1008→      <div className="mt-2.5 font-mono text-2xl text-foreground" aria-live="polite">
+  1009→        {!show ? <span className="text-muted-foreground/40">—</span> : display}
+  1010→      </div>
+  1011→      <div className="mt-1 text-xs leading-snug text-muted-foreground">{label}</div>
+  1012→    </div>
+  1013→  );
+  1014→}
+  1015→

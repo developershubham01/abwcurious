@@ -103,7 +103,7 @@ function useCountUp(target: number | undefined, active: boolean) {
 
 /* ---------------- Studio Console (admin view) ---------------- */
 
-const KEY_STORAGE = "abw-console-key";
+const TOKEN_STORAGE = "abw-console-token";
 const CONFIRM_WINDOW_MS = 3500;
 
 type TabId = "overview" | "inbox" | "subscribers";
@@ -123,7 +123,9 @@ export function StudioConsole() {
   const confirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { toast } = useToast();
 
-  /* passcode gate — key lives in sessionStorage for the browser session */
+  /* passcode gate — the unlock exchange returns a signed session token
+     (8h TTL) which lives in sessionStorage; the passcode itself is never
+     persisted in the browser. */
   const [key, setKey] = useState<string | null>(null);
   const keyRef = useRef<string | null>(null);
   const [needKey, setNeedKey] = useState(false);
@@ -132,11 +134,11 @@ export function StudioConsole() {
   const [unlocking, setUnlocking] = useState(false);
 
   const handle401 = useCallback((json: { error?: string } | null) => {
-    sessionStorage.removeItem(KEY_STORAGE);
+    sessionStorage.removeItem(TOKEN_STORAGE);
     keyRef.current = null;
     setKey(null);
     setNeedKey(true);
-    setKeyError(json?.error || "Console key required.");
+    setKeyError(json?.error || "Session expired — unlock again.");
   }, []);
 
   const load = useCallback(
@@ -147,7 +149,7 @@ export function StudioConsole() {
       try {
         const res = await fetch("/api/stats", {
           cache: "no-store",
-          headers: kk ? { "x-console-key": kk } : undefined,
+          headers: kk ? { "x-console-token": kk } : undefined,
         });
         const json = await res.json();
         if (res.status === 401) {
@@ -172,7 +174,7 @@ export function StudioConsole() {
       try {
         const res = await fetch("/api/messages", {
           cache: "no-store",
-          headers: { "x-console-key": kk },
+          headers: { "x-console-token": kk },
         });
         const json = await res.json();
         if (res.status === 401) {
@@ -195,7 +197,7 @@ export function StudioConsole() {
       try {
         const res = await fetch("/api/subscribers", {
           cache: "no-store",
-          headers: { "x-console-key": kk },
+          headers: { "x-console-token": kk },
         });
         const json = await res.json();
         if (res.status === 401) {
@@ -215,16 +217,31 @@ export function StudioConsole() {
     await Promise.all([load(), loadInbox(), loadSubs()]);
   }, [load, loadInbox, loadSubs]);
 
-  /* Load on open (with saved session key) + refresh every 30s while open */
+  /* Load on open (restoring a valid saved session token) + refresh every 30s */
   useEffect(() => {
     if (!open) return;
-    const saved = sessionStorage.getItem(KEY_STORAGE);
+    const saved = sessionStorage.getItem(TOKEN_STORAGE);
+    let restored = false;
     if (saved) {
-      keyRef.current = saved;
-      setKey(saved);
-      setNeedKey(false);
-      loadAll();
-    } else {
+      try {
+        const parsed = JSON.parse(saved) as { token?: string; expiresAt?: string };
+        const live =
+          parsed.token &&
+          parsed.expiresAt &&
+          new Date(parsed.expiresAt).getTime() > Date.now() + 5000;
+        if (live) {
+          keyRef.current = parsed.token as string;
+          setKey(parsed.token);
+          setNeedKey(false);
+          restored = true;
+          loadAll();
+        }
+      } catch {
+        /* fall through — treat as no session */
+      }
+    }
+    if (!restored) {
+      if (saved) sessionStorage.removeItem(TOKEN_STORAGE);
       setNeedKey(true);
     }
     const t = setInterval(() => {
@@ -245,6 +262,13 @@ export function StudioConsole() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  /* External open requests — the ⌘K command palette dispatches this */
+  useEffect(() => {
+    const openConsole = () => setOpen(true);
+    window.addEventListener("abw:console-open", openConsole);
+    return () => window.removeEventListener("abw:console-open", openConsole);
+  }, []);
+
   /* Clear any pending remove-confirmation when the dialog closes */
   useEffect(() => {
     if (!open) {
@@ -259,9 +283,9 @@ export function StudioConsole() {
 
   function exportCsv(type: "contacts" | "subscribers") {
     /* Direct navigation triggers the Content-Disposition download; the
-       console key rides along as ?key= for the gate. */
-    const k = keyRef.current ? `&key=${encodeURIComponent(keyRef.current)}` : "";
-    window.location.href = `/api/export?type=${type}${k}`;
+       session token rides along as ?t= for the gate. */
+    const t = keyRef.current ? `&t=${encodeURIComponent(keyRef.current)}` : "";
+    window.location.href = `/api/export?type=${type}${t}`;
   }
 
   async function patchStatus(row: MessageRow, status: MessageStatus) {
@@ -271,7 +295,7 @@ export function StudioConsole() {
     try {
       const res = await fetch("/api/messages", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-console-key": keyRef.current },
+        headers: { "Content-Type": "application/json", "x-console-token": keyRef.current },
         body: JSON.stringify({ id: row.id, status }),
       });
       const json = await res.json();
@@ -298,7 +322,7 @@ export function StudioConsole() {
     try {
       const res = await fetch("/api/subscribers", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json", "x-console-key": keyRef.current },
+        headers: { "Content-Type": "application/json", "x-console-token": keyRef.current },
         body: JSON.stringify({ id: row.id }),
       });
       const json = await res.json();
@@ -337,22 +361,28 @@ export function StudioConsole() {
     setUnlocking(true);
     setKeyError(null);
     try {
-      const res = await fetch("/api/stats", {
+      /* Exchange the passcode for a signed session token (8h TTL). */
+      const res = await fetch("/api/console/unlock", {
+        method: "POST",
         cache: "no-store",
-        headers: { "x-console-key": k },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: k }),
       });
       const json = await res.json();
+      if (res.status === 429) {
+        const ra = Number(res.headers.get("retry-after") || "0");
+        throw new Error(ra > 0 ? `Too many attempts — retry in ${ra}s.` : "Too many attempts — try again later.");
+      }
       if (!res.ok || !json.ok) {
         throw new Error(res.status === 401 ? "Invalid console key — try again." : json.error || "Unlock failed");
       }
-      sessionStorage.setItem(KEY_STORAGE, k);
-      keyRef.current = k;
-      setKey(k);
+      const session = { token: json.token as string, expiresAt: json.expiresAt as string };
+      sessionStorage.setItem(TOKEN_STORAGE, JSON.stringify(session));
+      keyRef.current = session.token;
+      setKey(session.token);
       setNeedKey(false);
       setPasscode("");
-      setData(json);
-      loadInbox(k);
-      loadSubs(k);
+      loadAll();
     } catch (err) {
       setKeyError(err instanceof Error ? err.message : "Invalid console key.");
     } finally {
@@ -361,7 +391,7 @@ export function StudioConsole() {
   }
 
   function lockConsole() {
-    sessionStorage.removeItem(KEY_STORAGE);
+    sessionStorage.removeItem(TOKEN_STORAGE);
     keyRef.current = null;
     setKey(null);
     setData(null);
@@ -465,7 +495,7 @@ export function StudioConsole() {
               <button
                 type="button"
                 onClick={lockConsole}
-                aria-label="Lock console (clear session key)"
+                aria-label="Lock console (end session)"
                 title="Lock console"
                 className="focus-carbon flex size-9 shrink-0 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
               >
@@ -487,7 +517,8 @@ export function StudioConsole() {
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Studio signals are behind a passcode. Enter the console key to
-                read messages, exports and live activity.
+                read messages, exports and live activity — a signed session
+                token (8h) is issued on unlock.
               </p>
               <form onSubmit={unlock} className="mt-6 w-full">
                 <label htmlFor="console-key" className="sr-only">
@@ -526,7 +557,8 @@ export function StudioConsole() {
                 )}
                 <p className="mt-4 font-mono text-[10px] leading-relaxed text-muted-foreground">
                   Demo key: <span className="text-ibm-soft">abw-2026</span> — set
-                  CONSOLE_PASSCODE env to change.
+                  CONSOLE_PASSCODE env to change. 8 failed attempts locks the
+                  console for 5 minutes.
                 </p>
               </form>
             </div>
