@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check, Sparkles, BriefcaseBusiness } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check, Sparkles, BriefcaseBusiness, ContactRound } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -202,6 +202,23 @@ export function Contact() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   Two build slots remain — first call is free.
                 </p>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <a
+                  href="/api/vcard"
+                  download
+                  className="focus-carbon group inline-flex items-center gap-2 border border-hairline-strong bg-card px-4 py-2.5 font-mono text-xs text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
+                  title="Download the studio contact card (.vcf) — opens in your contacts app"
+                >
+                  <ContactRound className="size-4 text-ibm-bright transition-transform duration-300 group-hover:scale-110" strokeWidth={1.5} aria-hidden="true" />
+                  Save contact card
+                  <span className="border border-hairline px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+                    .vcf
+                  </span>
+                </a>
+                <span className="font-mono text-[10px] text-muted-foreground">
+                  One tap into your contacts app — details included.
+                </span>
               </div>
             </Reveal>
           </div>

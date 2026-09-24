@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { guardConsole } from "@/lib/console-auth";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/stats
  * Aggregated studio activity for the in-page Studio Console (admin view).
- * Read-only; intentionally unauthenticated in this sandbox demo —
- * swap in auth middleware before exposing real production data.
+ * Read-only; passcode-gated via /lib/console-auth (x-console-key header
+ * or ?key= param, CONSOLE_PASSCODE env to configure).
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const denied = guardConsole(request);
+  if (denied) return denied;
+
   try {
     const [contacts, subscribers, byServiceRaw, recentContacts, recentSubscribers, bySourceRaw] =
       await Promise.all([

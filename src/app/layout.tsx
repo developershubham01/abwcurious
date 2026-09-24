@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { FAQS } from "@/lib/content-faq";
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
@@ -79,6 +80,17 @@ const jsonLd = {
   sameAs: [],
 };
 
+/* FAQPage rich-result structured data — mirrors the on-page FAQ (shared content module) */
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -90,6 +102,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
       <body

@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Activity,
   Download,
   Inbox,
   LoaderCircle,
+  Lock,
+  LockKeyhole,
   Mail,
   RefreshCw,
   Terminal,
@@ -56,18 +58,39 @@ function timeAgo(iso: string) {
 
 /* ---------------- Studio Console (admin view) ---------------- */
 
+const KEY_STORAGE = "abw-console-key";
+
 export function StudioConsole() {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<StatsPayload | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /* passcode gate — key lives in sessionStorage for the browser session */
+  const [key, setKey] = useState<string | null>(null);
+  const keyRef = useRef<string | null>(null);
+  const [needKey, setNeedKey] = useState(false);
+  const [passcode, setPasscode] = useState("");
+  const [keyError, setKeyError] = useState<string | null>(null);
+  const [unlocking, setUnlocking] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (k?: string | null) => {
+    const kk = k !== undefined ? k : keyRef.current;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/stats", { cache: "no-store" });
+      const res = await fetch("/api/stats", {
+        cache: "no-store",
+        headers: kk ? { "x-console-key": kk } : undefined,
+      });
       const json = await res.json();
+      if (res.status === 401) {
+        sessionStorage.removeItem(KEY_STORAGE);
+        keyRef.current = null;
+        setKey(null);
+        setNeedKey(true);
+        setKeyError(json.error || "Console key required.");
+        return;
+      }
       if (!res.ok || !json.ok) throw new Error(json.error || "Failed to load stats");
       setData(json);
     } catch (err) {
@@ -77,11 +100,19 @@ export function StudioConsole() {
     }
   }, []);
 
-  /* Load on open + refresh every 30s while open */
+  /* Load on open (with saved session key) + refresh every 30s while open */
   useEffect(() => {
     if (!open) return;
-    load();
-    const t = setInterval(load, 30000);
+    const saved = sessionStorage.getItem(KEY_STORAGE);
+    if (saved) {
+      keyRef.current = saved;
+      setKey(saved);
+      setNeedKey(false);
+      load(saved);
+    } else {
+      setNeedKey(true);
+    }
+    const t = setInterval(() => load(), 30000);
     return () => clearInterval(t);
   }, [open, load]);
 
@@ -101,8 +132,48 @@ export function StudioConsole() {
   const maxService = data ? Math.max(1, ...data.byService.map((s) => s.count)) : 1;
 
   function exportCsv(type: "contacts" | "subscribers") {
-    /* Direct navigation triggers the Content-Disposition download */
-    window.location.href = `/api/export?type=${type}`;
+    /* Direct navigation triggers the Content-Disposition download; the
+       console key rides along as ?key= for the gate. */
+    const k = keyRef.current ? `&key=${encodeURIComponent(keyRef.current)}` : "";
+    window.location.href = `/api/export?type=${type}${k}`;
+  }
+
+  async function unlock(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const k = passcode.trim();
+    if (!k || unlocking) return;
+    setUnlocking(true);
+    setKeyError(null);
+    try {
+      const res = await fetch("/api/stats", {
+        cache: "no-store",
+        headers: { "x-console-key": k },
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) {
+        throw new Error(res.status === 401 ? "Invalid console key — try again." : json.error || "Unlock failed");
+      }
+      sessionStorage.setItem(KEY_STORAGE, k);
+      keyRef.current = k;
+      setKey(k);
+      setNeedKey(false);
+      setPasscode("");
+      setData(json);
+    } catch (err) {
+      setKeyError(err instanceof Error ? err.message : "Invalid console key.");
+    } finally {
+      setUnlocking(false);
+    }
+  }
+
+  function lockConsole() {
+    sessionStorage.removeItem(KEY_STORAGE);
+    keyRef.current = null;
+    setKey(null);
+    setData(null);
+    setNeedKey(true);
+    setPasscode("");
+    setKeyError(null);
   }
 
   const tiles = [
@@ -145,7 +216,7 @@ export function StudioConsole() {
             <button
               type="button"
               onClick={load}
-              disabled={loading}
+              disabled={loading || needKey}
               aria-label="Refresh stats"
               className="focus-carbon flex size-9 shrink-0 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright disabled:opacity-50"
             >
@@ -155,10 +226,77 @@ export function StudioConsole() {
                 <RefreshCw className="size-4" strokeWidth={1.5} aria-hidden="true" />
               )}
             </button>
+            {key && (
+              <button
+                type="button"
+                onClick={lockConsole}
+                aria-label="Lock console (clear session key)"
+                title="Lock console"
+                className="focus-carbon flex size-9 shrink-0 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
+              >
+                <Lock className="size-4" strokeWidth={1.5} aria-hidden="true" />
+              </button>
+            )}
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 px-6 py-6">
+        <div className="px-6 py-6">
+          {needKey ? (
+            /* Passcode gate — Carbon restricted-access screen */
+            <div className="mx-auto flex max-w-sm flex-col items-center py-8 text-center">
+              <span className="flex size-12 items-center justify-center border border-hairline-strong bg-card">
+                <LockKeyhole className="size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+              </span>
+              <h3 className="mt-5 font-mono text-sm uppercase tracking-[0.22em]">
+                Restricted console
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Studio signals are behind a passcode. Enter the console key to
+                read messages, exports and live activity.
+              </p>
+              <form onSubmit={unlock} className="mt-6 w-full">
+                <label htmlFor="console-key" className="sr-only">
+                  Console key
+                </label>
+                <div className="flex border border-hairline-strong bg-white focus-within:border-ibm-bright">
+                  <input
+                    id="console-key"
+                    type="password"
+                    autoComplete="off"
+                    autoFocus
+                    value={passcode}
+                    onChange={(e) => setPasscode(e.target.value)}
+                    placeholder="console key"
+                    className="h-11 w-full min-w-0 bg-transparent px-4 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={unlocking}
+                    className="flex h-11 shrink-0 items-center gap-2 bg-primary px-4 font-mono text-xs uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-ibm-blue-hover focus-carbon disabled:opacity-60"
+                  >
+                    {unlocking ? (
+                      <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
+                    ) : (
+                      "Unlock"
+                    )}
+                  </button>
+                </div>
+                {keyError && (
+                  <p
+                    role="alert"
+                    className="mt-3 border border-ibm-error/40 bg-ibm-error/[0.06] px-3 py-2 font-mono text-xs text-ibm-error"
+                  >
+                    {keyError}
+                  </p>
+                )}
+                <p className="mt-4 font-mono text-[10px] leading-relaxed text-muted-foreground">
+                  Demo key: <span className="text-ibm-soft">abw-2026</span> — set
+                  CONSOLE_PASSCODE env to change.
+                </p>
+              </form>
+            </div>
+          ) : (
+            <div className="space-y-6">
           {error && (
             <div className="border border-ibm-error/40 bg-ibm-error/[0.06] px-4 py-3 font-mono text-xs text-ibm-error">
               {error}
@@ -382,6 +520,8 @@ export function StudioConsole() {
           <p className="text-center font-mono text-[10px] text-muted-foreground">
             {data ? `Synced ${timeAgo(data.generatedAt)} · auto-refresh 30s` : "—"}
           </p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

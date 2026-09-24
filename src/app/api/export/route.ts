@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { guardConsole } from "@/lib/console-auth";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/export?type=contacts|subscribers
  * CSV export for the Studio Console admin view. Read-only.
- * NOTE: intentionally unauthenticated in this sandbox demo —
- * gate with auth middleware before real production use.
+ * Passcode-gated via /lib/console-auth (x-console-key header or ?key= param
+ * for direct-navigation downloads; CONSOLE_PASSCODE env to configure).
  */
 
 function csvEscape(value: unknown): string {
@@ -24,6 +25,9 @@ function toCsv(headers: string[], rows: unknown[][]): string {
 }
 
 export async function GET(request: Request) {
+  const denied = guardConsole(request);
+  if (denied) return denied;
+
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type") === "subscribers" ? "subscribers" : "contacts";
   const stamp = new Date().toISOString().slice(0, 10);
