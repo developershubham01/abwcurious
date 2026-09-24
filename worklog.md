@@ -111,3 +111,23 @@ Stage Summary:
 - ✅ All verified in agent-browser (desktop + mobile); /api/export curl-verified; lint clean; zero runtime errors after clean restart.
 - Key decisions: zustand single-purpose store (nonce pattern re-triggers on repeat clicks); pushState/popState pairing for dialog↔history sync; export via direct navigation + Content-Disposition (no blob plumbing).
 - Remaining: placeholder phone/email + social hrefs="#top" (need real data); /api/stats + /api/export unauthenticated (add auth before real deployment); optional next: per-case-study deep links (#cases/<id>), newsletter double opt-in, footer BackToTop overlap on the "Engineered with curiosity" line at mobile widths (cosmetic, floating button by design).
+
+---
+Task ID: 5
+Agent: Z.ai Code (main)
+Task: QA assessment (agent-browser) + feature round (case deep-links, char counter, newsletter social proof) + mobile overlap fix + Carbon detailing
+
+Work Log:
+- QA first: read worklog.md; dev.log healthy (all 200s, no runtime errors); lint clean. agent-browser sweep at 1440x900: hero (blue dither + stats + live clock), cases (tabs), notes, Studio Console (Ctrl+Shift+K, live data 3 contacts/1 sub), footer; zero page errors, zero console errors; mobile 390x844 hero clean. Verdict: STABLE, no blocking bugs → feature round.
+- FEATURE case-study deep links (casestudy.tsx): Tabs converted to controlled state; hash ↔ tab sync — clicking a tab pushes #cases/<id>, direct visit to /#cases/askor auto-opens Askor (rAF-wrapped for lint), popstate+hashchange listeners keep tabs in sync (browser Back returns to previous case — verified askor→fleetiq→Back→askor). Per-case "COPY LINK" mono button (Link2 icon, Copy→green Check + toast) shares origin/#cases/<id>. NOTE: clipboard writeText requires document focus — real user clicks work; eval-driven clicks throw NotAllowedError (expected browser behavior).
+- FEATURE Carbon text-input counter (contact.tsx + api/contact): message textarea now controlled with maxLength 600; live "N / 600" counter (aria-live=polite, tabular-nums) turns ibm-bright at ≥90% and ibm-error at limit; backend zod max lowered 5000→600 to match. Counter resets on successful submit. Verified 0→147/600 live; full form submit end-to-end (done panel + toast).
+- FEATURE newsletter social proof (footer.tsx + api/newsletter): POST response now includes total subscriber count (both create + alreadySubscribed paths); toast reads "You're subscriber #N" and success panel reads "You are on the list — subscriber #N. No spam, ever." Verified end-to-end: subscribed qa-round5@abwcurious.test → "subscriber #2" in toast + panel; GET /api/newsletter total=2.
+- BUG FIX (cosmetic, known from Task 4): floating BackToTop button overlapped footer bottom-bar © line at mobile widths → bottom bar container pr-20 (sm:pr-6) + © p max-w-[calc(100vw-7.5rem)]; geometry verified: © right edge 302px and "Engineered…" right edge 310px vs button left 322px → clearOfButton=true at 390x844.
+- STYLING detailing (casestudy.tsx): case tabs now numbered 01/02/03 (mono, ibm-bright) matching mobile-menu numbering; active tab gained a 2px IBM blue→cyan left accent bar (origin-top scaleY spring-less transition, group-data-[state=active]); TabsList aria-label="Case files".
+- Verification: agent-browser — deep link /#cases/askor auto-opens (active tab "02 Askor"), tab click pushes #cases/fleetiq, Back restores askor, Copy link shows "Copied"; counter 0→147/600; contact submit 201 (stats totals contacts=4, subscribers=2, activity7d=6); newsletter total=2; mobile cases tabs render numbered + accent bar; zero page/console errors; bun run lint clean.
+
+Stage Summary:
+- ✅ Round 5 shipped: shareable case-file deep links (#cases/<id>) with history sync + copy-link, Carbon message counter (600, front+back aligned), newsletter subscriber-count social proof, mobile footer overlap fix, numbered case tabs with IBM accent bar.
+- ✅ All verified desktop + mobile; APIs curl-checked; lint clean; zero runtime errors.
+- Key decisions: tabs (unlike dialogs) push on every change and fall back to first case when hash is absent (Back from a case lands on previous case, not section top); controlled textarea for counter accuracy; count computed after create for consistency.
+- Remaining: placeholder phone/email + social hrefs="#top" (need real data); /api/stats + /api/export unauthenticated (add auth before real deployment); optional next: per-note "next article" pager in dialog, FAQ search/filter, OG image per-case (dynamic og route), newsletter double opt-in.

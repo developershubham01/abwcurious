@@ -30,6 +30,7 @@ function NewsletterForm() {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
+  const [total, setTotal] = useState<number | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -43,10 +44,14 @@ function NewsletterForm() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Subscription failed");
+      if (typeof json.total === "number") setTotal(json.total);
       setState("done");
       toast({
         title: json.alreadySubscribed ? "Already subscribed" : "Subscribed",
-        description: json.message ?? "See you in the next issue.",
+        description:
+          typeof json.total === "number" && !json.alreadySubscribed
+            ? `${json.message} You're subscriber #${json.total}.`
+            : (json.message ?? "See you in the next issue."),
       });
     } catch (err) {
       setState("idle");
@@ -62,7 +67,9 @@ function NewsletterForm() {
     return (
       <div className="flex items-center gap-2.5 border border-ibm-success/50 bg-ibm-success/10 px-4 py-3.5">
         <CheckCircle2 className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
-        <p className="font-mono text-xs text-foreground/90">You are on the list. No spam, ever.</p>
+        <p className="font-mono text-xs text-foreground/90">
+          You are on the list{total ? ` — subscriber #${total}` : ""}. No spam, ever.
+        </p>
       </div>
     );
   }
@@ -196,8 +203,8 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-hairline">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-xs text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} ABWcurious™. All rights reserved.</p>
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 pr-20 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-xs text-muted-foreground sm:flex-row sm:pr-6">
+          <p className="max-w-[calc(100vw-7.5rem)] sm:max-w-none">© {new Date().getFullYear()} ABWcurious™. All rights reserved.</p>
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
             <StudioConsole />
             <p className="flex items-center gap-2">

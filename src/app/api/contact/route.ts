@@ -7,7 +7,7 @@ const contactSchema = z.object({
   email: z.string().trim().email("Please provide a valid email address").max(200),
   phone: z.string().trim().max(40).optional().nullable(),
   service: z.string().trim().max(80).optional().nullable(),
-  message: z.string().trim().min(10, "Please tell us a little more (10+ characters)").max(5000),
+  message: z.string().trim().min(10, "Please tell us a little more (10+ characters)").max(600, "Message is limited to 600 characters"),
 });
 
 export async function POST(request: NextRequest) {

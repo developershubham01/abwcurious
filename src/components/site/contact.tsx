@@ -14,7 +14,10 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useInquiryStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
 import { Eyebrow, Reveal } from "./primitives";
+
+const MESSAGE_MAX = 600;
 
 const INFO = [
   { icon: Mail, label: "Email", value: "hello@abwcurious.com", href: "mailto:hello@abwcurious.com" },
@@ -29,6 +32,7 @@ export function Contact() {
   const [done, setDone] = useState(false);
   const [service, setService] = useState<string>("");
   const [copied, setCopied] = useState(false);
+  const [message, setMessage] = useState("");
   const presetService = useInquiryStore((s) => s.presetService);
   const presetNonce = useInquiryStore((s) => s.presetNonce);
   const clearPreset = useInquiryStore((s) => s.clearPreset);
@@ -86,6 +90,7 @@ export function Contact() {
       setDone(true);
       form.reset();
       setService("");
+      setMessage("");
       toast({
         title: "Message sent",
         description: "Thanks for reaching out — we reply within 24 hours.",
@@ -283,14 +288,33 @@ export function Contact() {
                   </div>
 
                   <div className="space-y-2.5">
-                    <Label htmlFor="message" className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                      Project details *
-                    </Label>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <Label htmlFor="message" className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                        Project details *
+                      </Label>
+                      {/* Carbon-style text-input counter */}
+                      <span
+                        aria-live="polite"
+                        className={cn(
+                          "font-mono text-xs tabular-nums",
+                          message.length >= MESSAGE_MAX
+                            ? "text-ibm-error"
+                            : message.length >= MESSAGE_MAX * 0.9
+                              ? "text-ibm-bright"
+                              : "text-muted-foreground"
+                        )}
+                      >
+                        {message.length} / {MESSAGE_MAX}
+                      </span>
+                    </div>
                     <Textarea
                       id="message"
                       name="message"
                       required
                       rows={5}
+                      maxLength={MESSAGE_MAX}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
                       placeholder="What are you building? What does success look like? Any timeline in mind?"
                       className="min-h-[132px] border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
                     />

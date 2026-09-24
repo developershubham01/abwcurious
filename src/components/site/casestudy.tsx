@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Link2, Check } from "lucide-react";
 import { Eyebrow, Reveal, SectionFrame } from "./primitives";
 import { useInquiryStore } from "@/lib/store";
+import { useToast } from "@/hooks/use-toast";
 
 const CASES = [
   {
@@ -57,8 +59,63 @@ const CASES = [
   },
 ];
 
+function caseFromHash(): string | null {
+  if (typeof window === "undefined") return null;
+  const m = window.location.hash.match(/^#cases\/([a-z0-9-]+)$/i);
+  return m ? m[1] : null;
+}
+
+function shareUrl(id: string) {
+  return `${window.location.origin}/#cases/${id}`;
+}
+
 export function CaseStudy() {
   const presetService = useInquiryStore((s) => s.presetService);
+  const { toast } = useToast();
+  const [value, setValue] = useState<string>(CASES[0].id);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  /* Open deep-linked case (#cases/<id>) on first paint */
+  useEffect(() => {
+    const id = caseFromHash();
+    if (!id || !CASES.some((c) => c.id === id)) return;
+    const raf = requestAnimationFrame(() => setValue(id));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  /* Keep tabs in sync with browser history (Back returns to previous case) */
+  useEffect(() => {
+    const onPop = () => {
+      const id = caseFromHash();
+      setValue(id && CASES.some((c) => c.id === id) ? id : CASES[0].id);
+    };
+    window.addEventListener("popstate", onPop);
+    window.addEventListener("hashchange", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      window.removeEventListener("hashchange", onPop);
+    };
+  }, []);
+
+  const handleValueChange = useCallback((v: string) => {
+    setValue(v);
+    history.pushState(null, "", `#cases/${v}`);
+  }, []);
+
+  async function copyLink(id: string) {
+    try {
+      await navigator.clipboard.writeText(shareUrl(id));
+      setCopiedId(id);
+      toast({ title: "Link copied", description: "Shareable deep link is on your clipboard." });
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      toast({
+        title: "Copy failed",
+        description: "Your browser blocked clipboard access.",
+        variant: "destructive",
+      });
+    }
+  }
 
   return (
     <SectionFrame id="cases">
@@ -79,15 +136,28 @@ export function CaseStudy() {
         </Reveal>
 
         <Reveal delay={0.12}>
-          <Tabs defaultValue={CASES[0].id} className="mt-14">
-            <TabsList className="h-auto w-full justify-start gap-0 rounded-none border border-hairline bg-transparent p-0">
-              {CASES.map((c) => (
+          <Tabs value={value} onValueChange={handleValueChange} className="mt-14">
+            <TabsList
+              className="h-auto w-full justify-start gap-0 rounded-none border border-hairline bg-transparent p-0"
+              aria-label="Case files"
+            >
+              {CASES.map((c, i) => (
                 <TabsTrigger
                   key={c.id}
                   value={c.id}
-                  className="flex-1 flex-col items-start gap-1 rounded-none border-r border-hairline px-5 py-4 last:border-r-0 data-[state=active]:bg-ibm-blue/[0.06] data-[state=active]:shadow-none sm:flex-row sm:items-center sm:gap-3"
+                  className="group relative flex-1 flex-col items-start gap-1 rounded-none border-r border-hairline px-5 py-4 last:border-r-0 data-[state=active]:bg-ibm-blue/[0.06] data-[state=active]:shadow-none sm:flex-row sm:items-center sm:gap-3"
                 >
-                  <span className="font-mono text-sm text-foreground">{c.client}</span>
+                  {/* active-case IBM accent bar (left edge) */}
+                  <span
+                    className="absolute inset-y-0 left-0 w-0.5 origin-top scale-y-0 bg-gradient-to-b from-ibm-blue to-ibm-cyan transition-transform duration-300 group-data-[state=active]:scale-y-100"
+                    aria-hidden="true"
+                  />
+                  <span className="flex items-baseline gap-2.5">
+                    <span className="font-mono text-[11px] text-ibm-bright" aria-hidden="true">
+                      0{i + 1}
+                    </span>
+                    <span className="font-mono text-sm text-foreground">{c.client}</span>
+                  </span>
                   <span className="hidden text-xs text-muted-foreground lg:inline">
                     {c.industry.split("·")[0]}
                   </span>
@@ -158,14 +228,29 @@ export function CaseStudy() {
                       ))}
                     </div>
 
-                    <a
-                      href="#contact"
-                      onClick={() => presetService(c.service)}
-                      className="mt-8 inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-bright focus-carbon"
-                    >
-                      Build something like this
-                      <ArrowUpRight className="size-4" strokeWidth={1.5} />
-                    </a>
+                    <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+                      <a
+                        href="#contact"
+                        onClick={() => presetService(c.service)}
+                        className="inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-bright focus-carbon"
+                      >
+                        Build something like this
+                        <ArrowUpRight className="size-4" strokeWidth={1.5} />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => copyLink(c.id)}
+                        aria-label={`Copy shareable link to the ${c.client} case file`}
+                        className="inline-flex items-center gap-1.5 border border-hairline px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+                      >
+                        {copiedId === c.id ? (
+                          <Check className="size-3.5 text-ibm-success" strokeWidth={2} aria-hidden="true" />
+                        ) : (
+                          <Link2 className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                        )}
+                        {copiedId === c.id ? "Copied" : "Copy link"}
+                      </button>
+                    </div>
                   </div>
                 </article>
               </TabsContent>

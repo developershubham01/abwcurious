@@ -27,21 +27,22 @@ export async function POST(request: NextRequest) {
       await db.newsletterSubscriber.create({
         data: { email, source: source || "footer" },
       });
+      const total = await db.newsletterSubscriber.count();
+      return NextResponse.json(
+        { ok: true, message: "Subscribed. See you in the next issue.", total },
+        { status: 201 }
+      );
     } catch (err) {
       // Unique constraint = already subscribed, treat as success with a note
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+        const total = await db.newsletterSubscriber.count();
         return NextResponse.json(
-          { ok: true, alreadySubscribed: true, message: "You are already on the list." },
+          { ok: true, alreadySubscribed: true, message: "You are already on the list.", total },
           { status: 200 }
         );
       }
       throw err;
     }
-
-    return NextResponse.json(
-      { ok: true, message: "Subscribed. See you in the next issue." },
-      { status: 201 }
-    );
   } catch (error) {
     console.error("[/api/newsletter] failed:", error);
     return NextResponse.json(
