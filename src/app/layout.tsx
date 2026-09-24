@@ -16,6 +16,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://abwcurious.com"),
   title: "ABWcurious — AI Software Development, AI Solutions & Website Development",
   description:
     "ABWcurious is a technology studio building AI software, intelligent AI solutions, high-performance websites and memorable digital design for ambitious businesses.",
@@ -39,13 +40,43 @@ export const metadata: Metadata = {
       "AI software development, AI solutions, website development and design — engineered with curiosity.",
     siteName: "ABWcurious",
     type: "website",
+    url: "https://abwcurious.com",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1216,
+        height: 640,
+        alt: "ABWcurious — AI software development studio",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "ABWcurious — Curious Minds. Intelligent Software.",
     description:
       "AI software development, AI solutions, website development and design — engineered with curiosity.",
+    images: ["/og-image.png"],
   },
+  robots: { index: true, follow: true },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "ABWcurious",
+  url: "https://abwcurious.com",
+  logo: "https://abwcurious.com/logo-mark.svg",
+  description:
+    "Technology studio building AI software, intelligent AI solutions, websites and digital design.",
+  email: "hello@abwcurious.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Pune",
+    addressRegion: "Maharashtra",
+    addressCountry: "IN",
+  },
+  sameAs: [],
 };
 
 export default function RootLayout({
@@ -55,6 +86,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${plexSans.variable} ${plexMono.variable} antialiased bg-background text-foreground font-sans`}
       >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Menu, X, Mail, Phone, MapPin, ArrowUpRight, Github, Linkedin, Twitter } from "lucide-react";
 import { Logo } from "./logo";
 import { RollButton } from "./primitives";
@@ -13,6 +14,7 @@ const NAV = [
   { label: "Work", href: "#work" },
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
+  { label: "Notes", href: "#notes" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -98,14 +100,23 @@ export function Header() {
               <a
                 key={item.href}
                 href={item.href}
+                aria-current={active === item.href ? "true" : undefined}
                 className={cn(
-                  "font-mono text-[13px] transition-colors focus-carbon",
+                  "relative font-mono text-[13px] transition-colors focus-carbon",
                   active === item.href
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.label}
+                {active === item.href && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    className="absolute -bottom-[7px] left-0 h-[2px] w-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    aria-hidden="true"
+                  />
+                )}
               </a>
             ))}
           </nav>

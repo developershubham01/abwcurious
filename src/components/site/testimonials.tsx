@@ -2,7 +2,6 @@
 
 import { Star } from "lucide-react";
 import { Eyebrow, Reveal } from "./primitives";
-import { cn } from "@/lib/utils";
 
 interface Testimonial {
   name: string;
@@ -99,8 +98,12 @@ function TweetCard({ t }: { t: Testimonial }) {
 }
 
 export function Testimonials() {
-  const rowA = [...TESTIMONIALS.slice(0, 4), ...TESTIMONIALS.slice(0, 4)];
-  const rowB = [...TESTIMONIALS.slice(4), ...TESTIMONIALS.slice(4)];
+  /* Each half of the track must be wider than the widest viewport for a
+     seamless -50% translate loop — 3 copies of 4 cards (~4.5k px) is safe. */
+  const baseA = TESTIMONIALS.slice(0, 4);
+  const baseB = TESTIMONIALS.slice(4);
+  const rowA = [...baseA, ...baseA, ...baseA];
+  const rowB = [...baseB, ...baseB, ...baseB];
   return (
     <section className="border-y border-hairline py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-6">
@@ -115,15 +118,15 @@ export function Testimonials() {
       </div>
 
       <div className="mt-14 space-y-5 [mask-image:linear-gradient(to_right,transparent,black_7%,black_93%,transparent)]">
-        <div className="flex justify-center gap-5 overflow-hidden">
-          <div className="flex w-max gap-5 animate-marquee-slow hover:[animation-play-state:paused]">
+        <div className="flex overflow-hidden">
+          <div className="flex w-max shrink-0 gap-5 animate-marquee-slow hover:[animation-play-state:paused]">
             {rowA.map((t, i) => (
               <TweetCard key={`a-${i}`} t={t} />
             ))}
           </div>
         </div>
-        <div className={cn("flex justify-center gap-5 overflow-hidden")}>
-          <div className="flex w-max gap-5 animate-marquee-reverse hover:[animation-play-state:paused]">
+        <div className="flex overflow-hidden">
+          <div className="flex w-max shrink-0 gap-5 animate-marquee-reverse hover:[animation-play-state:paused]">
             {rowB.map((t, i) => (
               <TweetCard key={`b-${i}`} t={t} />
             ))}

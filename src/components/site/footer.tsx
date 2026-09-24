@@ -5,6 +5,7 @@ import { LoaderCircle, Send, CheckCircle2 } from "lucide-react";
 import { Logo } from "./logo";
 import { SocialRow } from "./header";
 import { Reveal, RollButton } from "./primitives";
+import { StudioConsole } from "./console";
 import { useToast } from "@/hooks/use-toast";
 
 const COLUMNS = [
@@ -20,8 +21,8 @@ const COLUMNS = [
   },
   {
     title: "Resources",
-    links: ["Selected work", "Case files", "Pricing", "FAQ"],
-    hrefs: ["#work", "#cases", "#pricing", "#faq"],
+    links: ["Selected work", "Case files", "Pricing", "FAQ", "Field notes"],
+    hrefs: ["#work", "#cases", "#pricing", "#faq", "#notes"],
   },
 ];
 
@@ -195,12 +196,15 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-hairline">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-6 font-mono text-xs text-muted-foreground sm:flex-row">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-xs text-muted-foreground sm:flex-row">
           <p>© {new Date().getFullYear()} ABWcurious™. All rights reserved.</p>
-          <p className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-ibm-success" aria-hidden="true" />
-            Engineered with curiosity in Pune, India
-          </p>
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+            <StudioConsole />
+            <p className="flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-ibm-success" aria-hidden="true" />
+              Engineered with curiosity in Pune, India
+            </p>
+          </div>
         </div>
       </div>
     </footer>

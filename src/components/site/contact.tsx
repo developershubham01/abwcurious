@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -27,6 +27,24 @@ export function Contact() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [service, setService] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
+  async function copyEmail(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText("hello@abwcurious.com");
+      setCopied(true);
+      toast({ title: "Email copied", description: "hello@abwcurious.com is on your clipboard." });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({
+        title: "Copy failed",
+        description: "Your browser blocked clipboard access.",
+        variant: "destructive",
+      });
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -81,7 +99,7 @@ export function Contact() {
           {/* Info */}
           <div className="lg:col-span-5">
             <Reveal>
-              <Eyebrow className="justify-start">09 / Get in touch</Eyebrow>
+              <Eyebrow className="justify-start">10 / Get in touch</Eyebrow>
               <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Have an idea? <span className="text-ibm-bright">Let&apos;s interrogate it.</span>
               </h2>
@@ -94,19 +112,35 @@ export function Contact() {
             <Reveal delay={0.12}>
               <div className="mt-9 grid grid-cols-1 gap-px border border-hairline bg-hairline sm:grid-cols-2">
                 {INFO.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    className="group flex items-start gap-3.5 bg-card p-5 transition-colors hover:bg-ibm-blue/[0.05] focus-carbon"
-                  >
-                    <item.icon className="mt-0.5 size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
-                    <span>
-                      <span className="block font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        {item.label}
+                  <div key={item.label} className="relative bg-card transition-colors hover:bg-ibm-blue/[0.05]">
+                    <a
+                      href={item.href}
+                      className="group flex items-start gap-3.5 p-5 focus-carbon"
+                    >
+                      <item.icon className="mt-0.5 size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                      <span>
+                        <span className="block font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                          {item.label}
+                        </span>
+                        <span className="mt-1 block text-sm">{item.value}</span>
                       </span>
-                      <span className="mt-1 block text-sm">{item.value}</span>
-                    </span>
-                  </a>
+                    </a>
+                    {item.label === "Email" && (
+                      <button
+                        type="button"
+                        onClick={copyEmail}
+                        aria-label="Copy email address to clipboard"
+                        title="Copy email"
+                        className="focus-carbon absolute right-3 top-3 z-10 flex size-8 items-center justify-center border border-hairline bg-background text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
+                      >
+                        {copied ? (
+                          <Check className="size-3.5 text-ibm-success" strokeWidth={2} aria-hidden="true" />
+                        ) : (
+                          <Copy className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
             </Reveal>

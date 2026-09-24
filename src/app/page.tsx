@@ -10,6 +10,7 @@ import { CaseStudy } from "@/components/site/casestudy";
 import { Testimonials } from "@/components/site/testimonials";
 import { Pricing } from "@/components/site/pricing";
 import { Faq } from "@/components/site/faq";
+import { Notes } from "@/components/site/notes";
 import { Contact } from "@/components/site/contact";
 import { Footer } from "@/components/site/footer";
 import { ScrollProgress, BackToTop } from "@/components/site/chrome";
@@ -31,6 +32,7 @@ export default function Home() {
         <Testimonials />
         <Pricing />
         <Faq />
+        <Notes />
         <Contact />
       </main>
       <Footer />

@@ -69,3 +69,25 @@ Stage Summary:
 - ✅ Browser-verified desktop + mobile, all interactions + both API routes green
 - Key decisions: text-safe blues (blue-60/70) instead of light blues for contrast; blue-ink hairlines; monochrome DriftWall tiles that colorize on hover
 - Remaining (unchanged from Task 1): placeholder phone/email, social hrefs="#top"; optional: theme toggle, OG image
+
+---
+Task ID: 3
+Agent: Z.ai Code (main)
+Task: QA assessment (agent-browser) + bug fix + new features (Studio Console admin, Field Notes blog) + styling details + SEO
+
+Work Log:
+- QA first: reviewed worklog.md, page.tsx, globals.css, layout.tsx, API routes, all site components; dev.log healthy; /api/contact total=3, /api/newsletter total=1
+- agent-browser QA desktop 1440x900 + mobile 390x844: all sections render (full-page gray blocks = Reveal initial states only, verified via scroll-through), zero page errors, zero console errors, mobile menu + DriftWall + form fine
+- BUG FIXED: testimonials marquee showed blank gap on the right for >50% of each animation loop — root cause: `justify-center` on rows whose track (2×4 cards ≈ 3.1k px) is wider than viewport, so centered overflow leaves the window outside the track at high translate fractions → removed justify-center (flex-start) and tripled each half (3×4 cards ≈ 4.7k px) so copy width ≥ viewport on ultrawide; verified gap-free via two timed screenshots
+- FEATURE /api/stats (GET, force-dynamic): totals (contacts, subscribers, 7-day activity, distinct services), byService + bySource groupBy, 7-day daily histogram, recent 6 contacts + 6 subscribers; read-only, noted auth requirement for production
+- FEATURE Studio Console (src/components/site/console.tsx): IBM Carbon admin dialog in-page (single-route rule respected) — footer bottom-bar trigger (Terminal icon) + Ctrl/Cmd+Shift+K shortcut; stat tiles, 7-day bar chart, demand-mix + source bars, recent messages table (max-h scroll), recent subscribers list, 30s auto-refresh while open; fixed % -height bar collapse with px heights during verify
+- FEATURE Field Notes (src/components/site/notes.tsx): blog section "09 / Field notes" between FAQ and Contact (contact renumbered 10); 3 full articles (LLM production, RAG retrieval, design systems) with tag/date/read-time cards → shadcn Dialog reader with mono subheads, list + code blocks, "Put this to work" CTA; added Notes to header NAV + footer Resources links
+- SEO: generated /public/og-image.png (1216x640, AI; first attempt rendered IBM trademark — regenerated with abstract concentric-arcs prompt, no text/logos); layout.tsx: metadataBase https://abwcurious.com, openGraph+twitter images, robots, JSON-LD Organization (name/url/logo/email/address) injected in <head>
+- STYLING details: header scroll-spy active link now has animated sliding blue underline (framer-motion layoutId="nav-underline", spring); contact info tiles restructured with copy-to-clipboard email button (Copy→green Check + toast, verified); footer bottom bar respects iOS safe area via pb-[max(1.5rem,env(safe-area-inset-bottom))]
+- Verification: agent-browser — console dialog opens via footer click AND Ctrl+Shift+K, tiles/chart/bars/tables live with real SQLite data (3 contacts, 1 sub); notes dialog reads fully; marquee gap-free; copy-email toast confirmed; mobile: 8-item menu, 2-col console tiles, footer trigger; curl /api/stats 200 JSON correct; /og-image.png 200 image/png 59KB; bun run lint clean; dev.log zero runtime errors
+
+Stage Summary:
+- ✅ Site stable → advanced: 1 QA bug fixed, 3 new features (stats API, Studio Console admin, Field Notes blog), SEO upgraded (OG image + JSON-LD + metadataBase), Carbon detail pass (nav underline, copy email, safe-area)
+- Section order now: hero→marquee→services→about→process→stack→work→cases→testimonials→pricing→faq→notes(09)→contact(10)→footer(console trigger)
+- Key decisions: admin view as in-page dialog (single-route constraint); px-based bar heights; abstract OG art to avoid IBM trademark; unauthenticated /api/stats flagged for auth before production
+- Remaining: placeholder phone/email + social hrefs="#top" (need real data); /api/stats unauthenticated (add auth before real deployment); optional next: theme toggle, per-note deep-link (#notes/slug) via hash routing, newsletter double opt-in
