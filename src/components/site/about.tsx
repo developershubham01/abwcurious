@@ -60,27 +60,29 @@ export function About() {
       <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true">
         <WebThreads
           color1="#0f62fe"
-          color2="#33b1ff"
-          color3="#eaf2ff"
+          color2="#1192e8"
+          color3="#a6c8ff"
           speed={0.16}
           threadCount={5}
           frequency={3.2}
           spread={0.16}
           thickness={1.35}
           glow={0.02}
-          brightness={0.5}
-          opacity={0.9}
+          brightness={0.55}
+          opacity={0.85}
           mouseInteraction
           mouseStrength={0.25}
           grain
           grainIntensity={0.04}
           position={0.62}
+          backgroundColor="#ffffff"
+          lightMode
         />
       </div>
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden="true"
-        style={{ background: "linear-gradient(to bottom, #060609 0%, transparent 30%, transparent 62%, #060609 100%)" }}
+        style={{ background: "linear-gradient(to bottom, #ffffff 0%, transparent 30%, transparent 62%, #ffffff 100%)" }}
       />
 
       <div className="relative mx-auto max-w-7xl px-6 py-24 lg:py-32 lg:border-x lg:border-hairline">
@@ -122,7 +124,7 @@ export function About() {
                   { value: 40, suffix: "+", label: "AI models shipped" },
                   { value: 12, suffix: "", label: "Industries served" },
                 ].map((stat) => (
-                  <div key={stat.label} className="bg-background/80 px-4 py-5 backdrop-blur-sm">
+                  <div key={stat.label} className="bg-background/85 px-4 py-5 backdrop-blur-sm">
                     <div className="font-mono text-2xl text-ibm-bright">
                       <CountUp to={stat.value} suffix={stat.suffix} />
                     </div>
@@ -137,7 +139,7 @@ export function About() {
             <div className="grid gap-px border border-hairline bg-hairline sm:grid-cols-2">
               {PILLARS.map((pillar, i) => (
                 <Reveal key={pillar.title} delay={i * 0.08} className="h-full">
-                  <div className="h-full bg-background/80 p-7 backdrop-blur-sm transition-colors duration-300 hover:bg-white/[0.05]">
+                  <div className="h-full bg-background/85 p-7 backdrop-blur-sm transition-colors duration-300 hover:bg-ibm-blue/[0.05]">
                     <pillar.icon className="size-7 text-ibm-bright" strokeWidth={1.25} aria-hidden="true" />
                     <h3 className="mt-5 text-lg tracking-tight">{pillar.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{pillar.desc}</p>
@@ -147,7 +149,7 @@ export function About() {
             </div>
 
             <Reveal delay={0.3}>
-              <figure className="mt-6 border border-hairline bg-background/80 p-7 backdrop-blur-sm">
+              <figure className="mt-6 border border-hairline bg-background/85 p-7 backdrop-blur-sm">
                 <blockquote className="text-lg font-light leading-relaxed text-foreground/90">
                   “Curiosity is not a value on a wall. It is the habit of asking why the second
                   time — and the discipline of answering it in code.”

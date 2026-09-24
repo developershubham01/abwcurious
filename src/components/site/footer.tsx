@@ -67,7 +67,7 @@ function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex border border-hairline-strong bg-white/[0.03] focus-within:border-ibm-bright">
+    <form onSubmit={handleSubmit} className="flex border border-hairline-strong bg-white focus-within:border-ibm-bright">
       <label htmlFor="newsletter-email" className="sr-only">
         Email address
       </label>
@@ -98,33 +98,49 @@ function NewsletterForm() {
 
 export function Footer() {
   return (
-    <footer className="mt-auto bg-[#0a0a10]">
+    <footer className="mt-auto bg-[#f5f8fe]">
       {/* Big CTA banner */}
       <div className="border-b border-hairline">
         <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20 lg:border-x lg:border-hairline">
           <Reveal>
-            <div className="relative overflow-hidden border border-ibm-bright/50 bg-gradient-to-br from-ibm-blue/15 via-transparent to-ibm-cyan/10 px-8 py-12 text-center sm:px-12 lg:py-16">
+            <div className="relative overflow-hidden border border-ibm-blue/70 bg-ibm-blue px-8 py-12 text-center sm:px-12 lg:py-16">
+              {/* white blueprint grid + glow ornaments */}
               <div
-                className="pointer-events-none absolute inset-0 bg-grid-fine opacity-40"
+                className="pointer-events-none absolute inset-0 opacity-60"
                 aria-hidden="true"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px)",
+                  backgroundSize: "28px 28px",
+                }}
+              />
+              <div
+                className="pointer-events-none absolute -left-20 -top-24 size-72 rounded-full opacity-50 blur-3xl"
+                aria-hidden="true"
+                style={{ background: "radial-gradient(circle, rgba(255,255,255,0.35), transparent 70%)" }}
+              />
+              <div
+                className="pointer-events-none absolute -bottom-28 -right-16 size-80 rounded-full opacity-40 blur-3xl"
+                aria-hidden="true"
+                style={{ background: "radial-gradient(circle, rgba(166,200,255,0.5), transparent 70%)" }}
               />
               <div className="relative">
-                <p className="font-mono text-xs uppercase tracking-[0.24em] text-ibm-soft">
+                <p className="font-mono text-xs uppercase tracking-[0.24em] text-white/75">
                   Ready when you are
                 </p>
-                <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-light leading-tight tracking-tight sm:text-5xl">
+                <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-light leading-tight tracking-tight text-white sm:text-5xl">
                   Build your next product with{" "}
-                  <span className="text-ibm-bright">curious minds.</span>
+                  <span className="text-[#a6c8ff]">curious minds.</span>
                 </h2>
-                <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+                <p className="mx-auto mt-4 max-w-xl text-white/80">
                   Free discovery call. Written proposal in 48 hours. Working software in weeks, not
                   quarters.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                  <RollButton href="#contact" variant="primary" arrow>
+                  <RollButton href="#contact" variant="light" arrow>
                     Get a Quote
                   </RollButton>
-                  <RollButton href="#work" variant="outline">
+                  <RollButton href="#work" variant="outline-light">
                     See Our Work
                   </RollButton>
                 </div>

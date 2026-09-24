@@ -79,7 +79,7 @@ export function CaseStudy() {
                 <TabsTrigger
                   key={c.id}
                   value={c.id}
-                  className="flex-1 flex-col items-start gap-1 rounded-none border-r border-hairline px-5 py-4 last:border-r-0 data-[state=active]:bg-white/[0.06] data-[state=active]:shadow-none sm:flex-row sm:items-center sm:gap-3"
+                  className="flex-1 flex-col items-start gap-1 rounded-none border-r border-hairline px-5 py-4 last:border-r-0 data-[state=active]:bg-ibm-blue/[0.06] data-[state=active]:shadow-none sm:flex-row sm:items-center sm:gap-3"
                 >
                   <span className="font-mono text-sm text-foreground">{c.client}</span>
                   <span className="hidden text-xs text-muted-foreground lg:inline">
@@ -107,12 +107,12 @@ export function CaseStudy() {
                       className="absolute inset-0"
                       style={{
                         background:
-                          "linear-gradient(to top, rgba(6,6,9,0.85), rgba(6,6,9,0.1) 55%)",
+                          "linear-gradient(to top, rgba(0,17,65,0.88), rgba(0,17,65,0.12) 55%)",
                       }}
                       aria-hidden="true"
                     />
                     <div className="absolute bottom-5 left-5 right-5">
-                      <p className="font-mono text-xs uppercase tracking-[0.2em] text-ibm-soft">
+                      <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#a6c8ff]">
                         {c.industry}
                       </p>
                       <p className="mt-1 text-2xl font-light tracking-tight text-white">

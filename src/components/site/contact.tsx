@@ -97,7 +97,7 @@ export function Contact() {
                   <a
                     key={item.label}
                     href={item.href}
-                    className="group flex items-start gap-3.5 bg-card p-5 transition-colors hover:bg-white/[0.05] focus-carbon"
+                    className="group flex items-start gap-3.5 bg-card p-5 transition-colors hover:bg-ibm-blue/[0.05] focus-carbon"
                   >
                     <item.icon className="mt-0.5 size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
                     <span>
@@ -155,7 +155,7 @@ export function Contact() {
                         name="name"
                         required
                         placeholder="Ada Lovelace"
-                        className="h-12 border-hairline-strong bg-white/[0.04] focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
+                        className="h-12 border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
                       />
                     </div>
                     <div className="space-y-2.5">
@@ -168,7 +168,7 @@ export function Contact() {
                         type="email"
                         required
                         placeholder="ada@company.com"
-                        className="h-12 border-hairline-strong bg-white/[0.04] focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
+                        className="h-12 border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
                       />
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export function Contact() {
                         name="phone"
                         type="tel"
                         placeholder="+91 ..."
-                        className="h-12 border-hairline-strong bg-white/[0.04] focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
+                        className="h-12 border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
                       />
                     </div>
                     <div className="space-y-2.5">
@@ -193,7 +193,7 @@ export function Contact() {
                       <Select value={service} onValueChange={setService} required>
                         <SelectTrigger
                           id="service"
-                          className="h-12 border-hairline-strong bg-white/[0.04] data-[state=open]:border-ibm-bright focus:ring-ibm-bright"
+                          className="h-12 border-hairline-strong bg-white data-[state=open]:border-ibm-bright focus:ring-ibm-bright"
                         >
                           <SelectValue placeholder="Select a service" />
                         </SelectTrigger>
@@ -205,7 +205,7 @@ export function Contact() {
                             "Design",
                             "Something else",
                           ].map((s) => (
-                            <SelectItem key={s} value={s} className="rounded-none focus:bg-white/10">
+                            <SelectItem key={s} value={s} className="rounded-none focus:bg-ibm-blue/10">
                               {s}
                             </SelectItem>
                           ))}
@@ -224,7 +224,7 @@ export function Contact() {
                       required
                       rows={5}
                       placeholder="What are you building? What does success look like? Any timeline in mind?"
-                      className="min-h-[132px] border-hairline-strong bg-white/[0.04] focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
+                      className="min-h-[132px] border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
                     />
                   </div>
 

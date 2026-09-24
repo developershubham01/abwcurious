@@ -74,12 +74,12 @@ export function Pricing() {
                 className={cn(
                   "relative flex h-full flex-col border bg-card p-8 transition-all duration-300 hover:-translate-y-1",
                   plan.featured
-                    ? "border-ibm-bright/70 bg-white/[0.05] shadow-[0_18px_50px_-24px_rgba(15,98,254,0.45)]"
-                    : "border-hairline hover:border-white/25"
+                    ? "border-ibm-bright/70 bg-ibm-blue/[0.045] shadow-[0_18px_50px_-24px_rgba(15,98,254,0.35)]"
+                    : "border-hairline hover:border-ink/30"
                 )}
               >
                 {plan.featured && (
-                  <span className="absolute right-6 top-6 border border-white/40 bg-gradient-to-b from-white/25 to-transparent px-3 py-1 font-mono text-xs text-white">
+                  <span className="absolute right-6 top-6 border border-ibm-bright/40 bg-ibm-blue/10 px-3 py-1 font-mono text-xs text-ibm-bright">
                     Most Popular
                   </span>
                 )}

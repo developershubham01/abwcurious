@@ -50,7 +50,7 @@ export function Process() {
         <div className="mt-14 grid gap-px border border-hairline bg-hairline md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step, i) => (
             <Reveal key={step.id} delay={i * 0.1} className="h-full">
-              <div className="group relative h-full bg-card p-8 transition-colors duration-300 hover:bg-white/[0.04]">
+              <div className="group relative h-full bg-card p-8 transition-colors duration-300 hover:bg-ibm-blue/[0.04]">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-sm text-ibm-bright">{step.id}</span>
                   <step.icon

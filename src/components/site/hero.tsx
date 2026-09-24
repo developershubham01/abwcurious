@@ -32,13 +32,13 @@ export function Hero() {
         aria-hidden="true"
         style={{
           background:
-            "radial-gradient(ellipse 60% 55% at 72% 38%, rgba(15,98,254,0.16), transparent 65%), radial-gradient(ellipse 45% 40% at 12% 82%, rgba(69,137,255,0.08), transparent 60%)",
+            "radial-gradient(ellipse 60% 55% at 72% 38%, rgba(15,98,254,0.09), transparent 65%), radial-gradient(ellipse 45% 40% at 12% 82%, rgba(17,146,232,0.05), transparent 60%)",
         }}
       />
       <div
         className="absolute inset-x-0 bottom-0 h-40"
         aria-hidden="true"
-        style={{ background: "linear-gradient(to bottom, transparent, #060609)" }}
+        style={{ background: "linear-gradient(to bottom, transparent, #ffffff)" }}
       />
 
       <div className="relative mx-auto max-w-7xl px-6 pt-14 pb-16 lg:pt-20 lg:pb-24 lg:border-x lg:border-hairline">
@@ -46,7 +46,7 @@ export function Hero() {
           {/* Copy */}
           <div className="lg:col-span-7">
             <motion.div {...fadeUp(0)}>
-              <span className="inline-flex items-center gap-2.5 border border-hairline-strong bg-white/[0.03] px-3 py-1.5 font-mono text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-2.5 border border-hairline-strong bg-ibm-blue/[0.04] px-3 py-1.5 font-mono text-xs text-muted-foreground">
                 <span className="size-1.5 rounded-full bg-ibm-bright animate-pulse-dot" aria-hidden="true" />
                 AI SOFTWARE DEVELOPMENT STUDIO
               </span>
@@ -120,9 +120,9 @@ export function Hero() {
                   fit="cover"
                   pattern="floyd"
                   pixelSize={3}
-                  inkColor="#08080d"
-                  paperColor="#e8ecf4"
-                  rimColor="#4589ff"
+                  inkColor="#001141"
+                  paperColor="#ffffff"
+                  rimColor="#0f62fe"
                   rim={0.22}
                   revealRadius={190}
                   softness={0.65}
@@ -130,7 +130,7 @@ export function Hero() {
                   contrast={1.2}
                 />
                 <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-                  <div className="absolute inset-0 border border-white/5" />
+                  <div className="absolute inset-0 border border-ink/5" />
                 </div>
               </div>
 

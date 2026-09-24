@@ -24,7 +24,7 @@ export function Marquee({
 }) {
   const row = [...ITEMS, ...ITEMS];
   return (
-    <div className={`relative overflow-hidden border-y border-hairline bg-white/[0.02] py-4 ${className}`}>
+    <div className={`relative overflow-hidden border-y border-hairline bg-ibm-blue/[0.03] py-4 ${className}`}>
       <div
         className={`flex w-max items-center gap-8 whitespace-nowrap ${
           reverse ? "animate-marquee-reverse" : "animate-marquee"

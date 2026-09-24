@@ -50,14 +50,14 @@ export function Work() {
           parallax={0.55}
           lift={70}
           fade={0.65}
-          dim={0.66}
-          overlayColor="#060609"
+          dim={0.95}
+          overlayColor="#ffffff"
           grayscale
         />
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-24"
           aria-hidden="true"
-          style={{ background: "linear-gradient(to bottom, transparent, #060609)" }}
+          style={{ background: "linear-gradient(to bottom, transparent, #ffffff)" }}
         />
       </div>
 

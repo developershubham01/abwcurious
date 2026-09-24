@@ -57,15 +57,15 @@ export function Services() {
         <div className="mt-14 grid gap-px border border-hairline bg-hairline md:grid-cols-2">
           {SERVICES.map((service, i) => (
             <Reveal key={service.id} delay={i * 0.08}>
-              <article className="group relative h-full bg-card p-8 transition-colors duration-300 hover:bg-white/[0.04] lg:p-10">
+              <article className="group relative h-full bg-card p-8 transition-colors duration-300 hover:bg-ibm-blue/[0.04] lg:p-10">
                 <span
-                  className="pointer-events-none absolute right-6 top-6 font-mono text-5xl font-light text-white/[0.06] transition-colors duration-300 group-hover:text-ibm-blue/25"
+                  className="pointer-events-none absolute right-6 top-6 font-mono text-5xl font-light text-ink/[0.07] transition-colors duration-300 group-hover:text-ibm-blue/25"
                   aria-hidden="true"
                 >
                   {service.id}
                 </span>
 
-                <div className="flex size-12 items-center justify-center border border-hairline-strong bg-white/[0.03] text-ibm-bright transition-colors duration-300 group-hover:border-ibm-bright">
+                <div className="flex size-12 items-center justify-center border border-hairline-strong bg-ibm-blue/[0.05] text-ibm-bright transition-colors duration-300 group-hover:border-ibm-bright">
                   <service.icon className="size-6" strokeWidth={1.25} aria-hidden="true" />
                 </div>
 

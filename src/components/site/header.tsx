@@ -48,7 +48,7 @@ export function Header() {
   return (
     <>
       {/* IBM-style utility bar */}
-      <div className="hidden md:block border-b border-hairline bg-white/[0.03]">
+      <div className="hidden md:block border-b border-hairline bg-ibm-blue/[0.04]">
         <div className="mx-auto flex h-9 max-w-7xl items-center justify-between px-6 font-mono text-xs text-muted-foreground">
           <div className="flex items-center gap-6">
             <span className="inline-flex items-center gap-1.5">
@@ -85,7 +85,7 @@ export function Header() {
           "sticky top-0 z-50 border-b transition-all duration-300",
           scrolled
             ? "border-hairline bg-background/85 backdrop-blur-md"
-            : "border-transparent bg-background"
+            : "border-transparent bg-background/60 backdrop-blur-sm"
         )}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">

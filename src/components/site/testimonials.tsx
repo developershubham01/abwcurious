@@ -72,7 +72,7 @@ const TESTIMONIALS: Testimonial[] = [
 
 function TweetCard({ t }: { t: Testimonial }) {
   return (
-    <figure className="min-w-[320px] max-w-[420px] border border-hairline bg-white/[0.03] p-6 transition-colors duration-300 hover:border-white/25">
+    <figure className="min-w-[320px] max-w-[420px] border border-hairline bg-white p-6 shadow-[0_1px_0_rgba(16,40,84,0.06)] transition-colors duration-300 hover:border-ibm-bright/50">
       <div className="flex items-center gap-3">
         <span
           className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-ibm-blue to-ibm-cyan font-mono text-sm font-medium text-white"

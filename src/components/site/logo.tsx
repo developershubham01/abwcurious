@@ -27,7 +27,7 @@ export function LogoMark({ className }: { className?: string }) {
         className="logo-arc"
         style={{ ["--arc-len" as string]: "120", ["--arc-delay" as string]: "0.25s" }}
         d="M 55 22 A 23 23 0 1 0 58.5 45"
-        stroke="#4589ff"
+        stroke="#1192e8"
         strokeWidth="4"
         strokeLinecap="round"
         opacity="0.85"

@@ -75,7 +75,7 @@ export function RollButton({
   children: React.ReactNode;
   href?: string;
   onClick?: () => void;
-  variant?: "primary" | "outline" | "ghost";
+  variant?: "primary" | "outline" | "ghost" | "light" | "outline-light";
   className?: string;
   type?: "button" | "submit";
   arrow?: boolean;
@@ -98,8 +98,12 @@ export function RollButton({
     "btn-roll group focus-carbon font-mono text-sm tracking-[0.02em] px-6 h-12 select-none",
     variant === "primary" && "bg-primary text-primary-foreground hover:bg-ibm-blue-hover",
     variant === "outline" &&
-      "bg-white/5 text-foreground ring-1 ring-inset ring-white/40 hover:bg-white/10 hover:ring-white/70",
+      "bg-transparent text-foreground ring-1 ring-inset ring-ink/35 hover:bg-ink/[0.05] hover:ring-ink/70",
     variant === "ghost" && "text-foreground hover:text-ibm-bright",
+    /* white buttons for use on solid IBM blue surfaces */
+    variant === "light" && "bg-white text-ibm-blue-active hover:bg-white/85",
+    variant === "outline-light" &&
+      "bg-transparent text-white ring-1 ring-inset ring-white/60 hover:bg-white/10 hover:ring-white",
     disabled && "opacity-50 pointer-events-none",
     className
   );

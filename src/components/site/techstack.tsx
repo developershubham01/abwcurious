@@ -44,7 +44,7 @@ export function TechStack() {
         <div className="mt-14 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-4">
           {GROUPS.map((group, gi) => (
             <Reveal key={group.label} delay={gi * 0.08} className="h-full">
-              <div className="group h-full bg-card p-7 transition-colors duration-300 hover:bg-white/[0.04]">
+              <div className="group h-full bg-card p-7 transition-colors duration-300 hover:bg-ibm-blue/[0.04]">
                 <div className="flex items-center justify-between">
                   <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-ibm-soft">
                     {group.label}
@@ -57,7 +57,7 @@ export function TechStack() {
                   {group.items.map((item) => (
                     <li
                       key={item}
-                      className="cursor-default border border-hairline bg-white/[0.03] px-3 py-1.5 font-mono text-[13px] text-foreground/80 transition-all duration-300 hover:border-ibm-bright/70 hover:bg-ibm-blue/10 hover:text-ibm-soft"
+                      className="cursor-default border border-hairline bg-white px-3 py-1.5 font-mono text-[13px] text-foreground/80 transition-all duration-300 hover:border-ibm-bright/70 hover:bg-ibm-blue/10 hover:text-ibm-soft"
                     >
                       {item}
                     </li>
