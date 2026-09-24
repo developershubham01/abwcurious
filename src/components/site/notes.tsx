@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ArrowUpRight, CalendarDays, Check, Clock3, Link2 } from "lucide-react";
+import { ArrowUpRight, CalendarDays, Check, Clock3, Link2, ArrowLeft, ArrowRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -258,6 +258,13 @@ export function Notes() {
     []
   );
 
+  /* Jump between notes inside the open dialog; replaceState keeps history
+     linear so the browser Back button always exits to the pre-dialog page. */
+  const goToNote = useCallback((slug: string) => {
+    setOpenSlug(slug);
+    history.replaceState(null, "", `#note/${slug}`);
+  }, []);
+
   async function copyLink(slug: string) {
     try {
       await navigator.clipboard.writeText(shareUrl(slug));
@@ -390,6 +397,48 @@ export function Notes() {
                         </a>
                       </div>
                     </div>
+
+                    {/* Prev / next article pager */}
+                    {(() => {
+                      const idx = NOTES.findIndex((n) => n.slug === note.slug);
+                      const prev = idx > 0 ? NOTES[idx - 1] : null;
+                      const next = idx < NOTES.length - 1 ? NOTES[idx + 1] : null;
+                      return (
+                        <nav
+                          aria-label={`Note pagination — ${idx + 1} of ${NOTES.length}`}
+                          className="mt-7 grid grid-cols-2 gap-px border border-hairline bg-hairline"
+                        >
+                          <button
+                            type="button"
+                            disabled={!prev}
+                            onClick={() => prev && goToNote(prev.slug)}
+                            className="group flex min-w-0 flex-col items-start gap-1 bg-background px-5 py-4 text-left transition-colors hover:bg-ibm-blue/[0.05] focus-carbon disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-background"
+                          >
+                            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                              <ArrowLeft className="size-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" strokeWidth={1.5} aria-hidden="true" />
+                              Previous
+                            </span>
+                            <span className="w-full truncate text-sm text-foreground group-hover:text-ibm-bright">
+                              {prev ? prev.title : "First note"}
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            disabled={!next}
+                            onClick={() => next && goToNote(next.slug)}
+                            className="group flex min-w-0 flex-col items-end gap-1 bg-background px-5 py-4 text-right transition-colors hover:bg-ibm-blue/[0.05] focus-carbon disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-background"
+                          >
+                            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                              Next
+                              <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={1.5} aria-hidden="true" />
+                            </span>
+                            <span className="w-full truncate text-sm text-foreground group-hover:text-ibm-bright">
+                              {next ? next.title : "Last note"}
+                            </span>
+                          </button>
+                        </nav>
+                      );
+                    })()}
                   </div>
                 </DialogContent>
               </Dialog>

@@ -11,6 +11,7 @@ import { Testimonials } from "@/components/site/testimonials";
 import { Pricing } from "@/components/site/pricing";
 import { Faq } from "@/components/site/faq";
 import { Notes } from "@/components/site/notes";
+import { Careers } from "@/components/site/careers";
 import { Contact } from "@/components/site/contact";
 import { Footer } from "@/components/site/footer";
 import { ScrollProgress, BackToTop } from "@/components/site/chrome";
@@ -40,6 +41,7 @@ export default function Home() {
         <Pricing />
         <Faq />
         <Notes />
+        <Careers />
         <Contact />
       </main>
       <Footer />

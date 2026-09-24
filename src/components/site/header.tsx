@@ -15,6 +15,7 @@ const NAV = [
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
   { label: "Notes", href: "#notes" },
+  { label: "Careers", href: "#careers" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -126,14 +127,14 @@ export function Header() {
             <Logo />
           </a>
 
-          <nav className="hidden lg:flex items-center gap-7" aria-label="Primary">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7" aria-label="Primary">
             {NAV.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 aria-current={active === item.href ? "true" : undefined}
                 className={cn(
-                  "relative font-mono text-[13px] transition-colors focus-carbon",
+                  "relative font-mono text-xs xl:text-[13px] transition-colors focus-carbon",
                   active === item.href
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -171,7 +172,7 @@ export function Header() {
         <div
           className={cn(
             "lg:hidden overflow-hidden border-t border-hairline bg-background/95 backdrop-blur-md transition-[max-height] duration-300",
-            open ? "max-h-[480px]" : "max-h-0 border-t-0"
+            open ? "max-h-[620px]" : "max-h-0 border-t-0"
           )}
         >
           <nav className="flex flex-col px-6 py-4" aria-label="Mobile">

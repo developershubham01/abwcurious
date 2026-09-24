@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check, Sparkles, BriefcaseBusiness } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -33,10 +33,15 @@ export function Contact() {
   const [service, setService] = useState<string>("");
   const [copied, setCopied] = useState(false);
   const [message, setMessage] = useState("");
+  const [role, setRole] = useState<string | null>(null);
   const presetService = useInquiryStore((s) => s.presetService);
   const presetNonce = useInquiryStore((s) => s.presetNonce);
   const clearPreset = useInquiryStore((s) => s.clearPreset);
+  const presetRole = useInquiryStore((s) => s.presetRole);
+  const roleNonce = useInquiryStore((s) => s.roleNonce);
+  const clearPresetRole = useInquiryStore((s) => s.clearPresetRole);
   const lastNonce = useRef(0);
+  const lastRoleNonce = useRef(0);
 
   /* Prefill the service select when a service card (or case file) sent us here */
   useEffect(() => {
@@ -50,6 +55,26 @@ export function Contact() {
       clearPreset();
     }
   }, [presetNonce, presetService, clearPreset, toast]);
+
+  /* Prefill an application when a careers role sent us here */
+  useEffect(() => {
+    if (presetRole && roleNonce !== lastRoleNonce.current) {
+      lastRoleNonce.current = roleNonce;
+      setRole(presetRole);
+      setService("Join the team");
+      setMessage(
+        (prev) =>
+          prev.trim()
+            ? prev
+            : `Hi ABWcurious — I'd like to apply for the ${presetRole} role. A little about me: `
+      );
+      toast({
+        title: "Application started",
+        description: `${presetRole} — introduce yourself below.`,
+      });
+      clearPresetRole();
+    }
+  }, [roleNonce, presetRole, clearPresetRole, toast]);
 
   async function copyEmail(e: React.MouseEvent) {
     e.preventDefault();
@@ -91,6 +116,7 @@ export function Contact() {
       form.reset();
       setService("");
       setMessage("");
+      setRole(null);
       toast({
         title: "Message sent",
         description: "Thanks for reaching out — we reply within 24 hours.",
@@ -122,7 +148,7 @@ export function Contact() {
           {/* Info */}
           <div className="lg:col-span-5">
             <Reveal>
-              <Eyebrow className="justify-start">10 / Get in touch</Eyebrow>
+              <Eyebrow className="justify-start">11 / Get in touch</Eyebrow>
               <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Have an idea? <span className="text-ibm-bright">Let&apos;s interrogate it.</span>
               </h2>
@@ -186,7 +212,7 @@ export function Contact() {
               <span className="absolute -top-px -left-px h-3 w-3 border-t-2 border-l-2 border-ibm-bright" aria-hidden="true" />
               <span className="absolute -bottom-px -right-px h-3 w-3 border-b-2 border-r-2 border-ibm-bright" aria-hidden="true" />
 
-              {service && !done && (
+              {service && !done && !role && (
                 <div className="mb-6 flex items-center gap-2.5 border border-ibm-bright/40 bg-ibm-blue/[0.06] px-4 py-2.5" role="status">
                   <Sparkles className="size-4 shrink-0 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
                   <p className="font-mono text-xs text-ibm-soft">
@@ -195,6 +221,25 @@ export function Contact() {
                   <button
                     type="button"
                     onClick={() => setService("")}
+                    className="focus-carbon ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-error"
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
+
+              {role && !done && (
+                <div className="mb-6 flex items-center gap-2.5 border border-ibm-bright/40 bg-ibm-blue/[0.06] px-4 py-2.5" role="status">
+                  <BriefcaseBusiness className="size-4 shrink-0 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                  <p className="font-mono text-xs text-ibm-soft">
+                    Application: <span className="text-foreground">{role}</span>
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRole(null);
+                      setService("");
+                    }}
                     className="focus-carbon ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-error"
                   >
                     Clear
@@ -276,6 +321,7 @@ export function Contact() {
                             "AI Solutions",
                             "Website Development",
                             "Design",
+                            "Join the team",
                             "Something else",
                           ].map((s) => (
                             <SelectItem key={s} value={s} className="rounded-none focus:bg-ibm-blue/10">

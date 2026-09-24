@@ -12,7 +12,7 @@ const COLUMNS = [
   {
     title: "Company",
     links: ["About us", "Process", "Careers", "Contact"],
-    hrefs: ["#about", "#process", "#contact", "#contact"],
+    hrefs: ["#about", "#process", "#careers", "#contact"],
   },
   {
     title: "Services",
