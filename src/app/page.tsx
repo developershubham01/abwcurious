@@ -17,10 +17,17 @@ import { ScrollProgress, BackToTop } from "@/components/site/chrome";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div id="top" className="flex min-h-screen flex-col bg-background text-foreground">
+      {/* IBM Carbon skip-to-content (visible on keyboard focus) */}
+      <a
+        href="#main"
+        className="skip-link"
+      >
+        Skip to main content
+      </a>
       <ScrollProgress />
       <Header />
-      <main className="flex-1">
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <Hero />
         <Marquee />
         <Services />

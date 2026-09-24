@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowUpRight, CalendarDays, Clock3 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { ArrowUpRight, CalendarDays, Check, Clock3, Link2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Eyebrow, Reveal, SectionFrame } from "./primitives";
+import { useToast } from "@/hooks/use-toast";
 
 /* ---------------- content model ---------------- */
 
@@ -202,9 +204,75 @@ function ArticleBody({ blocks }: { blocks: Block[] }) {
   );
 }
 
+/* ---------------- deep-link helpers ---------------- */
+
+function slugFromHash(): string | null {
+  const m = window.location.hash.match(/^#note\/([a-z0-9-]+)$/i);
+  return m ? m[1] : null;
+}
+
+function shareUrl(slug: string) {
+  return `${window.location.origin}/#note/${slug}`;
+}
+
 /* ---------------- section ---------------- */
 
 export function Notes() {
+  const { toast } = useToast();
+  const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  /* Open from deep link on first paint */
+  useEffect(() => {
+    const slug = slugFromHash();
+    if (!slug || !NOTES.some((n) => n.slug === slug)) return;
+    const raf = requestAnimationFrame(() => setOpenSlug(slug));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  /* Keep dialog in sync with browser history (back button closes) */
+  useEffect(() => {
+    const onPop = () => {
+      const slug = slugFromHash();
+      setOpenSlug(slug && NOTES.some((n) => n.slug === slug) ? slug : null);
+    };
+    window.addEventListener("popstate", onPop);
+    window.addEventListener("hashchange", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      window.removeEventListener("hashchange", onPop);
+    };
+  }, []);
+
+  const handleOpenChange = useCallback(
+    (slug: string, open: boolean) => {
+      if (open) {
+        setOpenSlug(slug);
+        history.pushState(null, "", `#note/${slug}`);
+      } else {
+        setOpenSlug(null);
+        /* If we pushed a note hash, pop it so Back stays consistent */
+        if (slugFromHash()) history.back();
+      }
+    },
+    []
+  );
+
+  async function copyLink(slug: string) {
+    try {
+      await navigator.clipboard.writeText(shareUrl(slug));
+      setCopied(true);
+      toast({ title: "Link copied", description: "Shareable deep link is on your clipboard." });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({
+        title: "Copy failed",
+        description: "Your browser blocked clipboard access.",
+        variant: "destructive",
+      });
+    }
+  }
+
   return (
     <SectionFrame id="notes">
       <div className="py-20 lg:py-24">
@@ -226,7 +294,10 @@ export function Notes() {
         <div className="mt-14 grid gap-px border border-hairline bg-hairline lg:grid-cols-3">
           {NOTES.map((note, i) => (
             <Reveal key={note.slug} delay={0.08 * i} className="h-full">
-              <Dialog>
+              <Dialog
+                open={openSlug === note.slug}
+                onOpenChange={(open) => handleOpenChange(note.slug, open)}
+              >
                 <DialogTrigger asChild>
                   <article className="group flex h-full cursor-pointer flex-col bg-background p-7 transition-colors duration-300 hover:bg-ibm-blue/[0.04] focus-carbon">
                     <div className="flex items-center justify-between">
@@ -296,13 +367,28 @@ export function Notes() {
                       <p className="font-mono text-xs text-muted-foreground">
                         — The ABWcurious field desk
                       </p>
-                      <a
-                        href="#contact"
-                        className="focus-carbon inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-bright"
-                      >
-                        Put this to work
-                        <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden="true" />
-                      </a>
+                      <div className="flex items-center gap-5">
+                        <button
+                          type="button"
+                          onClick={() => copyLink(note.slug)}
+                          aria-label="Copy shareable link to this note"
+                          className="focus-carbon inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-ibm-bright"
+                        >
+                          {copied ? (
+                            <Check className="size-4 text-ibm-success" strokeWidth={2} aria-hidden="true" />
+                          ) : (
+                            <Link2 className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                          )}
+                          {copied ? "Copied" : "Copy link"}
+                        </button>
+                        <a
+                          href="#contact"
+                          className="focus-carbon inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-bright"
+                        >
+                          Put this to work
+                          <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </DialogContent>

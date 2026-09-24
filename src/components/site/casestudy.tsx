@@ -4,12 +4,14 @@ import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpRight } from "lucide-react";
 import { Eyebrow, Reveal, SectionFrame } from "./primitives";
+import { useInquiryStore } from "@/lib/store";
 
 const CASES = [
   {
     id: "nexacrm",
     client: "NexaCRM",
     industry: "B2B SaaS · Sales Intelligence",
+    service: "AI Solutions",
     image: "/images/work-crm.jpg",
     challenge:
       "A growing SaaS team was drowning in manual lead triage — reps spent 11 hours a week scoring and routing leads by hand.",
@@ -25,6 +27,7 @@ const CASES = [
     id: "askor",
     client: "Askor",
     industry: "Customer Support · Conversational AI",
+    service: "AI Solutions",
     image: "/images/work-chatbot.jpg",
     challenge:
       "A consumer platform with 12,000 daily tickets across three languages needed support that scales without scaling headcount.",
@@ -40,6 +43,7 @@ const CASES = [
     id: "fleetiq",
     client: "FleetIQ",
     industry: "Logistics · ERP & Analytics",
+    service: "AI Software Development",
     image: "/images/work-erp.jpg",
     challenge:
       "A logistics operator ran their fleet on spreadsheets — no live visibility, margins leaking through missed maintenance and empty return legs.",
@@ -54,6 +58,8 @@ const CASES = [
 ];
 
 export function CaseStudy() {
+  const presetService = useInquiryStore((s) => s.presetService);
+
   return (
     <SectionFrame id="cases">
       <div className="py-20 lg:py-24">
@@ -154,6 +160,7 @@ export function CaseStudy() {
 
                     <a
                       href="#contact"
+                      onClick={() => presetService(c.service)}
                       className="mt-8 inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-bright focus-carbon"
                     >
                       Build something like this

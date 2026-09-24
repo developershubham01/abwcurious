@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Activity,
+  Download,
   Inbox,
   LoaderCircle,
   Mail,
@@ -98,6 +99,11 @@ export function StudioConsole() {
 
   const maxDay = data ? Math.max(1, ...data.days.map((d) => d.contacts + d.subscribers)) : 1;
   const maxService = data ? Math.max(1, ...data.byService.map((s) => s.count)) : 1;
+
+  function exportCsv(type: "contacts" | "subscribers") {
+    /* Direct navigation triggers the Content-Disposition download */
+    window.location.href = `/api/export?type=${type}`;
+  }
 
   const tiles = [
     { icon: Inbox, label: "Contact messages", value: data?.totals.contacts },
@@ -275,7 +281,18 @@ export function StudioConsole() {
               <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 Recent messages
               </span>
-              <span className="font-mono text-[10px] text-muted-foreground">max-h scroll</span>
+              <span className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => exportCsv("contacts")}
+                  className="focus-carbon inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-bright"
+                  title="Download all contact messages as CSV"
+                >
+                  <Download className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                  Export CSV
+                </button>
+                <span className="font-mono text-[10px] text-muted-foreground">max-h scroll</span>
+              </span>
             </div>
             <div className="max-h-64 overflow-y-auto">
               <table className="w-full text-left text-xs">
@@ -324,8 +341,17 @@ export function StudioConsole() {
 
           {/* Recent subscribers */}
           <div className="border border-hairline">
-            <div className="border-b border-hairline bg-card px-4 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="flex items-center justify-between border-b border-hairline bg-card px-4 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
               Recent subscribers
+              <button
+                type="button"
+                onClick={() => exportCsv("subscribers")}
+                className="focus-carbon inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-bright"
+                title="Download all newsletter subscribers as CSV"
+              >
+                <Download className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                Export CSV
+              </button>
             </div>
             <ul className="max-h-48 overflow-y-auto">
               {(data?.recentSubscribers ?? []).map((s) => (

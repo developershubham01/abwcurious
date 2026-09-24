@@ -2,6 +2,7 @@
 
 import { Bot, BrainCircuit, Code2, PenTool, ArrowUpRight, Check } from "lucide-react";
 import { Eyebrow, Reveal, SectionFrame } from "./primitives";
+import { useInquiryStore } from "@/lib/store";
 
 const SERVICES = [
   {
@@ -35,6 +36,8 @@ const SERVICES = [
 ];
 
 export function Services() {
+  const presetService = useInquiryStore((s) => s.presetService);
+
   return (
     <SectionFrame id="services">
       <div className="py-20 lg:py-24">
@@ -83,6 +86,7 @@ export function Services() {
 
                 <a
                   href="#contact"
+                  onClick={() => presetService(service.title)}
                   className="mt-8 inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft focus-carbon"
                 >
                   Discuss this service

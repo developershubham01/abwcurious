@@ -91,3 +91,23 @@ Stage Summary:
 - Section order now: hero→marquee→services→about→process→stack→work→cases→testimonials→pricing→faq→notes(09)→contact(10)→footer(console trigger)
 - Key decisions: admin view as in-page dialog (single-route constraint); px-based bar heights; abstract OG art to avoid IBM trademark; unauthenticated /api/stats flagged for auth before production
 - Remaining: placeholder phone/email + social hrefs="#top" (need real data); /api/stats unauthenticated (add auth before real deployment); optional next: theme toggle, per-note deep-link (#notes/slug) via hash routing, newsletter double opt-in
+
+---
+Task ID: 4
+Agent: Z.ai Code (main)
+Task: QA assessment (agent-browser) + new features (inquiry prefill, notes deep-links, CSV export, live clock, skip-link) + styling details
+
+Work Log:
+- QA first: read worklog.md; checked dev.log (healthy, all 200s); agent-browser pass at 1440x900 across hero/services/about(WebThreads)/work(DriftWall)/cases/pricing/notes/contact/footer — zero page errors, zero console errors; Studio Console opened via footer button + Ctrl/Cmd+Shift+K with live SQLite data (3 contacts, 1 sub); mobile 390x844 smoke test fine. Verdict: site STABLE, no blocking bugs → proceeded to feature round.
+- FEATURE inquiry prefill (src/lib/store.ts): tiny zustand store (presetService + presetNonce). "Discuss this service" (services.tsx) and "Build something like this" (casestudy.tsx, per-case service field) now preset the contact form. contact.tsx effect (rAF-safe, nonce-guarded, toast "Service preselected") sets the Select + shows a dismissible blue "✦ Preselected: <service>" chip with CLEAR button above the form. Verified end-to-end in browser: click card → smooth scroll to #contact → toast + chip + select populated.
+- FEATURE notes deep-linking (notes.tsx): controlled dialogs keyed by openSlug; opening pushes #note/<slug>, Escape/UI-close pops history; popstate+hashchange listeners keep dialog in sync (browser Back closes; direct visit to /#note/llm-in-production auto-opens); added "Copy link" button in dialog footer (copies origin + #note/slug, toast "Link copied"). Verified: deep link opens dialog, Escape pops hash back to previous (#contact), Back closes.
+- FEATURE CSV export: new /api/export (GET ?type=contacts|subscribers) — proper CSV escaping, Content-Disposition attachment (abwcurious-contacts-YYYY-MM-DD.csv), no-store; verified via curl (headers + rows correct). Studio Console: "⬇ EXPORT CSV" mono buttons in Recent messages + Recent subscribers panel headers → window.location.href triggers download.
+- STYLING details: (1) LiveClock in header utility bar — ticking "Studio time HH:MM:SS IST" (Intl.DateTimeFormat Asia/Calcutta, hydration-safe placeholder, cyan pulse dot); (2) IBM Carbon skip-to-content link — fixed top-left, solid #0f62fe, white mono, hidden via translateY(-120%) until :focus-visible (page.tsx skip link + id="main"/tabIndex={-1} + id="top" on wrapper; .skip-link CSS in globals.css); verified reveal on Tab.
+- BUG FIXED: after editing globals.css the skip-link rendered UNHIDDEN (computed position:static) — stale Turbopack CSS chunk (same known issue as Task 1). Fix: kill all next processes → rm -rf .next → clean restart; re-verified computed style = fixed/translated, focus reveal works.
+- Lint: fixed react-hooks/set-state-in-effect in notes.tsx (deep-link open now rAF-wrapped); bun run lint clean.
+
+Stage Summary:
+- ✅ Round 4 shipped: inquiry prefill flow (services + case files → contact form), shareable notes deep links (#note/<slug>) with copy-link, CSV export API + console buttons, live IST studio clock, Carbon skip-to-content.
+- ✅ All verified in agent-browser (desktop + mobile); /api/export curl-verified; lint clean; zero runtime errors after clean restart.
+- Key decisions: zustand single-purpose store (nonce pattern re-triggers on repeat clicks); pushState/popState pairing for dialog↔history sync; export via direct navigation + Content-Disposition (no blob plumbing).
+- Remaining: placeholder phone/email + social hrefs="#top" (need real data); /api/stats + /api/export unauthenticated (add auth before real deployment); optional next: per-case-study deep links (#cases/<id>), newsletter double opt-in, footer BackToTop overlap on the "Engineered with curiosity" line at mobile widths (cosmetic, floating button by design).

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useInquiryStore } from "@/lib/store";
 import { Eyebrow, Reveal } from "./primitives";
 
 const INFO = [
@@ -28,6 +29,23 @@ export function Contact() {
   const [done, setDone] = useState(false);
   const [service, setService] = useState<string>("");
   const [copied, setCopied] = useState(false);
+  const presetService = useInquiryStore((s) => s.presetService);
+  const presetNonce = useInquiryStore((s) => s.presetNonce);
+  const clearPreset = useInquiryStore((s) => s.clearPreset);
+  const lastNonce = useRef(0);
+
+  /* Prefill the service select when a service card (or case file) sent us here */
+  useEffect(() => {
+    if (presetService && presetNonce !== lastNonce.current) {
+      lastNonce.current = presetNonce;
+      setService(presetService);
+      toast({
+        title: "Service preselected",
+        description: `${presetService} — tell us a little more below.`,
+      });
+      clearPreset();
+    }
+  }, [presetNonce, presetService, clearPreset, toast]);
 
   async function copyEmail(e: React.MouseEvent) {
     e.preventDefault();
@@ -162,6 +180,22 @@ export function Contact() {
             <div className="relative border border-hairline-strong bg-card p-7 lg:p-10">
               <span className="absolute -top-px -left-px h-3 w-3 border-t-2 border-l-2 border-ibm-bright" aria-hidden="true" />
               <span className="absolute -bottom-px -right-px h-3 w-3 border-b-2 border-r-2 border-ibm-bright" aria-hidden="true" />
+
+              {service && !done && (
+                <div className="mb-6 flex items-center gap-2.5 border border-ibm-bright/40 bg-ibm-blue/[0.06] px-4 py-2.5" role="status">
+                  <Sparkles className="size-4 shrink-0 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                  <p className="font-mono text-xs text-ibm-soft">
+                    Preselected: <span className="text-foreground">{service}</span>
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setService("")}
+                    className="focus-carbon ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-error"
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
 
               {done ? (
                 <div className="flex min-h-[420px] flex-col items-center justify-center text-center">

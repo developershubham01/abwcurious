@@ -215,6 +215,26 @@
   outline-offset: 2px;
 }
 
+/* IBM Carbon skip-to-content: hidden until keyboard-focused */
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0.875rem 1.25rem;
+  background: #0f62fe;
+  color: #ffffff;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.8125rem;
+  transform: translateY(-120%);
+  transition: transform 0.15s ease-out;
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #ffffff;
+  outline-offset: -4px;
+}
+
 /* Dual-layer roll-up button label (WriteMate signature) */
 /* NOTE: inside @layer components so Tailwind utilities (e.g. `hidden`) can override display */
 @layer components {

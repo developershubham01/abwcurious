@@ -18,6 +18,36 @@ const NAV = [
   { label: "Contact", href: "#contact" },
 ];
 
+/** Ticking studio clock (Asia/Calcutta) — hydration-safe, renders placeholder before mount. */
+function LiveClock() {
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Calcutta",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const tick = () => setTime(fmt.format(new Date()));
+    tick();
+    const t = setInterval(tick, 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 tabular-nums"
+      title="Studio local time (IST)"
+      suppressHydrationWarning
+    >
+      <span className="size-1.5 rounded-full bg-ibm-cyan animate-pulse-dot" aria-hidden="true" />
+      {time ? `Studio time ${time} IST` : "Studio time — IST"}
+    </span>
+  );
+}
+
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -63,6 +93,7 @@ export function Header() {
             </span>
           </div>
           <div className="flex items-center gap-6">
+            <LiveClock />
             <a
               href="mailto:hello@abwcurious.com"
               className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors"
