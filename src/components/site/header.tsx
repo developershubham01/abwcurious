@@ -201,18 +201,22 @@ export function Header() {
 }
 
 export function SocialRow({ className }: { className?: string }) {
+  /* Placeholder profile handles — swap for the studio's real profiles when available. */
   const socials = [
-    { icon: Github, label: "GitHub" },
-    { icon: Linkedin, label: "LinkedIn" },
-    { icon: Twitter, label: "X / Twitter" },
+    { icon: Github, label: "GitHub", href: "https://github.com/abwcurious" },
+    { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/abwcurious" },
+    { icon: Twitter, label: "X / Twitter", href: "https://x.com/abwcurious" },
   ];
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      {socials.map(({ icon: Icon, label }) => (
+      {socials.map(({ icon: Icon, label, href }) => (
         <a
           key={label}
-          href="#top"
-          aria-label={label}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${label} (opens in a new tab)`}
+          title={label}
           className="inline-flex h-9 w-9 items-center justify-center border border-hairline text-muted-foreground hover:border-ibm-bright hover:text-ibm-bright transition-colors focus-carbon"
         >
           <Icon className="size-4" strokeWidth={1.5} />

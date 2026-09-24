@@ -3,6 +3,9 @@ import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { FAQS } from "@/lib/content-faq";
+import { Header } from "@/components/site/header";
+import { Footer } from "@/components/site/footer";
+import { ScrollProgress, BackToTop } from "@/components/site/chrome";
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
@@ -60,6 +63,9 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
+  alternates: {
+    types: { "application/rss+xml": "/api/rss" },
+  },
 };
 
 const jsonLd = {
@@ -111,7 +117,19 @@ export default function RootLayout({
       <body
         className={`${plexSans.variable} ${plexMono.variable} antialiased bg-background text-foreground font-sans`}
       >
-        {children}
+        {/* Chrome (skip link, progress line, header, footer, back-to-top) lives
+            in the root layout so error/404 boundaries render with full site
+            navigation. page.tsx contributes only <main id="main">. */}
+        <div id="top" className="flex min-h-screen flex-col bg-background text-foreground">
+          <a href="#main" className="skip-link">
+            Skip to main content
+          </a>
+          <ScrollProgress />
+          <Header />
+          {children}
+          <Footer />
+          <BackToTop />
+        </div>
         <Toaster />
       </body>
     </html>

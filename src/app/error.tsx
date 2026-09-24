@@ -19,16 +19,17 @@ export default function Error({
   }, [error]);
 
   return (
-    <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden border-y border-hairline">
-      <div className="absolute inset-0 bg-grid-fine opacity-60" aria-hidden="true" />
-      <div
-        className="absolute inset-0"
-        aria-hidden="true"
-        style={{
-          background: "radial-gradient(ellipse 50% 60% at 50% 30%, rgba(15,98,254,0.10), transparent 60%)",
-        }}
-      />
-      <div className="relative mx-auto max-w-lg px-6 py-20 text-center">
+    <main id="main" tabIndex={-1} className="flex-1 outline-none">
+      <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden border-y border-hairline">
+        <div className="absolute inset-0 bg-grid-fine opacity-60" aria-hidden="true" />
+        <div
+          className="absolute inset-0"
+          aria-hidden="true"
+          style={{
+            background: "radial-gradient(ellipse 50% 60% at 50% 30%, rgba(15,98,254,0.10), transparent 60%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-lg px-6 py-20 text-center">
         <span className="mx-auto flex size-14 items-center justify-center border border-hairline-strong bg-card">
           <AlertTriangle className="size-6 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
         </span>
@@ -73,6 +74,7 @@ export default function Error({
           </a>
         </div>
       </div>
-    </section>
+      </section>
+    </main>
   );
 }

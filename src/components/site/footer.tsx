@@ -21,8 +21,8 @@ const COLUMNS = [
   },
   {
     title: "Resources",
-    links: ["Selected work", "Case files", "Pricing", "FAQ", "Field notes"],
-    hrefs: ["#work", "#cases", "#pricing", "#faq", "#notes"],
+    links: ["Selected work", "Case files", "Pricing", "FAQ", "Field notes", "Field notes RSS"],
+    hrefs: ["#work", "#cases", "#pricing", "#faq", "#notes", "/api/rss"],
   },
 ];
 
