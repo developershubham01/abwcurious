@@ -224,6 +224,10 @@ export function Footer() {
             <p className="flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-ibm-success" aria-hidden="true" />
               Engineered with curiosity in Pune, India
+              <span className="hidden text-muted-foreground/70 md:inline" aria-hidden="true">
+                ·
+              </span>
+              <span className="hidden text-muted-foreground/70 md:inline">Updated Sep 2026</span>
             </p>
           </div>
         </div>

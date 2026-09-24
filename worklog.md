@@ -242,3 +242,24 @@ Stage Summary:
 - ✅ Verified end-to-end via curl auth matrices + agent-browser at 1440/390; lint clean; zero runtime errors.
 - Key decisions: token over session-cookie (stateless, curl-friendly, passcode never stored client-side); fail2ban-style full-IP lock including valid tokens; custom cmdk substring-AND filter (DOM-order selection defeats fuzzy scoring); module-scope singleton state over refs (lint + single-instance semantics); rAF-timestamp quiet exit as the only drift-proof criterion.
 - Remaining: real phone/email still placeholders (+91 99999 99999 / hello@abwcurious.com); social handles pending real profiles; gate is now session-based but still demo key abw-2026 (set CONSOLE_PASSCODE + CONSOLE_SESSION_SECRET in production); optional next: dynamic OG per note (low value while hash deep-links), newsletter double opt-in (needs email infra), focus field directly from palette actions if Radix focus-restore timing ever becomes reliable in headless.
+
+---
+Task ID: 11
+Agent: Z.ai Code (main)
+Task: Round 11 — QA sweep, SEO/PWA completeness (sitemap + manifest + structured data), console freshness strip
+
+Work Log:
+- QA first: worklog reviewed (through Task 10); agent-browser desktop 1440x900 + mobile 390x844 — zero page/console errors, no x-overflow, all 12 in-page anchors resolve (programmatically verified against element ids), palette opens. SEO surface audit: robots 200, rss 200, og-image 200, metadata/OG/Twitter/JSON-LD(Organization+FAQPage) present — BUT /sitemap.xml 404 and /manifest.webmanifest 404. Verdict: STABLE → feature round.
+- SITEMAP: new src/app/sitemap.ts (Next MetadataRoute) → /sitemap.xml with the canonical single-page entry (lastModified now, weekly, priority 1). APIs (rss/vcard) intentionally excluded.
+- MANIFEST: new src/app/manifest.ts → /manifest.webmanifest (name/short_name/description, id+start_url, display browser, background #ffffff, theme_color #0f62fe, categories, icons: logo-mark.svg any + og-image.png 1216x640).
+- ROBOTS: appended "Sitemap: https://abwcurious.com/sitemap.xml".
+- LAYOUT: metadata.manifest linked; new Viewport export (themeColor #ffffff, device-width, initialScale 1 → <meta name="theme-color">); JSON-LD enrichment — Organization gained @id/#organization, slogan, knowsAbout[4]; NEW WebSite node (@id/#website, inLanguage, publisher → Organization @id) so the three-block graph is Organization ↔ WebSite ↔ FAQPage.
+- CONSOLE visible polish: bottom sync line upgraded to a Carbon status strip — success pulse dot + "LIVE · Synced HH:MM:SS IST (2m ago) · auto-refresh 30s" with hairline top border (absolute IST time from data.generatedAt + kept relative).
+- FOOTER stamp: bottom bar now reads "Engineered with curiosity in Pune, India · Updated Sep 2026" (md+ only, muted/70 — content-version honesty).
+- Verification: curl — sitemap.xml 200 valid XML, manifest.webmanifest 200 valid JSON; browser — link[rel=manifest] present, meta theme-color #ffffff, 3 JSON-LD blocks parse (Organization/WebSite/FAQPage); console unlock e2e shows the LIVE strip ("Synced 04:07:50 IST (just now)"); footer stamp visible at 1440; mobile 390 no overflow; zero page errors; lint clean; dev.log 200s.
+
+Stage Summary:
+- ✅ Round 11 shipped: /sitemap.xml + /manifest.webmanifest (both were 404), robots.txt Sitemap ref, viewport/theme-color, manifest metadata link, 3-node linked JSON-LD graph (Organization enriched with slogan/knowsAbout + WebSite publisher link + FAQPage), Studio Console LIVE freshness strip, footer content stamp.
+- ✅ Verified via curl + browser head-tag inspection + screenshots (qa11-console-unlocked.png); lint clean; zero runtime errors.
+- Key decisions: sitemap keeps only the canonical page (hash sections are one document; APIs excluded); theme_color #0f62fe in manifest vs #ffffff browser theme-color (brand inside install surface, neutral chrome on web); WebSite→Organization linked via @id refs for a clean knowledge-graph entity.
+- Remaining: real phone/email/social still placeholders (sameAs[] empty until real profiles); production env CONSOLE_PASSCODE/CONSOLE_SESSION_SECRET; optional next: palette-driven console tab deep-links (open Inbox tab directly), 30-day stats window toggle, newsletter double opt-in (needs email infra), dynamic OG (low value while hash deep-links).

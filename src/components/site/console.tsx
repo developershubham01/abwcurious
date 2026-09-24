@@ -1008,8 +1008,26 @@ export function StudioConsole() {
                 </div>
               )}
 
-              <p className="text-center font-mono text-[10px] text-muted-foreground">
-                {data ? `Synced ${timeAgo(data.generatedAt)} · auto-refresh 30s` : "—"}
+              <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 border-t border-hairline pt-4 text-center font-mono text-[10px] text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-ibm-success animate-pulse-dot" aria-hidden="true" />
+                  LIVE
+                </span>
+                <span aria-hidden="true">·</span>
+                {data ? (
+                  <span>
+                    Synced{" "}
+                    {new Date(data.generatedAt).toLocaleTimeString("en-GB", {
+                      timeZone: "Asia/Calcutta",
+                      hour12: false,
+                    })}{" "}
+                    IST ({timeAgo(data.generatedAt)})
+                  </span>
+                ) : (
+                  "—"
+                )}
+                <span aria-hidden="true">·</span>
+                <span>auto-refresh 30s</span>
               </p>
             </div>
           )}
