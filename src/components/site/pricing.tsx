@@ -57,7 +57,7 @@ export function Pricing() {
       <div className="py-20 lg:py-24">
         <Reveal>
           <div className="text-center">
-            <Eyebrow>Plans & Pricing</Eyebrow>
+            <Eyebrow>07 / Plans & Pricing</Eyebrow>
             <h2 className="mx-auto mt-5 max-w-2xl text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
               Flexible plans for <span className="text-ibm-bright">every stage of curious.</span>
             </h2>
@@ -72,9 +72,9 @@ export function Pricing() {
             <Reveal key={plan.name} delay={i * 0.1} className="h-full">
               <article
                 className={cn(
-                  "relative flex h-full flex-col border bg-card p-8 transition-colors duration-300",
+                  "relative flex h-full flex-col border bg-card p-8 transition-all duration-300 hover:-translate-y-1",
                   plan.featured
-                    ? "border-ibm-bright/70 bg-white/[0.05]"
+                    ? "border-ibm-bright/70 bg-white/[0.05] shadow-[0_18px_50px_-24px_rgba(15,98,254,0.45)]"
                     : "border-hairline hover:border-white/25"
                 )}
               >

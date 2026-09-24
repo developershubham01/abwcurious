@@ -41,7 +41,7 @@ export function Services() {
         <Reveal>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
-              <Eyebrow className="justify-start">Services</Eyebrow>
+              <Eyebrow className="justify-start">01 / Services</Eyebrow>
               <h2 className="mt-5 max-w-2xl text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Everything your product needs,{" "}
                 <span className="text-ibm-bright">under one roof.</span>

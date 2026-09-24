@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { LoaderCircle, Send, CheckCircle2 } from "lucide-react";
 import { Logo } from "./logo";
 import { SocialRow } from "./header";
 import { Reveal, RollButton } from "./primitives";
+import { useToast } from "@/hooks/use-toast";
 
 const COLUMNS = [
   {
@@ -17,10 +20,81 @@ const COLUMNS = [
   },
   {
     title: "Resources",
-    links: ["Selected work", "Pricing", "FAQ", "Privacy Policy"],
-    hrefs: ["#work", "#pricing", "#faq", "#top"],
+    links: ["Selected work", "Case files", "Pricing", "FAQ"],
+    hrefs: ["#work", "#cases", "#pricing", "#faq"],
   },
 ];
+
+function NewsletterForm() {
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "loading" | "done">("idle");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!email || state === "loading") return;
+    setState("loading");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "footer" }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Subscription failed");
+      setState("done");
+      toast({
+        title: json.alreadySubscribed ? "Already subscribed" : "Subscribed",
+        description: json.message ?? "See you in the next issue.",
+      });
+    } catch (err) {
+      setState("idle");
+      toast({
+        title: "Could not subscribe",
+        description: err instanceof Error ? err.message : "Please try again.",
+        variant: "destructive",
+      });
+    }
+  }
+
+  if (state === "done") {
+    return (
+      <div className="flex items-center gap-2.5 border border-ibm-success/50 bg-ibm-success/10 px-4 py-3.5">
+        <CheckCircle2 className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
+        <p className="font-mono text-xs text-foreground/90">You are on the list. No spam, ever.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex border border-hairline-strong bg-white/[0.03] focus-within:border-ibm-bright">
+      <label htmlFor="newsletter-email" className="sr-only">
+        Email address
+      </label>
+      <input
+        id="newsletter-email"
+        type="email"
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="you@company.com"
+        className="h-11 w-full min-w-0 bg-transparent px-4 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+      />
+      <button
+        type="submit"
+        disabled={state === "loading"}
+        aria-label="Subscribe to newsletter"
+        className="flex h-11 w-12 shrink-0 items-center justify-center bg-primary text-primary-foreground transition-colors hover:bg-ibm-blue-hover focus-carbon disabled:opacity-60"
+      >
+        {state === "loading" ? (
+          <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+        ) : (
+          <Send className="size-4" strokeWidth={1.75} aria-hidden="true" />
+        )}
+      </button>
+    </form>
+  );
+}
 
 export function Footer() {
   return (
@@ -70,6 +144,15 @@ export function Footer() {
               for ambitious businesses. Curious since day one.
             </p>
             <SocialRow className="mt-6" />
+            <div className="mt-8 max-w-xs">
+              <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-foreground">
+                Field notes — monthly
+              </h3>
+              <p className="mb-3 mt-2 text-xs text-muted-foreground">
+                One email a month on AI, product engineering and design. Unsubscribe anytime.
+              </p>
+              <NewsletterForm />
+            </div>
           </div>
 
           {COLUMNS.map((col) => (

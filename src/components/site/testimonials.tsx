@@ -1,5 +1,6 @@
 "use client";
 
+import { Star } from "lucide-react";
 import { Eyebrow, Reveal } from "./primitives";
 import { cn } from "@/lib/utils";
 
@@ -83,8 +84,16 @@ function TweetCard({ t }: { t: Testimonial }) {
           <figcaption className="font-medium leading-tight">{t.name}</figcaption>
           <div className="font-mono text-xs text-muted-foreground">{t.handle}</div>
         </div>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.18em] text-ibm-soft">
+          ★ 5.0
+        </span>
       </div>
-      <blockquote className="mt-4 text-sm leading-relaxed text-muted-foreground">“{t.quote}”</blockquote>
+      <div className="mt-4 flex gap-0.5" aria-label="5 out of 5 stars">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star key={i} className="size-3.5 fill-ibm-bright text-ibm-bright" aria-hidden="true" />
+        ))}
+      </div>
+      <blockquote className="mt-3 text-sm leading-relaxed text-muted-foreground">“{t.quote}”</blockquote>
     </figure>
   );
 }

@@ -16,3 +16,10 @@ model ContactMessage {
   message   String
   createdAt DateTime @default(now())
 }
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("footer")
+  createdAt DateTime @default(now())
+}

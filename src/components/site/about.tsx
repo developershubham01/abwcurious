@@ -87,7 +87,7 @@ export function About() {
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-6">
             <Reveal>
-              <Eyebrow className="justify-start">About ABWcurious</Eyebrow>
+              <Eyebrow className="justify-start">02 / The studio</Eyebrow>
               <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 A studio built on one trait:{" "}
                 <span className="text-ibm-bright">curiosity.</span>

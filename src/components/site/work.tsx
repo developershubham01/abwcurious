@@ -19,7 +19,7 @@ export function Work() {
         <Reveal>
           <div className="flex flex-col gap-6 pb-12 md:flex-row md:items-end md:justify-between">
             <div>
-              <Eyebrow className="justify-start">Selected work</Eyebrow>
+              <Eyebrow className="justify-start">05 / Selected work</Eyebrow>
               <h2 className="mt-5 max-w-2xl text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Products we have <span className="text-ibm-bright">shipped with pride.</span>
               </h2>
