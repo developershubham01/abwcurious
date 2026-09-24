@@ -1,0 +1,274 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ */
+/*  ABWcurious — IBM Carbon inspired dark design system               */
+/*  Derived from `npx getdesign@latest add ibm` (DESIGN.md)           */
+/* ------------------------------------------------------------------ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* IBM Carbon palette (dark-surface adaptation) */
+  --color-ibm-blue: #0f62fe;
+  --color-ibm-blue-hover: #0050e6;
+  --color-ibm-blue-active: #002d9c;
+  --color-ibm-bright: #4589ff;
+  --color-ibm-soft: #78a9ff;
+  --color-ibm-cyan: #33b1ff;
+  --color-ibm-success: #24a148;
+  --color-ibm-warning: #f1c21b;
+  --color-ibm-error: #da1e28;
+  --color-ink: #161616;
+  --color-ink-muted: #525252;
+  --color-canvas-inverse: #161616;
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+}
+
+@theme {
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-marquee-slow: marquee 68s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 58s linear infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-pulse-dot: pulse-dot 2.4s ease-in-out infinite;
+  --animate-blink: blink 1.1s steps(2, start) infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 rgba(69, 137, 255, 0.55);
+    }
+    50% {
+      opacity: 0.75;
+      box-shadow: 0 0 0 6px rgba(69, 137, 255, 0);
+    }
+  }
+  @keyframes blink {
+    to {
+      visibility: hidden;
+    }
+  }
+}
+
+:root {
+  /* Square corners are the IBM Carbon brand signature */
+  --radius: 0rem;
+
+  --background: #060609;
+  --foreground: #f4f4f4;
+  --card: #0a0a10;
+  --card-foreground: #f4f4f4;
+  --popover: #0d0d14;
+  --popover-foreground: #f4f4f4;
+  --primary: #0f62fe;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #f4f4f4;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #9d9da6;
+  --accent: rgba(15, 98, 254, 0.12);
+  --accent-foreground: #78a9ff;
+  --destructive: #da1e28;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.16);
+  --ring: #4589ff;
+  --chart-1: #4589ff;
+  --chart-2: #33b1ff;
+  --chart-3: #78a9ff;
+  --chart-4: #007d79;
+  --chart-5: #9f1853;
+  --sidebar: #0a0a10;
+  --sidebar-foreground: #f4f4f4;
+  --sidebar-primary: #0f62fe;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.06);
+  --sidebar-accent-foreground: #f4f4f4;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #4589ff;
+
+  --hairline: rgba(255, 255, 255, 0.1);
+  --hairline-strong: rgba(255, 255, 255, 0.22);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01";
+    letter-spacing: 0.16px; /* Carbon body tracking signature */
+  }
+  ::selection {
+    background: rgba(15, 98, 254, 0.45);
+    color: #ffffff;
+  }
+  /* Engineering-grade scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #060609;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #26262e;
+    border: 2px solid #060609;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #0f62fe;
+  }
+}
+
+@layer utilities {
+  /* Blueprint grid backdrop */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .bg-grid-fine {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+  .mask-fade-y {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* IBM Carbon focus treatment: 2px blue outline */
+.focus-carbon:focus-visible {
+  outline: 2px solid #4589ff;
+  outline-offset: 2px;
+}
+
+/* Dual-layer roll-up button label (WriteMate signature) */
+/* NOTE: inside @layer components so Tailwind utilities (e.g. `hidden`) can override display */
+@layer components {
+  .btn-roll {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .btn-roll .btn-roll__viewport {
+    display: block;
+    height: 1.5em;
+    overflow: hidden;
+  }
+  .btn-roll .btn-roll__track {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-roll:hover .btn-roll__track,
+  .btn-roll:focus-visible .btn-roll__track {
+    transform: translateY(-50%);
+  }
+  .btn-roll .btn-roll__span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 1.5em;
+    line-height: 1.5em;
+    white-space: nowrap;
+  }
+}
+
+/* Logo swoosh draw-in */
+.logo-arc {
+  stroke-dasharray: var(--arc-len);
+  stroke-dashoffset: var(--arc-len);
+  animation: arc-draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation-delay: var(--arc-delay, 0s);
+}
+@keyframes arc-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-slow,
+  .animate-marquee-reverse,
+  .animate-spin-slow {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
