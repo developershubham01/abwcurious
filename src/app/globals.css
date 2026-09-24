@@ -294,3 +294,33 @@
     scroll-behavior: auto;
   }
 }
+
+/* ---- Print stylesheet: engineering-drawing handoff ----
+   Strips chrome + WebGL canvases so the page prints as a clean
+   white/blue document (File → Print → Save as PDF). */
+@media print {
+  header,
+  footer,
+  [data-scroll-progress],
+  [data-back-to-top],
+  [data-reactbits-canvas],
+  .skip-link,
+  [role="dialog"] {
+    display: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  section,
+  .bg-card {
+    break-inside: avoid;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 10px;
+    color: #6f6f6f;
+  }
+}

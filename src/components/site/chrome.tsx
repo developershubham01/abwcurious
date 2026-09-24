@@ -12,6 +12,7 @@ export function ScrollProgress() {
   return (
     <motion.div
       aria-hidden="true"
+      data-scroll-progress
       className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-gradient-to-r from-ibm-blue via-ibm-bright to-ibm-cyan"
       style={{ scaleX }}
     />
@@ -33,6 +34,7 @@ export function BackToTop() {
     <AnimatePresence>
       {visible && (
         <motion.button
+          data-back-to-top
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}

@@ -857,7 +857,7 @@ const DitherVeil = ({
     };
   }, [src]);
 
-  return <div ref={containerRef} className={`dither-veil ${className}`.trim()} style={style} />;
+  return <div ref={containerRef} data-reactbits-canvas className={`dither-veil ${className}`.trim()} style={style} />;
 };
 
 export default DitherVeil;

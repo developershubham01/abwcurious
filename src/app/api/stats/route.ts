@@ -23,7 +23,7 @@ export async function GET(request: Request) {
         db.contactMessage.findMany({
           orderBy: { createdAt: "desc" },
           take: 6,
-          select: { id: true, name: true, email: true, service: true, message: true, createdAt: true },
+          select: { id: true, name: true, email: true, service: true, message: true, status: true, createdAt: true },
         }),
         db.newsletterSubscriber.findMany({
           orderBy: { createdAt: "desc" },
@@ -57,6 +57,7 @@ export async function GET(request: Request) {
       .sort((a, b) => b.count - a.count);
 
     const last7 = days.reduce((acc, d) => acc + d.contacts + d.subscribers, 0);
+    const unread = contacts.filter((c) => c.status === "new").length;
 
     return NextResponse.json(
       {
@@ -66,6 +67,7 @@ export async function GET(request: Request) {
           subscribers: subscribers.length,
           activity7d: last7,
           services: byService.length,
+          unread,
         },
         byService,
         bySource,
