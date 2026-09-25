@@ -41,6 +41,7 @@ import { openCategory } from "@/lib/catalog-route";
 const SECTIONS: { label: string; id: string; hint: string }[] = [
   { label: "Top", id: "top", hint: "Back to the hero" },
   { label: "Services", id: "services", hint: "What we build" },
+  { label: "Products", id: "products", hint: "Software we ship" },
   { label: "About", id: "about", hint: "The studio" },
   { label: "Process", id: "process", hint: "How we ship" },
   { label: "Tech stack", id: "stack", hint: "Tools we trust" },

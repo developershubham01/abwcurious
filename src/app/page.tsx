@@ -1,6 +1,7 @@
 import { Hero } from "@/components/site/hero";
 import { Marquee } from "@/components/site/marquee";
 import { Services } from "@/components/site/services";
+import { Products } from "@/components/site/products";
 import { About } from "@/components/site/about";
 import { Process } from "@/components/site/process";
 import { TechStack } from "@/components/site/techstack";
@@ -21,6 +22,7 @@ export default function Home() {
       <Hero />
       <Marquee />
       <Services />
+      <Products />
       <About />
       <Process />
       <TechStack />

@@ -13,8 +13,8 @@ import { openCategory } from "@/lib/catalog-route";
 const COLUMNS = [
   {
     title: "Company",
-    links: ["About us", "Process", "Careers", "Contact"],
-    hrefs: ["#about", "#process", "#careers", "#contact"],
+    links: ["About us", "Products", "Process", "Careers", "Contact"],
+    hrefs: ["#about", "#products", "#process", "#careers", "#contact"],
   },
   {
     title: "Resources",

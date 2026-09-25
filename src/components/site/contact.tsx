@@ -148,7 +148,7 @@ export function Contact() {
           {/* Info */}
           <div className="lg:col-span-5">
             <Reveal>
-              <Eyebrow className="justify-start">11 / Get in touch</Eyebrow>
+              <Eyebrow className="justify-start">12 / Get in touch</Eyebrow>
               <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Have an idea? <span className="text-ibm-bright">Let&apos;s interrogate it.</span>
               </h2>

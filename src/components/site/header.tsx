@@ -1,14 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Mail, Phone, MapPin, ArrowUpRight, Github, Linkedin, Twitter, Command as CommandIcon } from "lucide-react";
+import {
+  Menu,
+  X,
+  Mail,
+  Phone,
+  MapPin,
+  ArrowUpRight,
+  ChevronDown,
+  Github,
+  Linkedin,
+  Twitter,
+  Command as CommandIcon,
+} from "lucide-react";
 import { Logo } from "./logo";
 import { RollButton } from "./primitives";
+import { CATEGORIES, categoryServiceCount, ALL_SUB_SERVICES } from "@/lib/catalog";
+import { openCategory } from "@/lib/catalog-route";
 import { cn } from "@/lib/utils";
 
+/** Anchors rendered as plain links. Services is a dropdown; Products is a link. */
 const NAV = [
-  { label: "Services", href: "#services" },
   { label: "About", href: "#about" },
   { label: "Process", href: "#process" },
   { label: "Work", href: "#work" },
@@ -49,8 +63,185 @@ function LiveClock() {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Services mega-dropdown (desktop)                                    */
+/* ------------------------------------------------------------------ */
+
+function ServicesDropdown({ active }: { active: string }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const hoverTimer = useRef<number | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const clearTimer = () => {
+    if (hoverTimer.current !== null) {
+      window.clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  };
+
+  const openWithIntent = () => {
+    clearTimer();
+    hoverTimer.current = window.setTimeout(() => setOpen(true), 90);
+  };
+
+  const closeWithIntent = () => {
+    clearTimer();
+    hoverTimer.current = window.setTimeout(() => setOpen(false), 260);
+  };
+
+  /* Escape closes and returns focus to the trigger; focus leaving the
+     widget (tab through the panel) also closes it. */
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const panelPick = (fn: () => void) => () => {
+    setOpen(false);
+    clearTimer();
+    fn();
+  };
+
+  return (
+    <div
+      ref={wrapRef}
+      onMouseEnter={openWithIntent}
+      onMouseLeave={closeWithIntent}
+      onBlur={(e) => {
+        if (!wrapRef.current?.contains(e.relatedTarget as Node)) {
+          setOpen(false);
+          clearTimer();
+        }
+      }}
+    >
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        onMouseEnter={openWithIntent}
+        aria-expanded={open}
+        aria-haspopup="true"
+        aria-controls="services-menu"
+        aria-current={active === "#services" ? "true" : undefined}
+        className={cn(
+          "relative inline-flex items-center gap-1 font-mono text-[11px] xl:text-[13px] transition-colors focus-carbon",
+          active === "#services" || open ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Services
+        <ChevronDown
+          className={cn("size-3.5 transition-transform duration-300", open && "rotate-180")}
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
+        {active === "#services" && (
+          <motion.span
+            layoutId="nav-underline"
+            className="absolute -bottom-[7px] left-0 h-[2px] w-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+            transition={{ type: "spring", stiffness: 420, damping: 34 }}
+            aria-hidden="true"
+          />
+        )}
+      </button>
+
+      {/* Mega panel — anchored to the sticky header, spans the viewport width
+          like a classic IBM mega menu, content aligned to the max-w-7xl rail */}
+      <div
+        id="services-menu"
+        className={cn(
+          "absolute inset-x-0 top-full z-50 transition-all duration-200",
+          open
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-1 opacity-0"
+        )}
+        aria-hidden={!open}
+      >
+        <div className="mx-auto w-full max-w-7xl px-6">
+          <div className="border border-hairline-strong bg-background/97 shadow-[0_32px_64px_-32px_rgba(6,15,40,0.25)] backdrop-blur-md">
+            <div className="h-0.5 bg-gradient-to-r from-ibm-blue to-ibm-cyan" aria-hidden="true" />
+            <div className="grid gap-0 lg:grid-cols-[1fr_240px]">
+              {/* category grid */}
+              <div className="grid gap-px bg-hairline sm:grid-cols-2 xl:grid-cols-3">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c.slug}
+                    type="button"
+                    onClick={panelPick(() => openCategory(c.slug))}
+                    className="group flex items-start gap-3 bg-white px-4 py-3.5 text-left transition-colors hover:bg-ibm-blue/[0.05] focus-carbon"
+                  >
+                    <span className="mt-0.5 font-mono text-[10px] text-ibm-bright" aria-hidden="true">
+                      {c.num}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="truncate text-sm font-medium text-foreground">{c.name}</span>
+                        <ArrowUpRight
+                          className="size-3.5 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ibm-bright"
+                          strokeWidth={1.5}
+                          aria-hidden="true"
+                        />
+                      </span>
+                      <span className="mt-0.5 block truncate font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                        {categoryServiceCount(c)} sub-services · {c.short}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* rail */}
+              <div className="flex flex-col justify-between border-t border-hairline bg-ibm-blue/[0.03] p-5 lg:border-l lg:border-t-0">
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground">
+                    All services
+                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                    {ALL_SUB_SERVICES.length} sub-services across 6 practices — every card opens a full
+                    playbook.
+                  </p>
+                </div>
+                <div className="mt-5 flex flex-col gap-2">
+                  <a
+                    href="#services"
+                    onClick={panelPick(() => {})}
+                    className="inline-flex items-center justify-between border border-hairline-strong bg-white px-3 py-2 font-mono text-xs text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+                  >
+                    Browse showcase
+                    <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                  </a>
+                  <a
+                    href="#products"
+                    onClick={panelPick(() => {})}
+                    className="inline-flex items-center justify-between px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+                  >
+                    Our products
+                    <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Header                                                              */
+/* ------------------------------------------------------------------ */
+
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [servicesExpanded, setServicesExpanded] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
 
@@ -62,7 +253,7 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    const ids = NAV.map((n) => n.href.slice(1));
+    const ids = [...NAV.map((n) => n.href.slice(1)), "services", "products"];
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -113,10 +304,10 @@ export function Header() {
         </div>
       </div>
 
-      {/* Sticky header */}
+      {/* Sticky header — `relative` anchors the services mega panel */}
       <header
         className={cn(
-          "sticky top-0 z-50 border-b transition-all duration-300",
+          "relative sticky top-0 z-50 border-b transition-all duration-300",
           scrolled
             ? "border-hairline bg-background/85 backdrop-blur-md"
             : "border-transparent bg-background/60 backdrop-blur-sm"
@@ -127,14 +318,35 @@ export function Header() {
             <Logo />
           </a>
 
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7" aria-label="Primary">
+          <nav className="hidden lg:flex items-center gap-3 xl:gap-5" aria-label="Primary">
+            <ServicesDropdown active={active} />
+            <a
+              href="#products"
+              aria-current={active === "#products" ? "true" : undefined}
+              className={cn(
+                "relative font-mono text-[11px] xl:text-[13px] transition-colors focus-carbon",
+                active === "#products"
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Products
+              {active === "#products" && (
+                <motion.span
+                  layoutId="nav-underline"
+                  className="absolute -bottom-[7px] left-0 h-[2px] w-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  aria-hidden="true"
+                />
+              )}
+            </a>
             {NAV.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 aria-current={active === item.href ? "true" : undefined}
                 className={cn(
-                  "relative font-mono text-xs xl:text-[13px] transition-colors focus-carbon",
+                  "relative font-mono text-[11px] xl:text-[13px] transition-colors focus-carbon",
                   active === item.href
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -160,7 +372,7 @@ export function Header() {
               onClick={() => window.dispatchEvent(new CustomEvent("abw:palette-open"))}
               aria-label="Open command palette (Ctrl or Cmd + K)"
               title="Command palette — ⌘K"
-              className="hidden md:inline-flex h-9 items-center gap-2 border border-hairline px-3 font-mono text-xs text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+              className="hidden xl:inline-flex h-9 items-center gap-2 border border-hairline px-3 font-mono text-xs text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
             >
               <CommandIcon className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
               K
@@ -179,14 +391,63 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu — Services expands inline with the 6 categories */}
         <div
           className={cn(
-            "lg:hidden overflow-hidden border-t border-hairline bg-background/95 backdrop-blur-md transition-[max-height] duration-300",
-            open ? "max-h-[620px]" : "max-h-0 border-t-0"
+            "lg:hidden border-t border-hairline bg-background/95 backdrop-blur-md transition-[max-height] duration-300",
+            open ? "max-h-[calc(100dvh-4rem)] overflow-y-auto" : "max-h-0 overflow-hidden border-t-0"
           )}
         >
           <nav className="flex flex-col px-6 py-4" aria-label="Mobile">
+            {/* Services accordion */}
+            <div className="border-b border-hairline">
+              <button
+                type="button"
+                onClick={() => setServicesExpanded((v) => !v)}
+                aria-expanded={servicesExpanded}
+                aria-controls="mobile-services"
+                className="flex w-full items-center justify-between py-3.5 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground focus-carbon"
+              >
+                <span>
+                  <span className="text-ibm-bright mr-3">01</span>
+                  Services
+                </span>
+                <ChevronDown
+                  className={cn("size-4 transition-transform duration-300", servicesExpanded && "rotate-180")}
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
+              </button>
+              <div
+                id="mobile-services"
+                className={cn(
+                  "overflow-hidden transition-[max-height] duration-300",
+                  servicesExpanded ? "max-h-[420px]" : "max-h-0"
+                )}
+              >
+                <ul className="pb-2" aria-label="Service categories">
+                  {CATEGORIES.map((c) => (
+                    <li key={c.slug}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpen(false);
+                          setServicesExpanded(false);
+                          openCategory(c.slug);
+                        }}
+                        className="flex w-full items-center justify-between gap-3 py-2.5 pl-9 pr-2 text-left text-sm text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+                      >
+                        <span className="truncate">{c.name}</span>
+                        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/70">
+                          {categoryServiceCount(c)} svc
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             {NAV.map((item, i) => (
               <a
                 key={item.href}
@@ -195,7 +456,7 @@ export function Header() {
                 className="flex items-center justify-between border-b border-hairline py-3.5 font-mono text-sm text-muted-foreground hover:text-foreground focus-carbon"
               >
                 <span>
-                  <span className="text-ibm-bright mr-3">0{i + 1}</span>
+                  <span className="text-ibm-bright mr-3">0{i + 2}</span>
                   {item.label}
                 </span>
                 <ArrowUpRight className="size-4" strokeWidth={1.5} />

@@ -110,7 +110,7 @@ export function Careers() {
           {/* Left: pitch + perks */}
           <Reveal>
             <div className="lg:sticky lg:top-28">
-              <Eyebrow className="justify-start">10 / Careers</Eyebrow>
+              <Eyebrow className="justify-start">11 / Careers</Eyebrow>
               <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Build with{" "}
                 <span className="text-ibm-bright">curious people.</span>

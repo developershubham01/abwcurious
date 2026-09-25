@@ -57,7 +57,7 @@ export function Pricing() {
       <div className="py-20 lg:py-24">
         <Reveal>
           <div className="text-center">
-            <Eyebrow>07 / Plans & Pricing</Eyebrow>
+            <Eyebrow>08 / Plans & Pricing</Eyebrow>
             <h2 className="mx-auto mt-5 max-w-2xl text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
               Flexible plans for <span className="text-ibm-bright">every stage of curious.</span>
             </h2>

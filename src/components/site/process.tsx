@@ -40,7 +40,7 @@ export function Process() {
       <div className="py-20 lg:py-24">
         <Reveal>
           <div className="text-center">
-            <Eyebrow>03 / Process</Eyebrow>
+            <Eyebrow>04 / Process</Eyebrow>
             <h2 className="mx-auto mt-5 max-w-2xl text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
               A process tuned by <span className="text-ibm-bright">a hundred launches.</span>
             </h2>

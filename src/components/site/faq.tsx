@@ -39,7 +39,7 @@ export function Faq() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-28">
           <Reveal>
             <div className="lg:sticky lg:top-28">
-              <Eyebrow className="justify-start">08 / FAQ</Eyebrow>
+              <Eyebrow className="justify-start">09 / FAQ</Eyebrow>
               <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Frequently asked <span className="text-ibm-bright">questions.</span>
               </h2>
