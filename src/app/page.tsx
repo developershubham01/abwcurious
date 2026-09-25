@@ -13,6 +13,7 @@ import { Notes } from "@/components/site/notes";
 import { Careers } from "@/components/site/careers";
 import { Contact } from "@/components/site/contact";
 import { CommandPalette } from "@/components/site/palette";
+import { CategoryPortal } from "@/components/site/category-page";
 
 export default function Home() {
   return (
@@ -32,6 +33,7 @@ export default function Home() {
       <Careers />
       <Contact />
       <CommandPalette />
+      <CategoryPortal />
     </main>
   );
 }

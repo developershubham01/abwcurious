@@ -7,6 +7,7 @@ import {
   Command as CommandIcon,
   Compass,
   IdCard,
+  Layers,
   MailPlus,
   PenLine,
   Phone,
@@ -24,6 +25,8 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { useToast } from "@/hooks/use-toast";
+import { CATEGORIES } from "@/lib/catalog";
+import { openCategory } from "@/lib/catalog-route";
 
 /**
  * ⌘K command palette — Carbon WHITE & BLUE restyle of shadcn/cmdk.
@@ -247,6 +250,28 @@ export function CommandPalette() {
               <span className="text-sm">{s.label}</span>
               <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                 {s.id === "top" ? "#top" : `#${s.id}`}
+              </span>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+
+        <CommandSeparator className="bg-hairline" />
+
+        <CommandGroup heading="Service catalogs" className="[&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.22em] [&_[cmdk-group-heading]]:text-[10px]">
+          {CATEGORIES.map((c) => (
+            <CommandItem
+              key={c.slug}
+              value={`catalog ${c.name} ${c.slug} category playbook`}
+              onSelect={run(() => {
+                setOpen(false);
+                openCategory(c.slug);
+              })}
+              className="rounded-none px-3 py-2.5 data-[selected=true]:bg-ibm-blue/[0.07] data-[selected=true]:shadow-[inset_2px_0_0_0_#0f62fe]"
+            >
+              <Layers className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+              <span className="text-sm">{c.name}</span>
+              <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                #/services/{c.slug}
               </span>
             </CommandItem>
           ))}

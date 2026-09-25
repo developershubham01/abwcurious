@@ -334,10 +334,12 @@ export function Contact() {
                         </SelectTrigger>
                         <SelectContent className="rounded-none border-hairline-strong bg-popover">
                           {[
-                            "AI Software Development",
-                            "AI Solutions",
-                            "Website Development",
-                            "Design",
+                            "Software & Web Development",
+                            "Mobile App Development",
+                            "AI & Automation",
+                            "Digital Marketing",
+                            "Recruitment & HR Solutions",
+                            "Cloud, IT & Business Solutions",
                             "Join the team",
                             "Something else",
                           ].map((s) => (

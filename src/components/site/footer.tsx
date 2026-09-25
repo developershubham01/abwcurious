@@ -7,17 +7,14 @@ import { SocialRow } from "./header";
 import { Reveal, RollButton } from "./primitives";
 import { StudioConsole } from "./console";
 import { useToast } from "@/hooks/use-toast";
+import { CATEGORIES } from "@/lib/catalog";
+import { openCategory } from "@/lib/catalog-route";
 
 const COLUMNS = [
   {
     title: "Company",
     links: ["About us", "Process", "Careers", "Contact"],
     hrefs: ["#about", "#process", "#careers", "#contact"],
-  },
-  {
-    title: "Services",
-    links: ["AI Software Development", "AI Solutions", "Website Development", "Design"],
-    hrefs: ["#services", "#services", "#services", "#services"],
   },
   {
     title: "Resources",
@@ -178,6 +175,26 @@ export function Footer() {
               <NewsletterForm />
             </div>
           </div>
+
+          {/* Service catalog links — open the full-screen category pages */}
+          <nav aria-label="Services">
+            <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-foreground">
+              Services
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {CATEGORIES.map((c) => (
+                <li key={c.slug}>
+                  <button
+                    type="button"
+                    onClick={() => openCategory(c.slug)}
+                    className="text-left text-sm text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+                  >
+                    {c.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
           {COLUMNS.map((col) => (
             <nav key={col.title} aria-label={col.title}>

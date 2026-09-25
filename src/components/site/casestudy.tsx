@@ -13,7 +13,7 @@ const CASES = [
     id: "nexacrm",
     client: "NexaCRM",
     industry: "B2B SaaS · Sales Intelligence",
-    service: "AI Solutions",
+    service: "AI & Automation",
     image: "/images/work-crm.jpg",
     challenge:
       "A growing SaaS team was drowning in manual lead triage — reps spent 11 hours a week scoring and routing leads by hand.",
@@ -29,7 +29,7 @@ const CASES = [
     id: "askor",
     client: "Askor",
     industry: "Customer Support · Conversational AI",
-    service: "AI Solutions",
+    service: "AI & Automation",
     image: "/images/work-chatbot.jpg",
     challenge:
       "A consumer platform with 12,000 daily tickets across three languages needed support that scales without scaling headcount.",
@@ -45,7 +45,7 @@ const CASES = [
     id: "fleetiq",
     client: "FleetIQ",
     industry: "Logistics · ERP & Analytics",
-    service: "AI Software Development",
+    service: "Software & Web Development",
     image: "/images/work-erp.jpg",
     challenge:
       "A logistics operator ran their fleet on spreadsheets — no live visibility, margins leaking through missed maintenance and empty return legs.",

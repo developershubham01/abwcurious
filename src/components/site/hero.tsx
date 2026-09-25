@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { MousePointer2 } from "lucide-react";
 import DitherVeil from "@/components/reactbits/DitherVeil";
 import { CountUp, RollButton } from "./primitives";
+import { SplitText, Typewriter } from "./text-anim";
 
 const STATS = [
   { value: 120, suffix: "+", label: "Projects delivered" },
@@ -52,22 +53,39 @@ export function Hero() {
               </span>
             </motion.div>
 
-            <motion.h1
-              {...fadeUp(0.12)}
+            <h1
               className="mt-7 text-[2.6rem] leading-[1.08] font-light tracking-tight sm:text-6xl lg:text-[4.5rem] text-balance"
             >
-              Curious minds.{" "}
+              <SplitText text="Curious minds." immediate delay={0.1} />{" "}
               <span className="relative inline-block">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-ibm-bright via-ibm-soft to-ibm-cyan">
-                  Intelligent
-                </span>
-                <span
-                  className="absolute -bottom-1 left-0 h-[3px] w-full bg-gradient-to-r from-ibm-blue to-transparent"
+                <SplitText text="Intelligent" immediate delay={0.4} className="text-ibm-bright" />
+                <motion.span
+                  initial={reduced ? false : { scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.8, delay: 1.05, ease: [0.22, 1, 0.36, 1] as const }}
+                  className="absolute -bottom-1 left-0 h-[3px] w-full origin-left bg-gradient-to-r from-ibm-blue to-transparent"
                   aria-hidden="true"
                 />
               </span>{" "}
-              software.
-            </motion.h1>
+              <SplitText text="software." immediate delay={0.62} />
+            </h1>
+
+            <motion.p
+              {...fadeUp(0.2)}
+              className="mt-4 font-mono text-sm text-muted-foreground sm:text-base"
+            >
+              <Typewriter
+                prefix="→ "
+                phrases={[
+                  "AI chatbots & copilots",
+                  "SaaS platforms",
+                  "Mobile apps",
+                  "E-commerce stores",
+                  "CRM & ERP systems",
+                  "SEO & growth engines",
+                ]}
+              />
+            </motion.p>
 
             <motion.p
               {...fadeUp(0.24)}

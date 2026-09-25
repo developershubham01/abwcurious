@@ -1,43 +1,19 @@
 "use client";
 
-import { Bot, BrainCircuit, Code2, PenTool, ArrowUpRight, Check } from "lucide-react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Layers } from "lucide-react";
 import { Eyebrow, Reveal, SectionFrame } from "./primitives";
-import { useInquiryStore } from "@/lib/store";
+import { SplitText, Ticker } from "./text-anim";
+import { CATEGORIES, ALL_SUB_SERVICES, categoryServiceCount } from "@/lib/catalog";
+import { openCategory } from "@/lib/catalog-route";
 
-const SERVICES = [
-  {
-    id: "01",
-    icon: Bot,
-    title: "AI Software Development",
-    desc: "Custom AI products engineered end-to-end — from model selection to production deployment and monitoring.",
-    points: ["Custom AI applications", "Chatbots & copilots", "ML model integration", "MLOps & monitoring"],
-  },
-  {
-    id: "02",
-    icon: BrainCircuit,
-    title: "AI Solutions",
-    desc: "Practical intelligence woven into your existing stack — automate decisions, search and support.",
-    points: ["RAG knowledge systems", "Document intelligence", "Predictive analytics", "Workflow automation"],
-  },
-  {
-    id: "03",
-    icon: Code2,
-    title: "Website Development",
-    desc: "Fast, accessible, conversion-focused websites and web applications built on a modern stack.",
-    points: ["Marketing websites", "Web apps & portals", "E-commerce builds", "APIs & integrations"],
-  },
-  {
-    id: "04",
-    icon: PenTool,
-    title: "Design",
-    desc: "Interfaces people remember. Brand systems, product UI and motion that make software feel alive.",
-    points: ["UI/UX design", "Design systems", "Brand identity", "Motion & interaction"],
-  },
-];
+/**
+ * Home showcase for the 6 core service practices.
+ * Each card opens its full-screen category page (hash route #/services/<slug>).
+ */
 
 export function Services() {
-  const presetService = useInquiryStore((s) => s.presetService);
-
   return (
     <SectionFrame id="services">
       <div className="py-20 lg:py-24">
@@ -46,61 +22,101 @@ export function Services() {
             <div>
               <Eyebrow className="justify-start">01 / Services</Eyebrow>
               <h2 className="mt-5 max-w-2xl text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
-                Everything your product needs,{" "}
-                <span className="text-ibm-bright">under one roof.</span>
+                <SplitText text="Six practices." />{" "}
+                <span className="text-ibm-bright">
+                  <SplitText text="One accountable team." delay={0.25} />
+                </span>
               </h2>
             </div>
             <p className="max-w-sm text-muted-foreground">
-              Four disciplines, one accountable team. We take ideas from whiteboard sketch to
-              production-grade software.
+              From your first landing page to ERP, AI and cloud — every service below opens a
+              full playbook with scope, process and pricing paths.
             </p>
           </div>
         </Reveal>
 
+        {/* category grid: featured 01 + 02, then the rest */}
         <div className="mt-14 grid gap-px border border-hairline bg-hairline md:grid-cols-2">
-          {SERVICES.map((service, i) => (
-            <Reveal key={service.id} delay={i * 0.08}>
-              <article className="group relative h-full bg-card p-8 transition-colors duration-300 hover:bg-ibm-blue/[0.04] lg:p-10">
-                <span
-                  className="pointer-events-none absolute right-6 top-6 font-mono text-5xl font-light text-ink/[0.07] transition-colors duration-300 group-hover:text-ibm-blue/25"
-                  aria-hidden="true"
-                >
-                  {service.id}
-                </span>
-
-                <div className="flex size-12 items-center justify-center border border-hairline-strong bg-ibm-blue/[0.05] text-ibm-bright transition-colors duration-300 group-hover:border-ibm-bright">
-                  <service.icon className="size-6" strokeWidth={1.25} aria-hidden="true" />
+          {CATEGORIES.map((category, i) => {
+            const count = categoryServiceCount(category);
+            const topChips = category.groups[0].items.slice(0, 3).map((it) => it.name);
+            return (
+              <motion.button
+                key={category.slug}
+                type="button"
+                onClick={() => openCategory(category.slug)}
+                aria-label={`Open ${category.name} — ${count} services`}
+                className="group relative flex flex-col bg-white p-0 text-left transition-colors duration-300 hover:bg-ibm-blue/[0.03] focus-carbon"
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-48px" }}
+                transition={{ duration: 0.55, delay: (i % 2) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {/* image */}
+                <div className="relative aspect-[16/8] overflow-hidden border-b border-hairline bg-card">
+                  <Image
+                    src={category.image}
+                    alt={category.imageAlt}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <span
+                    className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-ibm-blue to-ibm-cyan transition-transform duration-500 group-hover:scale-x-100"
+                    aria-hidden="true"
+                  />
+                  <span className="absolute left-4 top-4 inline-flex items-center gap-2 border border-hairline-strong bg-white/95 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-foreground backdrop-blur-sm">
+                    <Layers className="size-3 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                    {count} services
+                  </span>
                 </div>
 
-                <h3 className="mt-6 text-2xl tracking-tight">{service.title}</h3>
-                <p className="mt-3 text-muted-foreground leading-relaxed">{service.desc}</p>
+                {/* body */}
+                <div className="flex flex-1 flex-col p-6 lg:p-8">
+                  <span
+                    className="pointer-events-none absolute right-6 top-6 font-mono text-5xl font-light text-ink/[0.07] transition-colors duration-300 group-hover:text-ibm-blue/25"
+                    aria-hidden="true"
+                  >
+                    {category.num}
+                  </span>
+                  <h3 className="text-2xl tracking-tight">{category.name}</h3>
+                  <p className="mt-2.5 max-w-md leading-relaxed text-muted-foreground">{category.tagline}</p>
 
-                <ul className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                  {service.points.map((point) => (
-                    <li key={point} className="flex items-center gap-2.5 text-sm text-foreground/80">
-                      <Check className="size-4 shrink-0 text-ibm-bright" strokeWidth={2} aria-hidden="true" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2" aria-label={`${category.name} highlights`}>
+                    {topChips.map((chip) => (
+                      <li key={chip} className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
+                        <span className="size-1 bg-ibm-blue" aria-hidden="true" />
+                        {chip}
+                      </li>
+                    ))}
+                    {count > 3 && (
+                      <li className="font-mono text-xs text-ibm-bright">+{count - 3} more</li>
+                    )}
+                  </ul>
 
-                <a
-                  href="#contact"
-                  onClick={() => presetService(service.title)}
-                  className="mt-8 inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft focus-carbon"
-                >
-                  Discuss this service
-                  <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.5} />
-                </a>
-
-                <span
-                  className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-ibm-blue to-ibm-cyan transition-transform duration-500 group-hover:scale-x-100"
-                  aria-hidden="true"
-                />
-              </article>
-            </Reveal>
-          ))}
+                  <span className="mt-auto inline-flex items-center gap-1.5 pt-6 font-mono text-sm text-ibm-soft">
+                    Explore category
+                    <ArrowUpRight
+                      className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    />
+                  </span>
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
+
+        {/* full-catalog ticker — all 65 sub-services */}
+        <Reveal>
+          <div className="mt-10 border border-hairline bg-ibm-blue/[0.02] py-4">
+            <p className="px-6 pb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              Full catalog — {ALL_SUB_SERVICES.length} sub-services
+            </p>
+            <Ticker items={ALL_SUB_SERVICES} slow />
+          </div>
+        </Reveal>
       </div>
     </SectionFrame>
   );
