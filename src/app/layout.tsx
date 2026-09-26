@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { FAQS } from "@/lib/content-faq";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ScrollProgress, BackToTop } from "@/components/site/chrome";
@@ -21,18 +20,20 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://abwcurious.com"),
-  title: "ABWcurious — AI Software Development, AI Solutions & Website Development",
+  title: "ABWcurious — The People Behind the Products · Leadership, Events & Journey",
   description:
-    "ABWcurious is a technology studio building AI software, intelligent AI solutions, high-performance websites and memorable digital design for ambitious businesses.",
+    "Meet the founders and team behind ABWcurious, explore our company events, milestones, gallery and social presence — a curious studio building AI software, websites and digital experiences.",
   keywords: [
     "ABWcurious",
-    "AI software development",
-    "AI solutions",
-    "website development",
-    "web app development",
-    "UI UX design",
-    "chatbot development",
-    "machine learning",
+    "about ABWcurious",
+    "ABWcurious team",
+    "founders",
+    "co-founders",
+    "company events",
+    "company gallery",
+    "leadership",
+    "AI software studio",
+    "Pune technology company",
   ],
   authors: [{ name: "ABWcurious" }],
   icons: {
@@ -110,21 +111,11 @@ const websiteJsonLd = {
   name: "ABWcurious",
   url: "https://abwcurious.com",
   description:
-    "AI software development, AI solutions, website development and design — engineered with curiosity.",
+    "Meet the people behind ABWcurious — leadership, company events, gallery and journey.",
   inLanguage: "en",
   publisher: { "@id": "https://abwcurious.com/#organization" },
 };
 
-/* FAQPage rich-result structured data — mirrors the on-page FAQ (shared content module) */
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQS.map((f) => ({
-    "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
-  })),
-};
 
 export default function RootLayout({
   children,
@@ -141,10 +132,6 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
       <body

@@ -1,27 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { LoaderCircle, Send, CheckCircle2, Command as CommandIcon } from "lucide-react";
+import {
+  LoaderCircle,
+  Send,
+  CheckCircle2,
+  Mail,
+  Phone,
+  MapPin,
+  ArrowUp,
+  ShieldCheck,
+  FileText,
+  type LucideIcon,
+} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Logo } from "./logo";
-import { SocialRow } from "./header";
-import { Reveal, RollButton } from "./primitives";
-import { StudioConsole } from "./console";
+import { SocialRow } from "./social-row";
+import { Reveal } from "./primitives";
+import { LeaderDialog } from "./leader-dialog";
+import MaskedHeading from "@/components/reactbits/MaskedHeading";
 import { useToast } from "@/hooks/use-toast";
-import { CATEGORIES } from "@/lib/catalog";
-import { openCategory } from "@/lib/catalog-route";
+import { COMPANY, ALL_LEADERS, type Leader } from "@/data/company";
 
-const COLUMNS = [
-  {
-    title: "Company",
-    links: ["About us", "Products", "Process", "Careers", "Contact"],
-    hrefs: ["#about", "#products", "#process", "#careers", "#contact"],
-  },
-  {
-    title: "Resources",
-    links: ["Selected work", "Case files", "Pricing", "FAQ", "Field notes", "Field notes RSS"],
-    hrefs: ["#work", "#cases", "#pricing", "#faq", "#notes", "/api/rss"],
-  },
-];
+/* ----------------------------- newsletter ------------------------------- */
 
 function NewsletterForm() {
   const { toast } = useToast();
@@ -62,9 +63,9 @@ function NewsletterForm() {
 
   if (state === "done") {
     return (
-      <div className="flex items-center gap-2.5 border border-ibm-success/50 bg-ibm-success/10 px-4 py-3.5">
+      <div className="flex items-center gap-2.5 rounded-2xl border border-ibm-success/40 bg-ibm-success/10 px-4 py-3.5">
         <CheckCircle2 className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
-        <p className="font-mono text-xs text-foreground/90">
+        <p className="font-mono text-xs text-white/85">
           You are on the list{total ? ` — subscriber #${total}` : ""}. No spam, ever.
         </p>
       </div>
@@ -72,7 +73,10 @@ function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex border border-hairline-strong bg-white focus-within:border-ibm-bright">
+    <form
+      onSubmit={handleSubmit}
+      className="flex overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur transition-colors focus-within:border-[#78a9ff]"
+    >
       <label htmlFor="newsletter-email" className="sr-only">
         Email address
       </label>
@@ -83,13 +87,13 @@ function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
-        className="h-11 w-full min-w-0 bg-transparent px-4 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+        className="h-11 w-full min-w-0 bg-transparent px-4 font-mono text-sm text-white placeholder:text-white/40 focus:outline-none"
       />
       <button
         type="submit"
         disabled={state === "loading"}
-        aria-label="Subscribe to newsletter"
-        className="flex h-11 w-12 shrink-0 items-center justify-center bg-primary text-primary-foreground transition-colors hover:bg-ibm-blue-hover focus-carbon disabled:opacity-60"
+        aria-label="Subscribe to the newsletter"
+        className="flex h-11 w-12 shrink-0 items-center justify-center bg-ibm-blue text-white transition-colors hover:bg-[#78a9ff] focus-carbon disabled:opacity-60"
       >
         {state === "loading" ? (
           <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -101,154 +105,268 @@ function NewsletterForm() {
   );
 }
 
-export function Footer() {
-  return (
-    <footer className="mt-auto bg-[#f5f8fe]">
-      {/* Big CTA banner */}
-      <div className="border-b border-hairline">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20 lg:border-x lg:border-hairline">
-          <Reveal>
-            <div className="relative overflow-hidden border border-ibm-blue/70 bg-ibm-blue px-8 py-12 text-center sm:px-12 lg:py-16">
-              {/* white blueprint grid + glow ornaments */}
-              <div
-                className="pointer-events-none absolute inset-0 opacity-60"
-                aria-hidden="true"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px)",
-                  backgroundSize: "28px 28px",
-                }}
-              />
-              <div
-                className="pointer-events-none absolute -left-20 -top-24 size-72 rounded-full opacity-50 blur-3xl"
-                aria-hidden="true"
-                style={{ background: "radial-gradient(circle, rgba(255,255,255,0.35), transparent 70%)" }}
-              />
-              <div
-                className="pointer-events-none absolute -bottom-28 -right-16 size-80 rounded-full opacity-40 blur-3xl"
-                aria-hidden="true"
-                style={{ background: "radial-gradient(circle, rgba(166,200,255,0.5), transparent 70%)" }}
-              />
-              <div className="relative">
-                <p className="font-mono text-xs uppercase tracking-[0.24em] text-white/75">
-                  Ready when you are
-                </p>
-                <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-light leading-tight tracking-tight text-white sm:text-5xl">
-                  Build your next product with{" "}
-                  <span className="text-[#a6c8ff]">curious minds.</span>
-                </h2>
-                <p className="mx-auto mt-4 max-w-xl text-white/80">
-                  Free discovery call. Written proposal in 48 hours. Working software in weeks, not
-                  quarters.
-                </p>
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                  <RollButton href="#contact" variant="light" arrow>
-                    Get a Quote
-                  </RollButton>
-                  <RollButton href="#work" variant="outline-light">
-                    See Our Work
-                  </RollButton>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </div>
+/* ------------------------------ legal dialog ----------------------------- */
 
-      {/* Link columns */}
-      <div className="mx-auto max-w-7xl px-6 py-14 lg:border-x lg:border-hairline">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
-          <div className="lg:col-span-2">
-            <Logo />
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              A technology studio building AI software, intelligent solutions, websites and design
-              for ambitious businesses. Curious since day one.
-            </p>
-            <SocialRow className="mt-6" />
-            <div className="mt-8 max-w-xs">
-              <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-foreground">
-                Field notes — monthly
-              </h3>
-              <p className="mb-3 mt-2 text-xs text-muted-foreground">
-                One email a month on AI, product engineering and design. Unsubscribe anytime.
-              </p>
-              <NewsletterForm />
+const LEGAL: Record<"privacy" | "terms", { title: string; icon: LucideIcon; body: string[] }> = {
+  privacy: {
+    title: "Privacy Policy",
+    icon: ShieldCheck,
+    body: [
+      "Placeholder copy — replace with your real Privacy Policy. In short: we collect only what you give us (name, email, message) when you reach out or subscribe, we never sell it, and we only use it to reply.",
+      "You can ask us to delete your data any time at the email listed in the contact column. Analytics, if any, are anonymised.",
+    ],
+  },
+  terms: {
+    title: "Terms & Conditions",
+    icon: FileText,
+    body: [
+      "Placeholder copy — replace with your real Terms & Conditions. In short: content on this site describes our company and services, trademarks belong to their owners, and nothing here is legal advice.",
+      "Project engagements are governed by individually signed agreements, not this page.",
+    ],
+  },
+};
+
+function LegalDialog({
+  kind,
+  open,
+  onClose,
+}: {
+  kind: "privacy" | "terms" | null;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const doc = kind ? LEGAL[kind] : null;
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-h-[80dvh] w-[calc(100vw-2rem)] max-w-lg overflow-hidden rounded-3xl border-white/60 p-0 shadow-[0_40px_120px_-30px_rgba(15,98,254,0.5)]">
+        {doc && (
+          <div className="max-h-[80dvh] overflow-y-auto p-7 sm:p-9">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2.5 text-xl font-light tracking-tight">
+                <doc.icon className="size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                {doc.title}
+              </DialogTitle>
+              <DialogDescription className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/45">
+                Last updated — placeholder
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-5 space-y-4">
+              {doc.body.map((p, i) => (
+                <p key={i} className="text-sm leading-relaxed text-ink/70">
+                  {p}
+                </p>
+              ))}
             </div>
           </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
-          {/* Service catalog links — open the full-screen category pages */}
-          <nav aria-label="Services">
-            <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-foreground">
-              Services
+/* -------------------------------- footer --------------------------------- */
+
+const NAV_LINKS = [
+  { label: "About", href: "#about" },
+  { label: "Leadership", href: "#leadership" },
+  { label: "Events", href: "#events" },
+  { label: "Gallery", href: "#gallery" },
+  { label: "Achievements", href: "#achievements" },
+  { label: "Contact", href: "#contact" },
+];
+
+const CONTACT_ITEMS = [
+  { icon: Mail, label: COMPANY.email, href: `mailto:${COMPANY.email}` },
+  { icon: Phone, label: COMPANY.phone, href: COMPANY.phoneHref },
+  { icon: MapPin, label: COMPANY.address, href: "#contact" },
+];
+
+export function Footer() {
+  const [legal, setLegal] = useState<"privacy" | "terms" | null>(null);
+  const [profile, setProfile] = useState<Leader | null>(null);
+
+  return (
+    <footer className="relative mt-auto overflow-hidden bg-[#0a0f1e] text-white">
+      {/* top glow */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ibm-blue/70 to-transparent"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[52rem] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
+        style={{ background: "radial-gradient(circle, rgba(15,98,254,0.7), transparent 70%)" }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        aria-hidden="true"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
+          backgroundSize: "44px 44px",
+        }}
+      />
+
+      {/* ------------------------- link columns ------------------------- */}
+      <div className="relative mx-auto max-w-7xl px-6 pb-4 pt-16 sm:pt-20">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-12">
+          {/* brand */}
+          <div className="lg:col-span-4">
+            <Logo onDark />
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/60">
+              {COMPANY.description}
+            </p>
+            <SocialRow variant="dark" className="mt-6" />
+          </div>
+
+          {/* explore */}
+          <nav aria-label="Footer navigation" className="lg:col-span-2">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+              Explore
             </h3>
             <ul className="mt-5 space-y-3">
-              {CATEGORIES.map((c) => (
-                <li key={c.slug}>
+              {NAV_LINKS.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className="focus-carbon group inline-flex items-center gap-1.5 text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
+                  >
+                    <span className="h-px w-0 bg-[#78a9ff] transition-all duration-300 group-hover:w-3" aria-hidden="true" />
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* leadership — opens the full profile dialog per person */}
+          <nav aria-label="Leadership" className="lg:col-span-3">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+              Leadership
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {ALL_LEADERS.map((leader) => (
+                <li key={leader.id}>
                   <button
                     type="button"
-                    onClick={() => openCategory(c.slug)}
-                    className="text-left text-sm text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+                    onClick={() => setProfile(leader)}
+                    aria-haspopup="dialog"
+                    aria-label={`Open profile: ${leader.name} — ${leader.role}`}
+                    className="focus-carbon group flex w-full items-center gap-3 rounded-xl text-left text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
                   >
-                    {c.name}
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] font-mono text-[9px] text-white/60 transition-colors group-hover:border-[#78a9ff]/50 group-hover:text-[#78a9ff]">
+                      {leader.monogram}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate">{leader.name}</span>
+                      <span className="block truncate font-mono text-[9px] uppercase tracking-[0.14em] text-white/35">
+                        {leader.role}
+                      </span>
+                    </span>
                   </button>
                 </li>
               ))}
             </ul>
           </nav>
 
-          {COLUMNS.map((col) => (
-            <nav key={col.title} aria-label={col.title}>
-              <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-foreground">
-                {col.title}
-              </h3>
-              <ul className="mt-5 space-y-3">
-                {col.links.map((link, i) => (
-                  <li key={link}>
-                    <a
-                      href={col.hrefs[i]}
-                      className="text-sm text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-        </div>
-      </div>
+          {/* contact + newsletter */}
+          <div className="lg:col-span-3">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+              Contact
+            </h3>
+            <ul className="mt-5 space-y-3.5">
+              {CONTACT_ITEMS.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    className="focus-carbon group inline-flex items-center gap-3 text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-white/12 bg-white/[0.06] text-white/60 transition-colors group-hover:border-[#78a9ff]/50 group-hover:text-[#78a9ff]">
+                      <item.icon className="size-3.5" strokeWidth={1.6} aria-hidden="true" />
+                    </span>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
 
-      {/* Bottom bar */}
-      <div className="border-t border-hairline">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 pr-20 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-xs text-muted-foreground sm:flex-row sm:pr-6">
-          <p className="max-w-[calc(100vw-7.5rem)] sm:max-w-none">© {new Date().getFullYear()} ABWcurious™. All rights reserved.</p>
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
-            {/* ⌘K quick actions trigger — sits beside the Studio Console link */}
-            <button
-              type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent("abw:palette-open"))}
-              aria-label="Open command palette quick actions (Ctrl or Cmd + K)"
-              title="Quick actions — ⌘K"
-              className="focus-carbon inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-ibm-bright"
-            >
-              <CommandIcon className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
-              Quick actions
-              <kbd className="border border-hairline bg-white px-1 py-0.5 text-[10px]" aria-hidden="true">
-                ⌘K
-              </kbd>
-            </button>
-            <StudioConsole />
-            <p className="flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-ibm-success" aria-hidden="true" />
-              Engineered with curiosity in Pune, India
-              <span className="hidden text-muted-foreground/70 md:inline" aria-hidden="true">
-                ·
-              </span>
-              <span className="hidden text-muted-foreground/70 md:inline">Updated Sep 2026</span>
-            </p>
+            <div className="mt-8">
+              <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+                Journey notes — monthly
+              </h3>
+              <p className="mb-3 mt-2 text-xs leading-relaxed text-white/50">
+                One email a month: launches, events and lessons. Unsubscribe anytime.
+              </p>
+              <NewsletterForm />
+            </div>
           </div>
         </div>
       </div>
+
+      {/* ------------------- giant image-filled wordmark ------------------- */}
+      <div className="relative border-t border-white/[0.07]" aria-hidden="true">
+        <div className="mx-auto max-w-7xl px-4 py-10 lg:px-6">
+          <MaskedHeading
+            text={COMPANY.wordmark}
+            tag="div"
+            src="/images/footer-abw.jpg"
+            align="center"
+            weight={700}
+            tracking={-0.02}
+            lineHeight={1}
+            textScale={0.128}
+            fillScale={1.35}
+            focalY={0.42}
+            parallax={22}
+            drift={12}
+            reveal="wipe"
+            trigger="view"
+            duration={1.4}
+            className="select-none"
+          />
+          <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-[0.32em] text-white/40">
+            People · Events · Journey — Pune, India
+          </p>
+        </div>
+      </div>
+
+      {/* --------------------------- bottom bar --------------------------- */}
+      <div className="relative border-t border-white/[0.07]">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-xs text-white/45 sm:flex-row">
+          <p>© {new Date().getFullYear()} {COMPANY.name}™. All rights reserved.</p>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <button
+              type="button"
+              onClick={() => setLegal("privacy")}
+              className="focus-carbon rounded-full transition-colors hover:text-[#78a9ff]"
+            >
+              Privacy Policy
+            </button>
+            <button
+              type="button"
+              onClick={() => setLegal("terms")}
+              className="focus-carbon rounded-full transition-colors hover:text-[#78a9ff]"
+            >
+              Terms &amp; Conditions
+            </button>
+            <a
+              href="#top"
+              className="focus-carbon group inline-flex items-center gap-1.5 rounded-full transition-colors hover:text-[#78a9ff]"
+            >
+              Back to top
+              <ArrowUp
+                className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <LegalDialog kind={legal} open={legal !== null} onClose={() => setLegal(null)} />
+      <LeaderDialog leader={profile} onClose={() => setProfile(null)} />
     </footer>
   );
 }

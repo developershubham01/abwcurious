@@ -1,0 +1,817 @@
+     1→"use client";
+     2→
+     3→import { useEffect, useRef, useState } from "react";
+     4→import { motion } from "framer-motion";
+     5→import {
+     6→  Menu,
+     7→  X,
+     8→  Mail,
+     9→  Phone,
+    10→  MapPin,
+    11→  ArrowUpRight,
+    12→  ArrowRight,
+    13→  ChevronDown,
+    14→  Github,
+    15→  Linkedin,
+    16→  Twitter,
+    17→  Command as CommandIcon,
+    18→  Layers,
+    19→  Newspaper,
+    20→  Package,
+    21→  Users,
+    22→} from "lucide-react";
+    23→import { Logo } from "./logo";
+    24→import { RollButton } from "./primitives";
+    25→import { CATEGORIES, categoryServiceCount, ALL_SUB_SERVICES } from "@/lib/catalog";
+    26→import { openCategory } from "@/lib/catalog-route";
+    27→import { PRODUCTS, productStatusTotals } from "@/lib/products";
+    28→import { openBlogs, openProducts } from "@/lib/view-route";
+    29→import { cn } from "@/lib/utils";
+    30→
+    31→/** Ticking studio clock (Asia/Calcutta) — hydration-safe, renders placeholder before mount. */
+    32→function LiveClock() {
+    33→  const [time, setTime] = useState<string | null>(null);
+    34→
+    35→  useEffect(() => {
+    36→    const fmt = new Intl.DateTimeFormat("en-GB", {
+    37→      timeZone: "Asia/Calcutta",
+    38→      hour: "2-digit",
+    39→      minute: "2-digit",
+    40→      second: "2-digit",
+    41→      hour12: false,
+    42→    });
+    43→    const tick = () => setTime(fmt.format(new Date()));
+    44→    tick();
+    45→    const t = setInterval(tick, 1000);
+    46→    return () => clearInterval(t);
+    47→  }, []);
+    48→
+    49→  return (
+    50→    <span
+    51→      className="inline-flex items-center gap-1.5 tabular-nums"
+    52→      title="Studio local time (IST)"
+    53→      suppressHydrationWarning
+    54→    >
+    55→      <span className="size-1.5 rounded-full bg-ibm-cyan animate-pulse-dot" aria-hidden="true" />
+    56→      {time ? `Studio time ${time} IST` : "Studio time — IST"}
+    57→    </span>
+    58→  );
+    59→}
+    60→
+    61→/* ------------------------------------------------------------------ */
+    62→/* Services mega-dropdown (desktop)                                    */
+    63→/* ------------------------------------------------------------------ */
+    64→
+    65→function ServicesDropdown({ active, variant = "site" }: { active: string; variant?: "site" | "view" }) {
+    66→  const [open, setOpen] = useState(false);
+    67→  const wrapRef = useRef<HTMLDivElement | null>(null);
+    68→  const hoverTimer = useRef<number | null>(null);
+    69→  const triggerRef = useRef<HTMLButtonElement | null>(null);
+    70→  const underlineId = variant === "view" ? "nav-underline-view" : "nav-underline";
+    71→  const menuId = variant === "view" ? "services-menu-view" : "services-menu";
+    72→
+    73→  const clearTimer = () => {
+    74→    if (hoverTimer.current !== null) {
+    75→      window.clearTimeout(hoverTimer.current);
+    76→      hoverTimer.current = null;
+    77→    }
+    78→  };
+    79→
+    80→  const openWithIntent = () => {
+    81→    clearTimer();
+    82→    hoverTimer.current = window.setTimeout(() => setOpen(true), 90);
+    83→  };
+    84→
+    85→  const closeWithIntent = () => {
+    86→    clearTimer();
+    87→    hoverTimer.current = window.setTimeout(() => setOpen(false), 260);
+    88→  };
+    89→
+    90→  /* Escape closes and returns focus to the trigger; focus leaving the
+    91→     widget (tab through the panel) also closes it. */
+    92→  useEffect(() => {
+    93→    if (!open) return;
+    94→    const onKey = (e: KeyboardEvent) => {
+    95→      if (e.key === "Escape") {
+    96→        setOpen(false);
+    97→        triggerRef.current?.focus();
+    98→      }
+    99→    };
+   100→    window.addEventListener("keydown", onKey);
+   101→    return () => window.removeEventListener("keydown", onKey);
+   102→  }, [open]);
+   103→
+   104→  const panelPick = (fn: () => void) => () => {
+   105→    setOpen(false);
+   106→    clearTimer();
+   107→    fn();
+   108→  };
+   109→
+   110→  const isActive = active === "#services";
+   111→
+   112→  return (
+   113→    <div
+   114→      ref={wrapRef}
+   115→      onMouseEnter={openWithIntent}
+   116→      onMouseLeave={closeWithIntent}
+   117→      onBlur={(e) => {
+   118→        if (!wrapRef.current?.contains(e.relatedTarget as Node)) {
+   119→          setOpen(false);
+   120→          clearTimer();
+   121→        }
+   122→      }}
+   123→    >
+   124→      <button
+   125→        ref={triggerRef}
+   126→        type="button"
+   127→        onClick={() => setOpen((v) => !v)}
+   128→        onMouseEnter={openWithIntent}
+   129→        aria-expanded={open}
+   130→        aria-haspopup="true"
+   131→        aria-controls={menuId}
+   132→        aria-current={isActive ? "true" : undefined}
+   133→        className={cn(
+   134→          "relative inline-flex items-center gap-1.5 font-mono text-[11px] xl:text-[13px] transition-colors focus-carbon",
+   135→          isActive || open ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+   136→        )}
+   137→      >
+   138→        <Layers className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   139→        Services
+   140→        <ChevronDown
+   141→          className={cn("size-3 transition-transform duration-300", open && "rotate-180")}
+   142→          strokeWidth={1.5}
+   143→          aria-hidden="true"
+   144→        />
+   145→        {isActive && (
+   146→          <motion.span
+   147→            layoutId={underlineId}
+   148→            className="absolute -bottom-[7px] left-0 h-[2px] w-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+   149→            transition={{ type: "spring", stiffness: 420, damping: 34 }}
+   150→            aria-hidden="true"
+   151→          />
+   152→        )}
+   153→      </button>
+   154→
+   155→      {/* Mega panel — anchored to the sticky header, spans the viewport width
+   156→          like a classic IBM mega menu, content aligned to the max-w-7xl rail */}
+   157→      <div
+   158→        id={menuId}
+   159→        className={cn(
+   160→          "absolute inset-x-0 top-full z-50 transition-all duration-200",
+   161→          open
+   162→            ? "pointer-events-auto translate-y-0 opacity-100"
+   163→            : "pointer-events-none -translate-y-1 opacity-0"
+   164→        )}
+   165→        aria-hidden={!open}
+   166→      >
+   167→        <div className="mx-auto w-full max-w-7xl px-6">
+   168→          <div className="border border-hairline-strong bg-background/97 shadow-[0_32px_64px_-32px_rgba(6,15,40,0.25)] backdrop-blur-md">
+   169→            <div className="h-0.5 bg-gradient-to-r from-ibm-blue to-ibm-cyan" aria-hidden="true" />
+   170→            <div className="grid gap-0 lg:grid-cols-[1fr_240px]">
+   171→              {/* category grid */}
+   172→              <div className="grid gap-px bg-hairline sm:grid-cols-2 xl:grid-cols-3">
+   173→                {CATEGORIES.map((c) => (
+   174→                  <button
+   175→                    key={c.slug}
+   176→                    type="button"
+   177→                    onClick={panelPick(() => openCategory(c.slug))}
+   178→                    className="group flex items-start gap-3 bg-white px-4 py-3.5 text-left transition-colors hover:bg-ibm-blue/[0.05] focus-carbon"
+   179→                  >
+   180→                    <span className="mt-0.5 font-mono text-[10px] text-ibm-bright" aria-hidden="true">
+   181→                      {c.num}
+   182→                    </span>
+   183→                    <span className="min-w-0 flex-1">
+   184→                      <span className="flex items-center justify-between gap-2">
+   185→                        <span className="truncate text-sm font-medium text-foreground">{c.name}</span>
+   186→                        <ArrowUpRight
+   187→                          className="size-3.5 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ibm-bright"
+   188→                          strokeWidth={1.5}
+   189→                          aria-hidden="true"
+   190→                        />
+   191→                      </span>
+   192→                      <span className="mt-0.5 block truncate font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+   193→                        {categoryServiceCount(c)} sub-services · {c.short}
+   194→                      </span>
+   195→                    </span>
+   196→                  </button>
+   197→                ))}
+   198→              </div>
+   199→
+   200→              {/* rail */}
+   201→              <div className="flex flex-col justify-between border-t border-hairline bg-ibm-blue/[0.03] p-5 lg:border-l lg:border-t-0">
+   202→                <div>
+   203→                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground">
+   204→                    All services
+   205→                  </p>
+   206→                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+   207→                    {ALL_SUB_SERVICES.length} sub-services across 6 practices — every card opens a full
+   208→                    playbook.
+   209→                  </p>
+   210→                </div>
+   211→                <div className="mt-5 flex flex-col gap-2">
+   212→                  <a
+   213→                    href="#services"
+   214→                    onClick={panelPick(() => {})}
+   215→                    className="inline-flex items-center justify-between border border-hairline-strong bg-white px-3 py-2 font-mono text-xs text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+   216→                  >
+   217→                    Browse showcase
+   218→                    <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   219→                  </a>
+   220→                  <a
+   221→                    href="#products"
+   222→                    onClick={panelPick(() => {})}
+   223→                    className="inline-flex items-center justify-between px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+   224→                  >
+   225→                    Our products
+   226→                    <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   227→                  </a>
+   228→                </div>
+   229→              </div>
+   230→            </div>
+   231→          </div>
+   232→        </div>
+   233→      </div>
+   234→    </div>
+   235→  );
+   236→}
+   237→
+   238→/* ------------------------------------------------------------------ */
+   239→/* Products dropdown (desktop)                                         */
+   240→/* ------------------------------------------------------------------ */
+   241→
+   242→const PRODUCT_STATUS_DOT: Record<string, string> = {
+   243→  live: "bg-ibm-success",
+   244→  beta: "bg-ibm-blue",
+   245→  soon: "bg-muted-foreground/60",
+   246→};
+   247→
+   248→function ProductsDropdown({ active, variant = "site" }: { active: string; variant?: "site" | "view" }) {
+   249→  const [open, setOpen] = useState(false);
+   250→  const wrapRef = useRef<HTMLDivElement | null>(null);
+   251→  const hoverTimer = useRef<number | null>(null);
+   252→  const triggerRef = useRef<HTMLButtonElement | null>(null);
+   253→  const underlineId = variant === "view" ? "nav-underline-view" : "nav-underline";
+   254→  const menuId = variant === "view" ? "products-menu-view" : "products-menu";
+   255→
+   256→  const clearTimer = () => {
+   257→    if (hoverTimer.current !== null) {
+   258→      window.clearTimeout(hoverTimer.current);
+   259→      hoverTimer.current = null;
+   260→    }
+   261→  };
+   262→
+   263→  const openWithIntent = () => {
+   264→    clearTimer();
+   265→    hoverTimer.current = window.setTimeout(() => setOpen(true), 90);
+   266→  };
+   267→
+   268→  const closeWithIntent = () => {
+   269→    clearTimer();
+   270→    hoverTimer.current = window.setTimeout(() => setOpen(false), 260);
+   271→  };
+   272→
+   273→  useEffect(() => {
+   274→    if (!open) return;
+   275→    const onKey = (e: KeyboardEvent) => {
+   276→      if (e.key === "Escape") {
+   277→        setOpen(false);
+   278→        triggerRef.current?.focus();
+   279→      }
+   280→    };
+   281→    window.addEventListener("keydown", onKey);
+   282→    return () => window.removeEventListener("keydown", onKey);
+   283→  }, [open]);
+   284→
+   285→  const panelPick = (fn: () => void) => () => {
+   286→    setOpen(false);
+   287→    clearTimer();
+   288→    fn();
+   289→  };
+   290→
+   291→  const isActive = active === "#products";
+   292→  const totals = productStatusTotals();
+   293→
+   294→  return (
+   295→    <div
+   296→      ref={wrapRef}
+   297→      onMouseEnter={openWithIntent}
+   298→      onMouseLeave={closeWithIntent}
+   299→      onBlur={(e) => {
+   300→        if (!wrapRef.current?.contains(e.relatedTarget as Node)) {
+   301→          setOpen(false);
+   302→          clearTimer();
+   303→        }
+   304→      }}
+   305→    >
+   306→      <button
+   307→        ref={triggerRef}
+   308→        type="button"
+   309→        onClick={() => setOpen((v) => !v)}
+   310→        onMouseEnter={openWithIntent}
+   311→        aria-expanded={open}
+   312→        aria-haspopup="true"
+   313→        aria-controls={menuId}
+   314→        aria-current={isActive ? "true" : undefined}
+   315→        className={cn(
+   316→          "relative inline-flex items-center gap-1.5 font-mono text-[11px] xl:text-[13px] transition-colors focus-carbon",
+   317→          isActive || open ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+   318→        )}
+   319→      >
+   320→        <Package className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   321→        Products
+   322→        <ChevronDown
+   323→          className={cn("size-3 transition-transform duration-300", open && "rotate-180")}
+   324→          strokeWidth={1.5}
+   325→          aria-hidden="true"
+   326→        />
+   327→        {isActive && (
+   328→          <motion.span
+   329→            layoutId={underlineId}
+   330→            className="absolute -bottom-[7px] left-0 h-[2px] w-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+   331→            transition={{ type: "spring", stiffness: 420, damping: 34 }}
+   332→            aria-hidden="true"
+   333→          />
+   334→        )}
+   335→      </button>
+   336→
+   337→      <div
+   338→        id={menuId}
+   339→        className={cn(
+   340→          "absolute inset-x-0 top-full z-50 transition-all duration-200",
+   341→          open
+   342→            ? "pointer-events-auto translate-y-0 opacity-100"
+   343→            : "pointer-events-none -translate-y-1 opacity-0"
+   344→        )}
+   345→        aria-hidden={!open}
+   346→      >
+   347→        <div className="mx-auto w-full max-w-7xl px-6">
+   348→          <div className="border border-hairline-strong bg-background/97 shadow-[0_32px_64px_-32px_rgba(6,15,40,0.25)] backdrop-blur-md">
+   349→            <div className="h-0.5 bg-gradient-to-r from-ibm-blue to-ibm-cyan" aria-hidden="true" />
+   350→            <div className="grid gap-0 lg:grid-cols-[1fr_240px]">
+   351→              {/* product grid */}
+   352→              <div className="grid gap-px bg-hairline sm:grid-cols-2 xl:grid-cols-3">
+   353→                {PRODUCTS.map((p) => (
+   354→                  <button
+   355→                    key={p.slug}
+   356→                    type="button"
+   357→                    onClick={panelPick(() => openProductFromNav(p.slug))}
+   358→                    className="group flex items-start gap-3 bg-white px-4 py-3.5 text-left transition-colors hover:bg-ibm-blue/[0.05] focus-carbon"
+   359→                  >
+   360→                    <span
+   361→                      className={cn("mt-[7px] size-1.5 shrink-0 rounded-full", PRODUCT_STATUS_DOT[p.status])}
+   362→                      aria-hidden="true"
+   363→                    />
+   364→                    <span className="min-w-0 flex-1">
+   365→                      <span className="flex items-center justify-between gap-2">
+   366→                        <span className="truncate text-sm font-medium text-foreground">{p.name}</span>
+   367→                        <ArrowUpRight
+   368→                          className="size-3.5 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ibm-bright"
+   369→                          strokeWidth={1.5}
+   370→                          aria-hidden="true"
+   371→                        />
+   372→                      </span>
+   373→                      <span className="mt-0.5 block truncate font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+   374→                        {p.statusLabel} · {p.tagline}
+   375→                      </span>
+   376→                    </span>
+   377→                  </button>
+   378→                ))}
+   379→              </div>
+   380→
+   381→              {/* rail */}
+   382→              <div className="flex flex-col justify-between border-t border-hairline bg-ibm-blue/[0.03] p-5 lg:border-l lg:border-t-0">
+   383→                <div>
+   384→                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground">
+   385→                    Our products
+   386→                  </p>
+   387→                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+   388→                    {totals.total} SaaS platforms built for scale — {totals.live} live, {totals.beta} in
+   389→                    beta, one on the way.
+   390→                  </p>
+   391→                </div>
+   392→                <div className="mt-5 flex flex-col gap-2">
+   393→                  <button
+   394→                    type="button"
+   395→                    onClick={panelPick(() => openProducts())}
+   396→                    className="inline-flex items-center justify-between border border-hairline-strong bg-white px-3 py-2 font-mono text-xs text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+   397→                  >
+   398→                    View all products
+   399→                    <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   400→                  </button>
+   401→                  <a
+   402→                    href="#products"
+   403→                    onClick={panelPick(() => {})}
+   404→                    className="inline-flex items-center justify-between px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+   405→                  >
+   406→                    Product showcase
+   407→                    <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   408→                  </a>
+   409→                </div>
+   410→              </div>
+   411→            </div>
+   412→          </div>
+   413→        </div>
+   414→      </div>
+   415→    </div>
+   416→  );
+   417→}
+   418→
+   419→function openProductFromNav(slug: string) {
+   420→  window.location.hash = `#/products/${slug}`;
+   421→}
+   422→
+   423→/* ------------------------------------------------------------------ */
+   424→/* Header                                                              */
+   425→/* ------------------------------------------------------------------ */
+   426→
+   427→export function Header({
+   428→  variant = "site",
+   429→  activeNav,
+   430→}: {
+   431→  /** "site" = landing page chrome; "view" = inside a full-screen takeover
+   432→   *  (unique layoutId/aria ids, always-solid bar, no duplicate scroll-spy). */
+   433→  variant?: "site" | "view";
+   434→  /** View variant: which primary item is underlined, e.g. "#products". */
+   435→  activeNav?: string;
+   436→}) {
+   437→  const isView = variant === "view";
+   438→  const [open, setOpen] = useState(false);
+   439→  const [expanded, setExpanded] = useState<"services" | "products" | null>(null);
+   440→  const [scrolled, setScrolled] = useState(false);
+   441→  const [spyActive, setSpyActive] = useState<string>("");
+   442→  const active = isView ? (activeNav ?? "") : spyActive;
+   443→  const solid = scrolled || isView;
+   444→
+   445→  useEffect(() => {
+   446→    const onScroll = () => setScrolled(window.scrollY > 24);
+   447→    onScroll();
+   448→    window.addEventListener("scroll", onScroll, { passive: true });
+   449→    return () => window.removeEventListener("scroll", onScroll);
+   450→  }, []);
+   451→
+   452→  useEffect(() => {
+   453→    if (isView) return;
+   454→    const ids = ["about", "services", "products", "contact"];
+   455→    const observer = new IntersectionObserver(
+   456→      (entries) => {
+   457→        entries.forEach((entry) => {
+   458→          if (entry.isIntersecting) setSpyActive(`#${entry.target.id}`);
+   459→        });
+   460→      },
+   461→      { rootMargin: "-40% 0px -55% 0px" }
+   462→    );
+   463→    ids.forEach((id) => {
+   464→      const el = document.getElementById(id);
+   465→      if (el) observer.observe(el);
+   466→    });
+   467→    return () => observer.disconnect();
+   468→  }, [isView]);
+   469→
+   470→  const mobileToggle = (key: "services" | "products") =>
+   471→    setExpanded((cur) => (cur === key ? null : key));
+   472→
+   473→  return (
+   474→    <>
+   475→      {/* IBM-style utility bar */}
+   476→      <div className="hidden md:block border-b border-hairline bg-ibm-blue/[0.04]">
+   477→        <div className="mx-auto flex h-9 max-w-7xl items-center justify-between px-6 font-mono text-xs text-muted-foreground">
+   478→          <div className="flex items-center gap-6">
+   479→            <span className="inline-flex items-center gap-1.5">
+   480→              <MapPin className="size-3 text-ibm-bright" strokeWidth={1.5} />
+   481→              Pune, Maharashtra — India
+   482→            </span>
+   483→            <span className="inline-flex items-center gap-1.5">
+   484→              <span className="size-1.5 rounded-full bg-ibm-success animate-pulse-dot" aria-hidden="true" />
+   485→              Accepting new projects
+   486→            </span>
+   487→          </div>
+   488→          <div className="flex items-center gap-6">
+   489→            <LiveClock />
+   490→            <a
+   491→              href="mailto:hello@abwcurious.com"
+   492→              className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors"
+   493→            >
+   494→              <Mail className="size-3 text-ibm-bright" strokeWidth={1.5} />
+   495→              hello@abwcurious.com
+   496→            </a>
+   497→            <a
+   498→              href="tel:+919999999999"
+   499→              className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors"
+   500→            >
+   501→              <Phone className="size-3 text-ibm-bright" strokeWidth={1.5} />
+   502→              +91 99999 99999
+   503→            </a>
+   504→          </div>
+   505→        </div>
+   506→      </div>
+   507→
+   508→      {/* Sticky header — `relative` anchors the mega panels */}
+   509→      <header
+   510→        className={cn(
+   511→          "relative sticky top-0 z-50 border-b transition-all duration-300",
+   512→          solid
+   513→            ? "border-hairline bg-background/85 backdrop-blur-md"
+   514→            : "border-transparent bg-background/60 backdrop-blur-sm"
+   515→        )}
+   516→      >
+   517→        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+   518→          <a href="#top" className="focus-carbon" aria-label="ABWcurious home">
+   519→            <Logo />
+   520→          </a>
+   521→
+   522→          <nav className="hidden lg:flex items-center gap-3 xl:gap-5" aria-label="Primary">
+   523→            <a
+   524→              href="#about"
+   525→              aria-current={active === "#about" ? "true" : undefined}
+   526→              className={cn(
+   527→                "relative inline-flex items-center gap-1.5 font-mono text-[11px] xl:text-[13px] transition-colors focus-carbon",
+   528→                active === "#about" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+   529→              )}
+   530→            >
+   531→              <Users className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   532→              About
+   533→              {active === "#about" && (
+   534→                <motion.span
+   535→                  layoutId={isView ? "nav-underline-view" : "nav-underline"}
+   536→                  className="absolute -bottom-[7px] left-0 h-[2px] w-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+   537→                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
+   538→                  aria-hidden="true"
+   539→                />
+   540→              )}
+   541→            </a>
+   542→
+   543→            <ServicesDropdown active={active} variant={variant} />
+   544→            <ProductsDropdown active={active} variant={variant} />
+   545→
+   546→            <button
+   547→              type="button"
+   548→              onClick={() => openBlogs()}
+   549→              className="relative inline-flex items-center gap-1.5 font-mono text-[11px] xl:text-[13px] text-muted-foreground transition-colors hover:text-foreground focus-carbon"
+   550→            >
+   551→              <Newspaper className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   552→              Blogs
+   553→            </button>
+   554→
+   555→            <a
+   556→              href="#contact"
+   557→              aria-current={active === "#contact" ? "true" : undefined}
+   558→              className={cn(
+   559→                "relative inline-flex items-center gap-1.5 font-mono text-[11px] xl:text-[13px] transition-colors focus-carbon",
+   560→                active === "#contact" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+   561→              )}
+   562→            >
+   563→              <Mail className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   564→              Contact Us
+   565→              {active === "#contact" && (
+   566→                <motion.span
+   567→                  layoutId={isView ? "nav-underline-view" : "nav-underline"}
+   568→                  className="absolute -bottom-[7px] left-0 h-[2px] w-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+   569→                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
+   570→                  aria-hidden="true"
+   571→                />
+   572→              )}
+   573→            </a>
+   574→          </nav>
+   575→
+   576→          <div className="flex items-center gap-3">
+   577→            {/* ⌘K command palette trigger — desktop chip */}
+   578→            <button
+   579→              type="button"
+   580→              onClick={() => window.dispatchEvent(new CustomEvent("abw:palette-open"))}
+   581→              aria-label="Open command palette (Ctrl or Cmd + K)"
+   582→              title="Command palette — ⌘K"
+   583→              className="hidden xl:inline-flex h-9 items-center gap-2 border border-hairline px-3 font-mono text-xs text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+   584→            >
+   585→              <CommandIcon className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   586→              K
+   587→            </button>
+   588→            <RollButton href="#contact" variant="primary" arrow className="hidden sm:inline-flex h-10 px-5 text-[13px]">
+   589→              Start a Project
+   590→            </RollButton>
+   591→            <button
+   592→              className="lg:hidden inline-flex h-10 w-10 items-center justify-center border border-hairline-strong text-foreground focus-carbon"
+   593→              onClick={() => setOpen(!open)}
+   594→              aria-label={open ? "Close menu" : "Open menu"}
+   595→              aria-expanded={open}
+   596→            >
+   597→              {open ? <X className="size-5" strokeWidth={1.5} /> : <Menu className="size-5" strokeWidth={1.5} />}
+   598→            </button>
+   599→          </div>
+   600→        </div>
+   601→
+   602→        {/* Mobile menu — Services and Products expand inline */}
+   603→        <div
+   604→          className={cn(
+   605→            "lg:hidden border-t border-hairline bg-background/95 backdrop-blur-md transition-[max-height] duration-300",
+   606→            open ? "max-h-[calc(100dvh-4rem)] overflow-y-auto" : "max-h-0 overflow-hidden border-t-0"
+   607→          )}
+   608→        >
+   609→          <nav className="flex flex-col px-6 py-4" aria-label="Mobile">
+   610→            {/* About */}
+   611→            <a
+   612→              href="#about"
+   613→              onClick={() => setOpen(false)}
+   614→              className="flex items-center gap-3 border-b border-hairline py-3.5 font-mono text-sm text-muted-foreground hover:text-foreground focus-carbon"
+   615→            >
+   616→              <Users className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   617→              <span>
+   618→                <span className="mr-3 text-ibm-bright">01</span>About
+   619→              </span>
+   620→            </a>
+   621→
+   622→            {/* Services accordion */}
+   623→            <div className="border-b border-hairline">
+   624→              <button
+   625→                type="button"
+   626→                onClick={() => mobileToggle("services")}
+   627→                aria-expanded={expanded === "services"}
+   628→                aria-controls={variant === "view" ? "mobile-services-view" : "mobile-services"}
+   629→                className="flex w-full items-center justify-between py-3.5 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground focus-carbon"
+   630→              >
+   631→                <span className="inline-flex items-center gap-3">
+   632→                  <Layers className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   633→                  <span>
+   634→                    <span className="mr-3 text-ibm-bright">02</span>Services
+   635→                  </span>
+   636→                </span>
+   637→                <ChevronDown
+   638→                  className={cn("size-4 transition-transform duration-300", expanded === "services" && "rotate-180")}
+   639→                  strokeWidth={1.5}
+   640→                  aria-hidden="true"
+   641→                />
+   642→              </button>
+   643→              <div
+   644→                id={variant === "view" ? "mobile-services-view" : "mobile-services"}
+   645→                className={cn(
+   646→                  "overflow-hidden transition-[max-height] duration-300",
+   647→                  expanded === "services" ? "max-h-[420px]" : "max-h-0"
+   648→                )}
+   649→              >
+   650→                <ul className="pb-2" aria-label="Service categories">
+   651→                  {CATEGORIES.map((c) => (
+   652→                    <li key={c.slug}>
+   653→                      <button
+   654→                        type="button"
+   655→                        onClick={() => {
+   656→                          setOpen(false);
+   657→                          setExpanded(null);
+   658→                          openCategory(c.slug);
+   659→                        }}
+   660→                        className="flex w-full items-center justify-between gap-3 py-2.5 pl-12 pr-2 text-left text-sm text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+   661→                      >
+   662→                        <span className="truncate">{c.name}</span>
+   663→                        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/70">
+   664→                          {categoryServiceCount(c)} svc
+   665→                        </span>
+   666→                      </button>
+   667→                    </li>
+   668→                  ))}
+   669→                </ul>
+   670→              </div>
+   671→            </div>
+   672→
+   673→            {/* Products accordion */}
+   674→            <div className="border-b border-hairline">
+   675→              <button
+   676→                type="button"
+   677→                onClick={() => mobileToggle("products")}
+   678→                aria-expanded={expanded === "products"}
+   679→                aria-controls={variant === "view" ? "mobile-products-view" : "mobile-products"}
+   680→                className="flex w-full items-center justify-between py-3.5 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground focus-carbon"
+   681→              >
+   682→                <span className="inline-flex items-center gap-3">
+   683→                  <Package className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   684→                  <span>
+   685→                    <span className="mr-3 text-ibm-bright">03</span>Products
+   686→                  </span>
+   687→                </span>
+   688→                <ChevronDown
+   689→                  className={cn("size-4 transition-transform duration-300", expanded === "products" && "rotate-180")}
+   690→                  strokeWidth={1.5}
+   691→                  aria-hidden="true"
+   692→                />
+   693→              </button>
+   694→              <div
+   695→                id={variant === "view" ? "mobile-products-view" : "mobile-products"}
+   696→                className={cn(
+   697→                  "overflow-hidden transition-[max-height] duration-300",
+   698→                  expanded === "products" ? "max-h-[480px]" : "max-h-0"
+   699→                )}
+   700→              >
+   701→                <ul className="pb-2" aria-label="Products">
+   702→                  {PRODUCTS.map((p) => (
+   703→                    <li key={p.slug}>
+   704→                      <button
+   705→                        type="button"
+   706→                        onClick={() => {
+   707→                          setOpen(false);
+   708→                          setExpanded(null);
+   709→                          openProductFromNav(p.slug);
+   710→                        }}
+   711→                        className="flex w-full items-center justify-between gap-3 py-2.5 pl-12 pr-2 text-left text-sm text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+   712→                      >
+   713→                        <span className="truncate">{p.name}</span>
+   714→                        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/70">
+   715→                          {p.statusLabel}
+   716→                        </span>
+   717→                      </button>
+   718→                    </li>
+   719→                  ))}
+   720→                  <li>
+   721→                    <button
+   722→                      type="button"
+   723→                      onClick={() => {
+   724→                        setOpen(false);
+   725→                        setExpanded(null);
+   726→                        openProducts();
+   727→                      }}
+   728→                      className="flex w-full items-center gap-2 py-2.5 pl-12 pr-2 text-left font-mono text-xs text-ibm-soft transition-colors hover:text-ibm-blue focus-carbon"
+   729→                    >
+   730→                      View all products
+   731→                      <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   732→                    </button>
+   733→                  </li>
+   734→                </ul>
+   735→              </div>
+   736→            </div>
+   737→
+   738→            {/* Blogs */}
+   739→            <button
+   740→              type="button"
+   741→              onClick={() => {
+   742→                setOpen(false);
+   743→                openBlogs();
+   744→              }}
+   745→              className="flex w-full items-center gap-3 border-b border-hairline py-3.5 font-mono text-sm text-muted-foreground hover:text-foreground focus-carbon"
+   746→            >
+   747→              <Newspaper className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   748→              <span>
+   749→                <span className="mr-3 text-ibm-bright">04</span>Blogs
+   750→              </span>
+   751→              <ArrowUpRight className="ml-auto size-4" strokeWidth={1.5} aria-hidden="true" />
+   752→            </button>
+   753→
+   754→            {/* Contact Us */}
+   755→            <a
+   756→              href="#contact"
+   757→              onClick={() => setOpen(false)}
+   758→              className="flex items-center gap-3 border-b border-hairline py-3.5 font-mono text-sm text-muted-foreground hover:text-foreground focus-carbon"
+   759→            >
+   760→              <Mail className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   761→              <span>
+   762→                <span className="mr-3 text-ibm-bright">05</span>Contact Us
+   763→              </span>
+   764→              <ArrowUpRight className="ml-auto size-4" strokeWidth={1.5} aria-hidden="true" />
+   765→            </a>
+   766→
+   767→            {/* ⌘K command palette trigger — mobile row */}
+   768→            <button
+   769→              type="button"
+   770→              onClick={() => {
+   771→                setOpen(false);
+   772→                window.dispatchEvent(new CustomEvent("abw:palette-open"));
+   773→              }}
+   774→              className="mt-4 flex w-full items-center justify-between border border-hairline px-4 py-3 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+   775→            >
+   776→              <span className="inline-flex items-center gap-2">
+   777→                <CommandIcon className="size-3.5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+   778→                Quick actions
+   779→              </span>
+   780→              <kbd className="border border-hairline bg-white px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+   781→            </button>
+   782→            <RollButton href="#contact" variant="primary" arrow className="mt-5 w-full" onClick={() => setOpen(false)}>
+   783→              Start a Project
+   784→            </RollButton>
+   785→          </nav>
+   786→        </div>
+   787→      </header>
+   788→    </>
+   789→  );
+   790→}
+   791→
+   792→export function SocialRow({ className }: { className?: string }) {
+   793→  /* Placeholder profile handles — swap for the studio's real profiles when available. */
+   794→  const socials = [
+   795→    { icon: Github, label: "GitHub", href: "https://github.com/abwcurious" },
+   796→    { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/abwcurious" },
+   797→    { icon: Twitter, label: "X / Twitter", href: "https://x.com/abwcurious" },
+   798→  ];
+   799→  return (
+   800→    <div className={cn("flex items-center gap-2", className)}>
+   801→      {socials.map(({ icon: Icon, label, href }) => (
+   802→        <a
+   803→          key={label}
+   804→          href={href}
+   805→          target="_blank"
+   806→          rel="noopener noreferrer"
+   807→          aria-label={`${label} (opens in a new tab)`}
+   808→          title={label}
+   809→          className="inline-flex h-9 w-9 items-center justify-center border border-hairline text-muted-foreground hover:border-ibm-bright hover:text-ibm-bright transition-colors focus-carbon"
+   810→        >
+   811→          <Icon className="size-4" strokeWidth={1.5} />
+   812→        </a>
+   813→      ))}
+   814→    </div>
+   815→  );
+   816→}
+   817→

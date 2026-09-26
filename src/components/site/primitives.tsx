@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion, useSpring } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -172,6 +172,86 @@ export function CountUp({
       {value.toFixed(decimals)}
       {suffix}
     </span>
+  );
+}
+
+/* ---------------- Magnetic: cursor-attracting wrapper for CTAs ------------- */
+
+export function Magnetic({
+  children,
+  strength = 0.28,
+  className,
+}: {
+  children: React.ReactNode;
+  strength?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const x = useSpring(0, { stiffness: 160, damping: 14, mass: 0.25 });
+  const y = useSpring(0, { stiffness: 160, damping: 14, mass: 0.25 });
+
+  return (
+    <motion.div
+      ref={ref}
+      className={cn("inline-block", className)}
+      style={{ x, y }}
+      onPointerMove={(e) => {
+        if (reduced || e.pointerType !== "mouse" || !ref.current) return;
+        const r = ref.current.getBoundingClientRect();
+        x.set((e.clientX - (r.left + r.width / 2)) * strength);
+        y.set((e.clientY - (r.top + r.height / 2)) * strength);
+      }}
+      onPointerLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ---------------- TiltCard: subtle 3D pointer tilt wrapper ---------------- */
+
+export function TiltCard({
+  children,
+  max = 5,
+  className,
+}: {
+  children: React.ReactNode;
+  max?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const rx = useSpring(0, { stiffness: 140, damping: 16 });
+  const ry = useSpring(0, { stiffness: 140, damping: 16 });
+
+  return (
+    <motion.div
+      ref={ref}
+      className={cn("[perspective:1100px]", className)}
+      onPointerMove={(e) => {
+        if (reduced || e.pointerType !== "mouse" || !ref.current) return;
+        const r = ref.current.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        ry.set(px * max * 2);
+        rx.set(-py * max * 2);
+      }}
+      onPointerLeave={() => {
+        rx.set(0);
+        ry.set(0);
+      }}
+    >
+      <motion.div
+        style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
+        className="h-full will-change-transform"
+      >
+        {children}
+      </motion.div>
+    </motion.div>
   );
 }
 

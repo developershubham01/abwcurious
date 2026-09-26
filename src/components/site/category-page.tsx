@@ -3,20 +3,14 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight,
-  X,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { CATEGORIES, CATEGORY_BY_SLUG, categoryServiceCount, type Category } from "@/lib/catalog";
 import { closeCategory, openCategory, useCatalogRoute, useCatalogRouter } from "@/lib/catalog-route";
 import { useInquiryStore } from "@/lib/store";
 import { Eyebrow, RollButton } from "./primitives";
 import { SplitText, Typewriter, Ticker } from "./text-anim";
 import { SaasDemo } from "./saas-demo";
+import { ViewShell } from "./view-shell";
 
 /**
  * Full-screen service-category "pages" on hash routes #/services/<slug>.
@@ -68,8 +62,7 @@ function CategoryPage({ category }: { category: Category }) {
   const prev = CATEGORIES[(index - 1 + CATEGORIES.length) % CATEGORIES.length];
   const next = CATEGORIES[(index + 1) % CATEGORIES.length];
   const count = categoryServiceCount(category);
-  const presetService = useInquiryStore((s) => s.presetService);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const setPresetService = useInquiryStore((s) => s.setPresetService);
 
   /* Escape closes — matching the site-wide dialog behaviour */
   useEffect(() => {
@@ -77,13 +70,12 @@ function CategoryPage({ category }: { category: Category }) {
       if (e.key === "Escape") closeCategory();
     };
     window.addEventListener("keydown", onKey);
-    closeBtnRef.current?.focus();
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   /* Close the takeover, then glide to the contact form with the category pre-filled */
   const startProject = () => {
-    presetService(category.name);
+    setPresetService(category.name);
     closeCategory();
     window.setTimeout(() => {
       document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
@@ -91,58 +83,12 @@ function CategoryPage({ category }: { category: Category }) {
   };
 
   return (
-    <motion.div
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${category.name} — service details`}
-      className="fixed inset-0 z-[90] overflow-y-auto bg-background"
-      initial={{ opacity: 0, y: 28, scale: 0.995 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, transition: { duration: 0.28, ease: "easeIn" } }}
-      transition={{ duration: 0.45, ease: EASE }}
+    <ViewShell
+      crumb={`Services / ${category.short}`}
+      label={`${category.name} — service details`}
+      activeNav="#services"
+      onClose={closeCategory}
     >
-      {/* ================= top bar ================= */}
-      <div className="sticky top-0 z-20 border-b border-hairline bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:px-6">
-          <span className="hidden items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground md:inline-flex">
-            Services
-            <span className="text-hairline-strong" aria-hidden="true">/</span>
-            <span className="text-foreground">{category.short}</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5 border border-hairline px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground md:hidden">
-            {category.num} / {count}
-          </span>
-          <span className="ml-auto flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => openCategory(prev.slug)}
-              aria-label={`Previous service category: ${prev.name}`}
-              className="inline-flex h-9 w-9 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
-            >
-              <ChevronLeft className="size-4" strokeWidth={1.5} />
-            </button>
-            <button
-              type="button"
-              onClick={() => openCategory(next.slug)}
-              aria-label={`Next service category: ${next.name}`}
-              className="inline-flex h-9 w-9 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
-            >
-              <ChevronRight className="size-4" strokeWidth={1.5} />
-            </button>
-            <button
-              ref={closeBtnRef}
-              type="button"
-              onClick={closeCategory}
-              aria-label="Close category page (Escape)"
-              className="inline-flex h-9 items-center gap-2 border border-hairline-strong bg-white px-3 font-mono text-xs uppercase tracking-[0.14em] text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
-            >
-              <X className="size-4" strokeWidth={1.5} />
-              <span className="hidden sm:inline">Esc</span>
-            </button>
-          </span>
-        </div>
-      </div>
-
       {/* ================= hero ================= */}
       <div className="border-b border-hairline">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
@@ -423,6 +369,6 @@ function CategoryPage({ category }: { category: Category }) {
           </button>
         </div>
       </nav>
-    </motion.div>
+    </ViewShell>
   );
 }

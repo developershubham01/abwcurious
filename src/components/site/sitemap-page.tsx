@@ -1,0 +1,465 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowUpRight,
+  Command as CommandIcon,
+  FileCode2,
+  Home,
+  Layers,
+  Map as MapIcon,
+  Newspaper,
+  Package,
+  Rss,
+  Search,
+  Terminal,
+  XCircle,
+} from "lucide-react";
+import { CATEGORIES } from "@/lib/catalog";
+import { PRODUCTS } from "@/lib/products";
+import { closeView, openBlogs, openProduct, openProducts, useViewRoute } from "@/lib/view-route";
+import { openCategory } from "@/lib/catalog-route";
+import { Eyebrow, RollButton } from "./primitives";
+import { SplitText, Typewriter } from "./text-anim";
+import { ViewShell } from "./view-shell";
+
+/**
+ * Sitemap page (#/sitemap) — an index of EVERY page on the site:
+ * the landing sections, all 7 product pages, all 6 service-category
+ * pages and the resource/utility destinations. Filterable, keyboard
+ * friendly, and every row navigates for real.
+ */
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+type RowKind = "anchor" | "view" | "external" | "action";
+
+interface SitemapRow {
+  num: string;
+  label: string;
+  desc: string;
+  target: string;
+  kind: RowKind;
+  /** anchor → href; view → hash route opener; external → url; action → callback id */
+  arg: string;
+}
+
+interface SitemapGroup {
+  id: string;
+  label: string;
+  desc: string;
+  rows: SitemapRow[];
+}
+
+const LANDING_SECTIONS: { id: string; label: string; desc: string }[] = [
+  { id: "top", label: "Home", desc: "The hero — where curiosity starts" },
+  { id: "about", label: "About the studio", desc: "Who we are and how we think" },
+  { id: "services", label: "Services showcase", desc: "Six practices, 72 sub-services" },
+  { id: "products", label: "Product showcase", desc: "The SaaS platforms we ship" },
+  { id: "process", label: "Our process", desc: "Four steps, zero mystery" },
+  { id: "stack", label: "Tech stack", desc: "The tools we trust in production" },
+  { id: "work", label: "Selected work", desc: "Recent projects and outcomes" },
+  { id: "cases", label: "Case files", desc: "Deep dives into real builds" },
+  { id: "pricing", label: "Pricing", desc: "Engagement models that scale" },
+  { id: "faq", label: "FAQ", desc: "Common questions, straight answers" },
+  { id: "notes", label: "Field notes", desc: "Engineering journal on the home page" },
+  { id: "careers", label: "Careers", desc: "Open roles in the studio" },
+  { id: "contact", label: "Get in touch", desc: "Project brief, email, phone" },
+];
+
+function buildGroups(): SitemapGroup[] {
+  let n = 0;
+  const nextNum = () => String(++n).padStart(2, "0");
+
+  return [
+    {
+      id: "main",
+      label: "Main site",
+      desc: "Landing page sections — every anchor is one glide away",
+      rows: LANDING_SECTIONS.map((s) => ({
+        num: nextNum(),
+        label: s.label,
+        desc: s.desc,
+        target: `#${s.id}`,
+        kind: "anchor" as const,
+        arg: `#${s.id}`,
+      })),
+    },
+    {
+      id: "products",
+      label: "Products",
+      desc: "Full pages on hash routes — overview plus one page per platform",
+      rows: [
+        {
+          num: nextNum(),
+          label: "All products — overview",
+          desc: "The full SaaS line with status, stack and demos",
+          target: "#/products",
+          kind: "view",
+          arg: "products",
+        },
+        ...PRODUCTS.map((p) => ({
+          num: nextNum(),
+          label: p.name,
+          desc: p.tagline,
+          target: `#/products/${p.slug}`,
+          kind: "view" as const,
+          arg: p.slug,
+        })),
+      ],
+    },
+    {
+      id: "services",
+      label: "Services",
+      desc: "Category playbooks — each opens a full page with 12 sub-services",
+      rows: CATEGORIES.map((c) => ({
+        num: nextNum(),
+        label: c.name,
+        desc: `${c.short} · ${c.num} practice`,
+        target: `#/services/${c.slug}`,
+        kind: "view" as const,
+        arg: c.slug,
+      })),
+    },
+    {
+      id: "resources",
+      label: "Resources",
+      desc: "Blog, feeds and studio utilities",
+      rows: [
+        {
+          num: nextNum(),
+          label: "Blog — field notes",
+          desc: "Long-form articles from the build floor",
+          target: "#/blogs",
+          kind: "view",
+          arg: "blogs",
+        },
+        {
+          num: nextNum(),
+          label: "RSS feed",
+          desc: "Syndicated XML — new notes land here first",
+          target: "/api/rss",
+          kind: "external",
+          arg: "/api/rss",
+        },
+        {
+          num: nextNum(),
+          label: "Sitemap XML",
+          desc: "Machine-readable index for crawlers",
+          target: "/sitemap.xml",
+          kind: "external",
+          arg: "/sitemap.xml",
+        },
+        {
+          num: nextNum(),
+          label: "Quick actions",
+          desc: "The ⌘K command palette — jump anywhere",
+          target: "⌘K",
+          kind: "action",
+          arg: "palette",
+        },
+        {
+          num: nextNum(),
+          label: "Studio console",
+          desc: "Internal inbox and stats (passcode)",
+          target: "⇧⌘K",
+          kind: "action",
+          arg: "console",
+        },
+      ],
+    },
+  ];
+}
+
+const GROUP_ICONS: Record<string, typeof Home> = {
+  main: Home,
+  products: Package,
+  services: Layers,
+  resources: Newspaper,
+};
+
+export function SitemapPortal() {
+  const route = useViewRoute((s) => s.route);
+  const open = route.kind === "sitemap";
+  const lastFocused = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (open && !lastFocused.current) {
+      lastFocused.current = document.activeElement as HTMLElement | null;
+    }
+    if (!open && lastFocused.current) {
+      lastFocused.current?.focus?.();
+      lastFocused.current = null;
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const prevTitle = document.title;
+    const prevOverflow = document.body.style.overflow;
+    document.title = "Sitemap — ABWcurious";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.title = prevTitle;
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeView();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  return <AnimatePresence mode="wait">{open && <SitemapPage key="sitemap" />}</AnimatePresence>;
+}
+
+function SitemapRowButton({
+  row,
+  index,
+  total,
+}: {
+  row: SitemapRow;
+  index: number;
+  total: number;
+}) {
+  const inner = (
+    <>
+      <span className="w-7 shrink-0 font-mono text-[10px] text-ibm-bright" aria-hidden="true">
+        {row.num}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium text-foreground">{row.label}</span>
+        <span className="mt-0.5 block truncate text-xs text-muted-foreground">{row.desc}</span>
+      </span>
+      <span
+        className="hidden shrink-0 border border-hairline px-2 py-0.5 font-mono text-[10px] text-muted-foreground md:block"
+        aria-hidden="true"
+      >
+        {row.target}
+      </span>
+      <ArrowUpRight
+        className="size-4 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ibm-bright"
+        strokeWidth={1.5}
+        aria-hidden="true"
+      />
+    </>
+  );
+
+  const cls =
+    "group flex w-full items-center gap-3 px-4 py-3.5 text-left transition-all duration-200 hover:bg-ibm-blue/[0.05] hover:shadow-[inset_2px_0_0_0_#0f62fe] focus-carbon sm:gap-4 sm:px-5";
+
+  return (
+    <motion.li
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: Math.min(index * 0.025, 0.4), ease: EASE }}
+      style={{ width: "100%" }}
+      aria-setsize={total}
+      aria-posinset={index + 1}
+    >
+      {row.kind === "anchor" ? (
+        <a href={row.arg} className={cls}>
+          {inner}
+        </a>
+      ) : row.kind === "external" ? (
+        <a href={row.arg} target="_blank" rel="noopener noreferrer" className={cls}>
+          {inner}
+        </a>
+      ) : row.kind === "view" ? (
+        <button
+          type="button"
+          onClick={() =>
+            row.arg === "products"
+              ? openProducts()
+              : row.arg === "blogs"
+                ? openBlogs()
+                : openProduct(row.arg)
+          }
+          className={cls}
+        >
+          {inner}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() =>
+            window.dispatchEvent(
+              new CustomEvent(row.arg === "palette" ? "abw:palette-open" : "abw:console-open")
+            )
+          }
+          className={cls}
+        >
+          {inner}
+        </button>
+      )}
+    </motion.li>
+  );
+}
+
+function SitemapPage() {
+  const [query, setQuery] = useState("");
+  const groups = useMemo(() => buildGroups(), []);
+  const total = groups.reduce((acc, g) => acc + g.rows.length, 0);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return groups;
+    return groups
+      .map((g) => ({
+        ...g,
+        rows: g.rows.filter((r) =>
+          `${r.label} ${r.desc} ${r.target}`.toLowerCase().includes(q)
+        ),
+      }))
+      .filter((g) => g.rows.length > 0);
+  }, [groups, query]);
+
+  const shown = filtered.reduce((acc, g) => acc + g.rows.length, 0);
+
+  return (
+    <ViewShell crumb="Sitemap / Every page" label="Sitemap — every page of the site" onClose={closeView}>
+      <main className="flex-1">
+        {/* ================= hero ================= */}
+        <section className="border-b border-hairline">
+          <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20">
+            <Eyebrow className="justify-start">
+              Sitemap — {total} destinations · every page indexed
+            </Eyebrow>
+            <h1 className="mt-7 max-w-4xl text-4xl font-light leading-[1.05] tracking-tight sm:text-6xl">
+              <SplitText text="Every page," immediate />
+              <br />
+              <span className="text-ibm-bright">
+                <SplitText text="one map." immediate delay={0.22} />
+              </span>
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              The whole studio site on a single page — landing sections, all seven product
+              pages, all six service playbooks and the utilities. Pick a destination.
+            </p>
+            <div className="mt-5 max-w-xl">
+              <Typewriter
+                prefix="Try: "
+                phrases={["“qr” finds IntelliQR", "“careers” finds the roles", "“rss” finds the feed"]}
+                className="font-mono text-sm text-ibm-soft"
+              />
+            </div>
+
+            {/* filter */}
+            <div className="mt-10 flex max-w-xl flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="flex h-11 flex-1 items-center border border-hairline-strong bg-white focus-within:border-ibm-bright">
+                <Search className="ml-3 size-4 shrink-0 text-muted-foreground" strokeWidth={1.5} aria-hidden="true" />
+                <label htmlFor="sitemap-filter" className="sr-only">
+                  Filter destinations
+                </label>
+                <input
+                  id="sitemap-filter"
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Filter pages — try “qr” or “careers”"
+                  className="h-full w-full min-w-0 bg-transparent px-3 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    aria-label="Clear filter"
+                    className="mr-2 inline-flex size-7 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+                  >
+                    <XCircle className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+              <p
+                className="shrink-0 border border-hairline bg-ibm-blue/[0.04] px-3 py-2.5 font-mono text-[11px] text-muted-foreground"
+                role="status"
+              >
+                {shown} / {total} destinations
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ================= groups ================= */}
+        <section aria-label="All destinations" className="border-b border-hairline">
+          <div className="mx-auto max-w-7xl px-6 py-12">
+            {filtered.length === 0 ? (
+              <div className="border border-hairline bg-ibm-blue/[0.03] px-6 py-14 text-center">
+                <MapIcon className="mx-auto size-6 text-muted-foreground" strokeWidth={1.5} aria-hidden="true" />
+                <p className="mt-4 font-mono text-sm text-muted-foreground">
+                  No destinations match “{query}” — try “qr”, “blogs” or “pricing”.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-12">
+                {filtered.map((group, gi) => {
+                  const GroupIcon = GROUP_ICONS[group.id] ?? MapIcon;
+                  return (
+                    <motion.section
+                      key={group.id}
+                      aria-label={group.label}
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: gi * 0.08, ease: EASE }}
+                    >
+                      <div className="flex flex-wrap items-baseline justify-between gap-2 border-t-2 border-foreground pt-4">
+                        <h2 className="inline-flex items-center gap-2.5 text-xl tracking-tight">
+                          <GroupIcon className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                          {group.label}
+                        </h2>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                          {group.rows.length} {group.rows.length === 1 ? "page" : "pages"}
+                        </p>
+                      </div>
+                      <p className="mt-1.5 text-sm text-muted-foreground">{group.desc}</p>
+                      <ul className="mt-4 divide-y divide-hairline border border-hairline bg-white">
+                        {group.rows.map((row) => (
+                          <SitemapRowButton
+                            key={row.num}
+                            row={row}
+                            index={Number(row.num) - 1}
+                            total={total}
+                          />
+                        ))}
+                      </ul>
+                    </motion.section>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ================= CTA ================= */}
+        <section>
+          <div className="mx-auto max-w-7xl px-6 py-14">
+            <div className="flex flex-col items-start justify-between gap-6 border border-hairline bg-ibm-blue/[0.03] px-6 py-8 sm:px-10 lg:flex-row lg:items-center">
+              <div>
+                <h2 className="text-2xl tracking-tight">Can&apos;t find what you were looking for?</h2>
+                <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
+                  Skip the map — tell us what you need and a human answers within one business day.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <RollButton variant="outline" onClick={() => window.dispatchEvent(new CustomEvent("abw:palette-open"))}>
+                  <span className="inline-flex items-center gap-2">
+                    <CommandIcon className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                    Quick actions
+                  </span>
+                </RollButton>
+                <RollButton href="#contact" variant="primary" arrow>
+                  Get in touch
+                </RollButton>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </ViewShell>
+  );
+}

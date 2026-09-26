@@ -1,7 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, LoaderCircle, CheckCircle2, Copy, Check, Sparkles, BriefcaseBusiness, ContactRound } from "lucide-react";
+import { useState } from "react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Send,
+  LoaderCircle,
+  CheckCircle2,
+  HeartHandshake,
+  Navigation,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,85 +23,44 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { useInquiryStore } from "@/lib/store";
-import { cn } from "@/lib/utils";
-import { Eyebrow, Reveal } from "./primitives";
+import { Reveal } from "./primitives";
+import { SplitText } from "./text-anim";
+import { SocialRow } from "./social-row";
+import { COMPANY } from "@/data/company";
 
 const MESSAGE_MAX = 600;
 
+/** OpenStreetMap embed (no API key) built from COMPANY.map coords. */
+const MAP_EMBED = (() => {
+  const { lat, lng, span } = COMPANY.map;
+  const bbox = [lng - span, lat - span * 0.6, lng + span, lat + span * 0.6]
+    .map((n) => n.toFixed(4))
+    .join(",");
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat}%2C${lng}`;
+})();
+
 const INFO = [
-  { icon: Mail, label: "Email", value: "hello@abwcurious.com", href: "mailto:hello@abwcurious.com" },
-  { icon: Phone, label: "Phone", value: "+91 99999 99999", href: "tel:+919999999999" },
-  { icon: MapPin, label: "Studio", value: "Pune, Maharashtra — India", href: "#contact" },
-  { icon: Clock, label: "Hours", value: "Mon–Sat · 9:00–19:00 IST", href: "#contact" },
+  { icon: Mail, label: "Email", value: COMPANY.email, href: `mailto:${COMPANY.email}` },
+  { icon: Phone, label: "Phone", value: COMPANY.phone, href: COMPANY.phoneHref },
+  { icon: MapPin, label: "Studio", value: COMPANY.address, href: "#contact" },
+  { icon: Clock, label: "Hours", value: COMPANY.hours, href: "#contact" },
+];
+
+const TOPICS = [
+  "General hello",
+  "Work with us",
+  "Partnerships",
+  "Press & media",
+  "Join the team",
+  "Events & meetups",
 ];
 
 export function Contact() {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [service, setService] = useState<string>("");
-  const [copied, setCopied] = useState(false);
+  const [topic, setTopic] = useState<string>("");
   const [message, setMessage] = useState("");
-  const [role, setRole] = useState<string | null>(null);
-  const presetService = useInquiryStore((s) => s.presetService);
-  const presetNonce = useInquiryStore((s) => s.presetNonce);
-  const clearPreset = useInquiryStore((s) => s.clearPreset);
-  const presetRole = useInquiryStore((s) => s.presetRole);
-  const roleNonce = useInquiryStore((s) => s.roleNonce);
-  const clearPresetRole = useInquiryStore((s) => s.clearPresetRole);
-  const lastNonce = useRef(0);
-  const lastRoleNonce = useRef(0);
-
-  /* Prefill the service select when a service card (or case file) sent us here */
-  useEffect(() => {
-    if (presetService && presetNonce !== lastNonce.current) {
-      lastNonce.current = presetNonce;
-      setService(presetService);
-      toast({
-        title: "Service preselected",
-        description: `${presetService} — tell us a little more below.`,
-      });
-      clearPreset();
-    }
-  }, [presetNonce, presetService, clearPreset, toast]);
-
-  /* Prefill an application when a careers role sent us here */
-  useEffect(() => {
-    if (presetRole && roleNonce !== lastRoleNonce.current) {
-      lastRoleNonce.current = roleNonce;
-      setRole(presetRole);
-      setService("Join the team");
-      setMessage(
-        (prev) =>
-          prev.trim()
-            ? prev
-            : `Hi ABWcurious — I'd like to apply for the ${presetRole} role. A little about me: `
-      );
-      toast({
-        title: "Application started",
-        description: `${presetRole} — introduce yourself below.`,
-      });
-      clearPresetRole();
-    }
-  }, [roleNonce, presetRole, clearPresetRole, toast]);
-
-  async function copyEmail(e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText("hello@abwcurious.com");
-      setCopied(true);
-      toast({ title: "Email copied", description: "hello@abwcurious.com is on your clipboard." });
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast({
-        title: "Copy failed",
-        description: "Your browser blocked clipboard access.",
-        variant: "destructive",
-      });
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -106,7 +75,7 @@ export function Contact() {
           name: data.get("name"),
           email: data.get("email"),
           phone: data.get("phone"),
-          service: service || "General",
+          service: topic || "General hello",
           message: data.get("message"),
         }),
       });
@@ -114,9 +83,8 @@ export function Contact() {
       if (!res.ok) throw new Error(json.error || "Something went wrong");
       setDone(true);
       form.reset();
-      setService("");
+      setTopic("");
       setMessage("");
-      setRole(null);
       toast({
         title: "Message sent",
         description: "Thanks for reaching out — we reply within 24 hours.",
@@ -133,283 +101,260 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="relative overflow-hidden border-y border-hairline">
-      <div className="absolute inset-0 bg-grid-fine opacity-60" aria-hidden="true" />
-      <div
-        className="absolute inset-0"
-        aria-hidden="true"
-        style={{
-          background: "radial-gradient(ellipse 50% 60% at 85% 20%, rgba(15,98,254,0.12), transparent 60%)",
-        }}
-      />
-
-      <div className="relative mx-auto max-w-7xl px-6 py-20 lg:py-24 lg:border-x lg:border-hairline">
-        <div className="grid gap-14 lg:grid-cols-12">
-          {/* Info */}
-          <div className="lg:col-span-5">
+    <section id="contact" aria-label="Contact ABWcurious" className="relative scroll-mt-24 py-24 sm:py-28">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
+          {/* ---------------- left: info ---------------- */}
+          <div>
             <Reveal>
-              <Eyebrow className="justify-start">12 / Get in touch</Eyebrow>
-              <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
-                Have an idea? <span className="text-ibm-bright">Let&apos;s interrogate it.</span>
-              </h2>
-              <p className="mt-5 max-w-md text-muted-foreground">
-                Tell us what you are building. We reply within 24 hours with honest first thoughts —
-                and never a generic sales pitch.
+              <p className="inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.22em] text-ibm-soft">
+                <span className="h-px w-6 bg-current" aria-hidden="true" />
+                07 — Get in touch
+              </p>
+            </Reveal>
+            <h2 className="mt-6 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">
+              <SplitText text="Say hello to" />{" "}
+              <SplitText text="the team." delay={0.15} wordClassName="text-gradient font-normal" />
+            </h2>
+            <Reveal delay={0.12}>
+              <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-ink/60 sm:text-lg">
+                A project, a question, or just curiosity — the inbox reaches the whole team and we
+                answer fast.
               </p>
             </Reveal>
 
-            <Reveal delay={0.12}>
-              <div className="mt-9 grid grid-cols-1 gap-px border border-hairline bg-hairline sm:grid-cols-2">
-                {INFO.map((item) => (
-                  <div key={item.label} className="relative bg-card transition-colors hover:bg-ibm-blue/[0.05]">
-                    <a
-                      href={item.href}
-                      className="group flex items-start gap-3.5 p-5 focus-carbon"
-                    >
-                      <item.icon className="mt-0.5 size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
-                      <span>
-                        <span className="block font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                          {item.label}
-                        </span>
-                        <span className="mt-1 block text-sm">{item.value}</span>
-                      </span>
-                    </a>
-                    {item.label === "Email" && (
-                      <button
-                        type="button"
-                        onClick={copyEmail}
-                        aria-label="Copy email address to clipboard"
-                        title="Copy email"
-                        className="focus-carbon absolute right-3 top-3 z-10 flex size-8 items-center justify-center border border-hairline bg-background text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
-                      >
-                        {copied ? (
-                          <Check className="size-3.5 text-ibm-success" strokeWidth={2} aria-hidden="true" />
-                        ) : (
-                          <Copy className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
-                        )}
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="mt-6 border border-ibm-bright/40 bg-ibm-blue/[0.07] p-5">
-                <p className="font-mono text-sm text-ibm-soft">
-                  Currently accepting projects for next quarter.
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Two build slots remain — first call is free.
-                </p>
-              </div>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <a
-                  href="/api/vcard"
-                  download
-                  className="focus-carbon group inline-flex items-center gap-2 border border-hairline-strong bg-card px-4 py-2.5 font-mono text-xs text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
-                  title="Download the studio contact card (.vcf) — opens in your contacts app"
-                >
-                  <ContactRound className="size-4 text-ibm-bright transition-transform duration-300 group-hover:scale-110" strokeWidth={1.5} aria-hidden="true" />
-                  Save contact card
-                  <span className="border border-hairline px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-                    .vcf
-                  </span>
-                </a>
-                <span className="font-mono text-[10px] text-muted-foreground">
-                  One tap into your contacts app — details included.
+            <Reveal delay={0.15}>
+              <div className="mt-8 inline-flex items-center gap-2.5 rounded-full border border-ibm-success/25 bg-ibm-success/[0.08] px-4 py-2">
+                <HeartHandshake className="size-4 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/70">
+                  We reply within 24 hours
                 </span>
               </div>
             </Reveal>
-          </div>
 
-          {/* Form */}
-          <Reveal delay={0.15} className="lg:col-span-7">
-            <div className="relative border border-hairline-strong bg-card p-7 lg:p-10">
-              <span className="absolute -top-px -left-px h-3 w-3 border-t-2 border-l-2 border-ibm-bright" aria-hidden="true" />
-              <span className="absolute -bottom-px -right-px h-3 w-3 border-b-2 border-r-2 border-ibm-bright" aria-hidden="true" />
-
-              {service && !done && !role && (
-                <div className="mb-6 flex items-center gap-2.5 border border-ibm-bright/40 bg-ibm-blue/[0.06] px-4 py-2.5" role="status">
-                  <Sparkles className="size-4 shrink-0 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
-                  <p className="font-mono text-xs text-ibm-soft">
-                    Preselected: <span className="text-foreground">{service}</span>
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setService("")}
-                    className="focus-carbon ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-error"
-                  >
-                    Clear
-                  </button>
-                </div>
-              )}
-
-              {role && !done && (
-                <div className="mb-6 flex items-center gap-2.5 border border-ibm-bright/40 bg-ibm-blue/[0.06] px-4 py-2.5" role="status">
-                  <BriefcaseBusiness className="size-4 shrink-0 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
-                  <p className="font-mono text-xs text-ibm-soft">
-                    Application: <span className="text-foreground">{role}</span>
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setRole(null);
-                      setService("");
-                    }}
-                    className="focus-carbon ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-ibm-error"
-                  >
-                    Clear
-                  </button>
-                </div>
-              )}
-
-              {done ? (
-                <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
-                  <CheckCircle2 className="size-14 text-ibm-success" strokeWidth={1.25} aria-hidden="true" />
-                  <h3 className="mt-6 text-2xl tracking-tight">Message received.</h3>
-                  <p className="mt-2 max-w-sm text-muted-foreground">
-                    Thanks for writing to ABWcurious. A real human will reply within 24 hours.
-                  </p>
-                  <button
-                    onClick={() => setDone(false)}
-                    className="mt-8 border border-hairline-strong px-5 py-2.5 font-mono text-sm transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
-                  >
-                    Send another message
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6" noValidate={false}>
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div className="space-y-2.5">
-                      <Label htmlFor="name" className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Name *
-                      </Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        required
-                        placeholder="Ada Lovelace"
-                        className="h-12 border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
-                      />
-                    </div>
-                    <div className="space-y-2.5">
-                      <Label htmlFor="email" className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Email *
-                      </Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        placeholder="ada@company.com"
-                        className="h-12 border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div className="space-y-2.5">
-                      <Label htmlFor="phone" className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Phone
-                      </Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        placeholder="+91 ..."
-                        className="h-12 border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
-                      />
-                    </div>
-                    <div className="space-y-2.5">
-                      <Label htmlFor="service" className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        I&apos;m interested in *
-                      </Label>
-                      <Select value={service} onValueChange={setService} required>
-                        <SelectTrigger
-                          id="service"
-                          className="h-12 border-hairline-strong bg-white data-[state=open]:border-ibm-bright focus:ring-ibm-bright"
-                        >
-                          <SelectValue placeholder="Select a service" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-none border-hairline-strong bg-popover">
-                          {[
-                            "Software & Web Development",
-                            "Mobile App Development",
-                            "AI & Automation",
-                            "Digital Marketing",
-                            "Recruitment & HR Solutions",
-                            "Cloud, IT & Business Solutions",
-                            "Join the team",
-                            "Something else",
-                          ].map((s) => (
-                            <SelectItem key={s} value={s} className="rounded-none focus:bg-ibm-blue/10">
-                              {s}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    <div className="flex items-baseline justify-between gap-4">
-                      <Label htmlFor="message" className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Project details *
-                      </Label>
-                      {/* Carbon-style text-input counter */}
-                      <span
-                        aria-live="polite"
-                        className={cn(
-                          "font-mono text-xs tabular-nums",
-                          message.length >= MESSAGE_MAX
-                            ? "text-ibm-error"
-                            : message.length >= MESSAGE_MAX * 0.9
-                              ? "text-ibm-bright"
-                              : "text-muted-foreground"
-                        )}
-                      >
-                        {message.length} / {MESSAGE_MAX}
+            {/* info cards */}
+            <ul className="mt-9 grid gap-4 sm:grid-cols-2">
+              {INFO.map((item, i) => (
+                <Reveal key={item.label} delay={0.1 + i * 0.07}>
+                  <li>
+                    <a
+                      href={item.href}
+                      className="focus-carbon group flex items-start gap-3.5 rounded-2xl border border-ink/[0.07] bg-white p-4 shadow-[0_4px_20px_-10px_rgba(15,98,254,0.2)] transition-all duration-300 hover:-translate-y-0.5 hover:border-ibm-blue/30 hover:shadow-[0_16px_40px_-16px_rgba(15,98,254,0.4)]"
+                    >
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ibm-blue to-ibm-cyan text-white shadow-[0_8px_18px_-8px_rgba(15,98,254,0.6)] transition-transform duration-300 group-hover:scale-105">
+                        <item.icon className="size-4.5" strokeWidth={1.6} aria-hidden="true" />
                       </span>
-                    </div>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      required
-                      rows={5}
-                      maxLength={MESSAGE_MAX}
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="What are you building? What does success look like? Any timeline in mind?"
-                      className="min-h-[132px] border-hairline-strong bg-white focus-visible:ring-ibm-bright focus-visible:border-ibm-bright"
-                    />
-                  </div>
+                      <span className="min-w-0">
+                        <span className="block font-mono text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                          {item.label}
+                        </span>
+                        <span className="mt-1 block truncate text-sm font-medium text-ink">
+                          {item.value}
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                </Reveal>
+              ))}
+            </ul>
 
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="btn-roll group inline-flex h-13 w-full items-center justify-center gap-2 bg-primary px-6 py-3.5 font-mono text-sm text-primary-foreground transition-colors hover:bg-ibm-blue-hover focus-carbon disabled:opacity-60"
-                  >
-                    {submitting ? (
-                      <>
-                        <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-                        Sending…
-                      </>
-                    ) : (
-                      <>
-                        Send message
-                        <Send className="size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.75} aria-hidden="true" />
-                      </>
-                    )}
-                  </button>
-                  <p className="text-center font-mono text-xs text-muted-foreground">
-                    No spam. No newsletters. Just a reply.
-                  </p>
-                </form>
-              )}
+            <Reveal delay={0.2}>
+              <div className="mt-9">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink/45">
+                  Or find us on social
+                </p>
+                <SocialRow className="mt-3" />
+              </div>
+            </Reveal>
+          </div>
+          {/* ---------------- right: form ---------------- */}
+          <Reveal delay={0.15}>
+            <div className="relative h-full">
+              {/* soft gradient halo */}
+              <div
+                className="pointer-events-none absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-ibm-blue/[0.08] via-transparent to-ibm-cyan/[0.1] blur-xl"
+                aria-hidden="true"
+              />
+              <div className="relative h-full rounded-3xl border border-ink/[0.07] bg-white p-6 shadow-[0_24px_70px_-28px_rgba(15,98,254,0.4)] sm:p-9">
+                {done ? (
+                  <div className="flex h-full min-h-[24rem] flex-col items-center justify-center text-center">
+                    <span className="flex size-16 items-center justify-center rounded-full bg-ibm-success/10 text-ibm-success">
+                      <CheckCircle2 className="size-8" strokeWidth={1.5} aria-hidden="true" />
+                    </span>
+                    <h3 className="mt-6 text-2xl font-light tracking-tight text-ink">
+                      Message received
+                    </h3>
+                    <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink/60">
+                      Thanks for writing in — a real human (probably two) will get back to you within
+                      24 hours.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setDone(false)}
+                      className="focus-carbon mt-8 rounded-full border border-ibm-blue/30 px-6 py-2.5 text-sm font-medium text-ibm-bright transition-colors hover:bg-ibm-blue hover:text-white"
+                    >
+                      Send another message
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5" noValidate={false}>
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-name" className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/55">
+                          Name *
+                        </Label>
+                        <Input
+                          id="contact-name"
+                          name="name"
+                          required
+                          placeholder="Your name"
+                          autoComplete="name"
+                          className="h-12 rounded-xl border-ink/12 bg-[#f8faff] focus-visible:ring-ibm-blue/40"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-email" className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/55">
+                          Email *
+                        </Label>
+                        <Input
+                          id="contact-email"
+                          name="email"
+                          type="email"
+                          required
+                          placeholder="you@company.com"
+                          autoComplete="email"
+                          className="h-12 rounded-xl border-ink/12 bg-[#f8faff] focus-visible:ring-ibm-blue/40"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-phone" className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/55">
+                          Phone <span className="text-ink/30">(optional)</span>
+                        </Label>
+                        <Input
+                          id="contact-phone"
+                          name="phone"
+                          type="tel"
+                          placeholder="+91 …"
+                          autoComplete="tel"
+                          className="h-12 rounded-xl border-ink/12 bg-[#f8faff] focus-visible:ring-ibm-blue/40"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-topic" className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/55">
+                          Topic
+                        </Label>
+                        <Select value={topic || undefined} onValueChange={setTopic}>
+                          <SelectTrigger
+                            id="contact-topic"
+                            className="h-12 rounded-xl border-ink/12 bg-[#f8faff] focus-visible:ring-ibm-blue/40"
+                          >
+                            <SelectValue placeholder="What's this about?" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl border-ink/10">
+                            {TOPICS.map((t) => (
+                              <SelectItem key={t} value={t} className="rounded-lg">
+                                {t}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-baseline justify-between">
+                        <Label htmlFor="contact-message" className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/55">
+                          Message *
+                        </Label>
+                        <span className="font-mono text-[10px] tabular-nums text-ink/40">
+                          {message.length}/{MESSAGE_MAX}
+                        </span>
+                      </div>
+                      <Textarea
+                        id="contact-message"
+                        name="message"
+                        required
+                        rows={6}
+                        maxLength={MESSAGE_MAX}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder="Tell us a little about what you have in mind…"
+                        className="resize-none rounded-xl border-ink/12 bg-[#f8faff] focus-visible:ring-ibm-blue/40"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="focus-carbon group inline-flex h-13 w-full items-center justify-center gap-2.5 rounded-full bg-ibm-blue text-[15px] font-medium text-white shadow-[0_14px_34px_-10px_rgba(15,98,254,0.55)] transition-all duration-300 hover:bg-ibm-blue-hover hover:shadow-[0_18px_44px_-10px_rgba(15,98,254,0.65)] disabled:opacity-60 sm:w-auto sm:px-10"
+                    >
+                      {submitting ? (
+                        <>
+                          Sending
+                          <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+                        </>
+                      ) : (
+                        <>
+                          Send message
+                          <Send
+                            className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                            strokeWidth={1.75}
+                            aria-hidden="true"
+                          />
+                        </>
+                      )}
+                    </button>
+                    <p className="font-mono text-[10px] leading-relaxed tracking-[0.06em] text-ink/40">
+                      By sending, you agree to be contacted about your enquiry. No newsletters unless
+                      you ask.
+                    </p>
+                  </form>
+                )}
+              </div>
             </div>
           </Reveal>
         </div>
+
+        {/* ---------------- studio map ---------------- */}
+        <Reveal delay={0.1}>
+          <div className="relative mt-14 overflow-hidden rounded-3xl border border-ink/[0.07] bg-white shadow-[0_24px_70px_-30px_rgba(15,98,254,0.45)]">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/[0.06] px-5 py-4 sm:px-7">
+              <p className="inline-flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.22em] text-ink/55">
+                <MapPin className="size-3.5 text-ibm-bright" strokeWidth={1.75} aria-hidden="true" />
+                Studio — {COMPANY.address}
+              </p>
+              <a
+                href={COMPANY.map.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="focus-carbon group inline-flex h-9 items-center gap-2 rounded-full bg-ibm-blue px-4 font-mono text-[10px] uppercase tracking-[0.14em] text-white shadow-[0_10px_24px_-10px_rgba(15,98,254,0.6)] transition-colors hover:bg-ibm-blue-hover"
+              >
+                <Navigation
+                  className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                Get directions
+              </a>
+            </div>
+            <div className="relative aspect-[16/10] w-full sm:aspect-[21/9]">
+              <iframe
+                src={MAP_EMBED}
+                title={`Map — ABWcurious studio, ${COMPANY.address}`}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full border-0"
+              />
+              {/* hairline frame accent */}
+              <div
+                className="pointer-events-none absolute inset-0 rounded-b-3xl ring-1 ring-inset ring-ibm-blue/[0.08]"
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

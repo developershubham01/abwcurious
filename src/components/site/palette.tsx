@@ -9,6 +9,8 @@ import {
   IdCard,
   Layers,
   MailPlus,
+  Map as MapIcon,
+  Package,
   PenLine,
   Phone,
   Rss,
@@ -27,6 +29,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { CATEGORIES } from "@/lib/catalog";
 import { openCategory } from "@/lib/catalog-route";
+import { PRODUCTS } from "@/lib/products";
+import { openBlogs, openProduct, openProducts, openSitemap } from "@/lib/view-route";
 
 /**
  * ⌘K command palette — Carbon WHITE & BLUE restyle of shadcn/cmdk.
@@ -276,6 +280,70 @@ export function CommandPalette() {
               </span>
             </CommandItem>
           ))}
+        </CommandGroup>
+
+        <CommandSeparator className="bg-hairline" />
+
+        <CommandGroup heading="Product pages" className="[&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.22em] [&_[cmdk-group-heading]]:text-[10px]">
+          <CommandItem
+            value="products view all overview saas platforms"
+            onSelect={run(() => {
+              setOpen(false);
+              openProducts();
+            })}
+            className="rounded-none px-3 py-2.5 data-[selected=true]:bg-ibm-blue/[0.07] data-[selected=true]:shadow-[inset_2px_0_0_0_#0f62fe]"
+          >
+            <Package className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+            <span className="text-sm">View all products</span>
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              #/products
+            </span>
+          </CommandItem>
+          {PRODUCTS.map((p) => (
+            <CommandItem
+              key={p.slug}
+              value={`product ${p.name} ${p.slug} saas platform`}
+              onSelect={run(() => {
+                setOpen(false);
+                openProduct(p.slug);
+              })}
+              className="rounded-none px-3 py-2.5 data-[selected=true]:bg-ibm-blue/[0.07] data-[selected=true]:shadow-[inset_2px_0_0_0_#0f62fe]"
+            >
+              <Package className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+              <span className="text-sm">{p.name}</span>
+              <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                #/products/{p.slug}
+              </span>
+            </CommandItem>
+          ))}
+          <CommandItem
+            value="blog blogs articles field notes journal"
+            onSelect={run(() => {
+              setOpen(false);
+              openBlogs();
+            })}
+            className="rounded-none px-3 py-2.5 data-[selected=true]:bg-ibm-blue/[0.07] data-[selected=true]:shadow-[inset_2px_0_0_0_#0f62fe]"
+          >
+            <PenLine className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+            <span className="text-sm">Blog — field notes</span>
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              #/blogs
+            </span>
+          </CommandItem>
+          <CommandItem
+            value="sitemap every page index map directory"
+            onSelect={run(() => {
+              setOpen(false);
+              openSitemap();
+            })}
+            className="rounded-none px-3 py-2.5 data-[selected=true]:bg-ibm-blue/[0.07] data-[selected=true]:shadow-[inset_2px_0_0_0_#0f62fe]"
+          >
+            <MapIcon className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+            <span className="text-sm">Sitemap — every page</span>
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              #/sitemap
+            </span>
+          </CommandItem>
         </CommandGroup>
 
         <CommandSeparator className="bg-hairline" />

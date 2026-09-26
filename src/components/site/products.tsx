@@ -2,18 +2,20 @@
 
 import Image from "next/image";
 import { ArrowUpRight, Check, Sparkles } from "lucide-react";
-import { Eyebrow, Reveal, SectionFrame } from "./primitives";
+import { Eyebrow, Reveal, RollButton, SectionFrame } from "./primitives";
 import MaskedHeading from "@/components/reactbits/MaskedHeading";
 import ParticleText from "@/components/reactbits/ParticleText";
 import { DepthCard, DepthLayer } from "@/components/reactbits/DepthCard";
-import { PRODUCTS, type Product, type ProductStatus } from "@/lib/products";
+import { PRODUCTS, productStatusTotals, type Product, type ProductStatus } from "@/lib/products";
+import { openProduct, openProducts } from "@/lib/view-route";
 import { useInquiryStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 /**
- * "Our products" — the studio's own software line, layered with the
- * React Bits text effects: a MaskedHeading (image fills the letterforms),
- * a ParticleText banner and mouse-responsive DepthCards for each product.
+ * "Our products" — the studio's own SaaS line on the landing page:
+ * a MaskedHeading (image fills the letterforms), a ParticleText banner,
+ * mouse-responsive DepthCards and a "View all products" jump to the
+ * full product page (#/products).
  */
 
 const STATUS_STYLE: Record<ProductStatus, string> = {
@@ -45,26 +47,39 @@ function StatusChip({ status, label }: { status: ProductStatus; label: string })
 }
 
 function ProductCard({ product, index }: { product: Product; index: number }) {
-  const presetService = useInquiryStore((s) => s.presetService);
+  const setPresetService = useInquiryStore((s) => s.setPresetService);
 
   /* Prefill the contact form's "What do you need?" select via the shared
-     pipeline (same one the category pages use), then glide to #contact. */
-  const requestAccess = () => {
-    presetService(product.prefill);
+     pipeline (same one the product pages use), then glide to #contact. */
+  const requestAccess = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPresetService(product.prefill);
     window.setTimeout(() => {
       document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
     }, 60);
   };
 
   return (
-    <Reveal delay={(index % 2) * 0.08} className="h-full">
+    <Reveal delay={(index % 3) * 0.08} className="h-full">
       <DepthCard
         maxTilt={7}
         lift={12}
         className="group h-full focus-within:ring-2 focus-within:ring-ibm-blue focus-within:ring-offset-2"
         ariaLabel={`${product.name} — ${product.statusLabel}`}
       >
-        <article className="flex h-full flex-col border border-hairline bg-white transition-[border-color,box-shadow] duration-300 group-hover:border-ibm-blue/50 group-hover:shadow-[0_28px_56px_-28px_rgba(15,98,254,0.28)]">
+        <article
+          role="button"
+          tabIndex={0}
+          aria-label={`${product.name} — open the product page`}
+          onClick={() => openProduct(product.slug)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              openProduct(product.slug);
+            }
+          }}
+          className="flex h-full cursor-pointer flex-col border border-hairline bg-white transition-[border-color,box-shadow] duration-300 group-hover:border-ibm-blue/50 group-hover:shadow-[0_28px_56px_-28px_rgba(15,98,254,0.28)]"
+        >
           {/* image plane — 2D zoom inside its own clip so the 3D chain above stays intact */}
           <DepthLayer z={18}>
             <div className="relative aspect-[16/8] overflow-hidden border-b border-hairline bg-card">
@@ -72,7 +87,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
                 src={product.image}
                 alt={product.imageAlt}
                 fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
+                sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.045]"
               />
               <span
@@ -86,22 +101,17 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             <DepthLayer z={30}>
               <div className="flex items-center justify-between gap-3">
                 <StatusChip status={product.status} label={product.statusLabel} />
-                <span
-                  className="font-mono text-4xl font-light text-ink/[0.08]"
-                  aria-hidden="true"
-                >
+                <span className="font-mono text-4xl font-light text-ink/[0.08]" aria-hidden="true">
                   {product.num}
                 </span>
               </div>
               <h3 className="mt-4 text-2xl tracking-tight">{product.name}</h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
-                {product.tagline}
-              </p>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{product.tagline}</p>
             </DepthLayer>
 
             <DepthLayer z={14}>
               <ul className="mt-5 space-y-2.5" aria-label={`${product.name} features`}>
-                {product.features.map((feature) => (
+                {product.features.slice(0, 3).map((feature) => (
                   <li key={feature} className="flex items-start gap-2.5 text-sm text-foreground/85">
                     <Check className="mt-0.5 size-4 shrink-0 text-ibm-bright" strokeWidth={2} aria-hidden="true" />
                     {feature}
@@ -110,7 +120,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               </ul>
 
               <div className="mt-5 flex flex-wrap gap-2" aria-label={`${product.name} stack`}>
-                {product.stack.map((chip) => (
+                {product.stack.slice(0, 3).map((chip) => (
                   <span
                     key={chip}
                     className="border border-hairline bg-ibm-blue/[0.04] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground"
@@ -122,19 +132,26 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             </DepthLayer>
 
             <DepthLayer z={36} className="mt-auto pt-7">
-              <button
-                type="button"
-                onClick={requestAccess}
-                className="inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-blue focus-carbon"
-                aria-label={`${product.cta} — pre-fills the contact form for ${product.prefill}`}
-              >
-                {product.cta}
-                <ArrowUpRight
-                  className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  strokeWidth={1.5}
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span
+                  className="inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors group-hover:text-ibm-blue"
                   aria-hidden="true"
-                />
-              </button>
+                >
+                  Explore product
+                  <ArrowUpRight
+                    className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    strokeWidth={1.5}
+                  />
+                </span>
+                <button
+                  type="button"
+                  onClick={requestAccess}
+                  className="font-mono text-xs text-muted-foreground underline decoration-hairline-strong underline-offset-4 transition-colors hover:text-ibm-blue hover:decoration-ibm-blue focus-carbon"
+                  aria-label={`${product.cta} — pre-fills the contact form for ${product.prefill}`}
+                >
+                  {product.cta}
+                </button>
+              </div>
             </DepthLayer>
           </div>
         </article>
@@ -144,6 +161,8 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 }
 
 export function Products() {
+  const totals = productStatusTotals();
+
   return (
     <SectionFrame id="products">
       <div className="py-20 lg:py-24">
@@ -154,7 +173,7 @@ export function Products() {
         {/* MaskedHeading — the artwork fills the letterforms, parallax on hover */}
         <div className="mt-8">
           <MaskedHeading
-            text="We ship our own products"
+            text="SaaS platforms built for scale"
             tag="h2"
             src="/images/prod-masked-band.jpg"
             align="left"
@@ -178,12 +197,12 @@ export function Products() {
           <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <p className="max-w-xl leading-relaxed text-muted-foreground">
               Client work funds the lab — and the lab ships software we run
-              ourselves. Every product below grew out of a real engagement and
+              ourselves. Every platform below grew out of a real engagement and
               is maintained by the same team you'd hire.
             </p>
             <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
               <Sparkles className="size-3.5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
-              {PRODUCTS.length} products · 2 live
+              {totals.total} products · {totals.live} live · {totals.beta} beta
             </p>
           </div>
         </Reveal>
@@ -216,17 +235,23 @@ export function Products() {
           </div>
         </Reveal>
 
-        {/* product cards — mouse-responsive depth cards */}
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        {/* product cards — mouse-responsive depth cards, each opens its own page */}
+        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {PRODUCTS.map((product, i) => (
             <ProductCard key={product.slug} product={product} index={i} />
           ))}
         </div>
 
+        {/* View all products → full product page */}
         <Reveal>
-          <p className="mt-10 border border-hairline bg-ibm-blue/[0.03] px-6 py-4 text-center font-mono text-xs text-muted-foreground">
-            Products run on the same stack we deliver for clients — Next.js, TypeScript, Prisma and modern AI SDKs.
-          </p>
+          <div className="mt-10 flex flex-col items-center justify-between gap-5 border border-hairline bg-ibm-blue/[0.03] px-6 py-6 sm:flex-row">
+            <p className="text-center font-mono text-xs text-muted-foreground sm:text-left">
+              Products run on the same stack we deliver for clients — Next.js, TypeScript, Prisma and modern AI SDKs.
+            </p>
+            <RollButton variant="primary" arrow onClick={() => openProducts()} className="shrink-0">
+              View all products
+            </RollButton>
+          </div>
         </Reveal>
       </div>
     </SectionFrame>

@@ -70,7 +70,7 @@ function shareUrl(id: string) {
 }
 
 export function CaseStudy() {
-  const presetService = useInquiryStore((s) => s.presetService);
+  const setPresetService = useInquiryStore((s) => s.setPresetService);
   const { toast } = useToast();
   const [value, setValue] = useState<string>(CASES[0].id);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -231,7 +231,7 @@ export function CaseStudy() {
                     <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
                       <a
                         href="#contact"
-                        onClick={() => presetService(c.service)}
+                        onClick={() => setPresetService(c.service)}
                         className="inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-bright focus-carbon"
                       >
                         Build something like this

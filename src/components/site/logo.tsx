@@ -52,9 +52,11 @@ export function LogoMark({ className }: { className?: string }) {
 export function Logo({
   className,
   compact = false,
+  onDark = false,
 }: {
   className?: string;
   compact?: boolean;
+  onDark?: boolean;
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5 select-none", className)}>
@@ -65,13 +67,16 @@ export function Logo({
         </span>
         <span
           className={cn(
-            "font-light text-ibm-bright tracking-tight",
+            "font-light tracking-tight",
+            onDark ? "text-[#78a9ff]" : "text-ibm-bright",
             compact ? "text-xl" : "text-2xl"
           )}
         >
           curious
         </span>
-        <span className="text-[9px] font-mono text-ibm-soft ml-0.5 -translate-y-2">™</span>
+        <span className={cn("text-[9px] font-mono ml-0.5 -translate-y-2", onDark ? "text-white/50" : "text-ibm-soft")}>
+          ™
+        </span>
       </span>
     </span>
   );

@@ -97,10 +97,10 @@ const PERKS = [
 /* ---------------- section ---------------- */
 
 export function Careers() {
-  const presetRole = useInquiryStore((s) => s.presetRole);
+  const setPresetRole = useInquiryStore((s) => s.setPresetRole);
 
   function applyFor(role: Role) {
-    presetRole(role.title);
+    setPresetRole(role.title);
   }
 
   return (

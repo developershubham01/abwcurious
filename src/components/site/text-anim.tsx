@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 export function SplitText({
   text,
   className,
+  wordClassName,
   delay = 0,
   stagger = 0.055,
   duration = 0.7,
@@ -22,6 +23,10 @@ export function SplitText({
 }: {
   text: string;
   className?: string;
+  /** Applied to every inner word span — use for background-clip gradients
+   *  (gradients on an ancestor wrapper break in Chromium once the word
+   *  spans get their own compositing layer via will-change:transform). */
+  wordClassName?: string;
   /** seconds before the first word starts */
   delay?: number;
   /** seconds between words */
@@ -64,7 +69,7 @@ export function SplitText({
           className="inline-block overflow-hidden pb-[0.08em] -mb-[0.08em] align-bottom"
           aria-hidden="true"
         >
-          <motion.span className="inline-block will-change-transform" variants={word}>
+          <motion.span className={cn("inline-block will-change-transform", wordClassName)} variants={word}>
             {w}
             {i < words.length - 1 ? "\u00A0" : ""}
           </motion.span>

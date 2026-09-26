@@ -287,11 +287,66 @@
   .animate-marquee,
   .animate-marquee-slow,
   .animate-marquee-reverse,
-  .animate-spin-slow {
+  .animate-spin-slow,
+  .animate-scroll-hint {
     animation: none;
   }
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Round 16 — premium layer (people / events / journey brand site)   */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  --animate-scroll-hint: scroll-hint 1.7s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+
+  @keyframes scroll-hint {
+    0% {
+      transform: translateY(-100%);
+    }
+    55% {
+      transform: translateY(300%);
+    }
+    100% {
+      transform: translateY(300%);
+    }
+  }
+}
+
+@layer utilities {
+  /* Gradient text (blue → cyan → violet) for display headlines */
+  .text-gradient {
+    background: linear-gradient(92deg, #0f62fe 0%, #1192e8 52%, #8a3ffc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Frosted glass surface */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+  }
+  /* Premium soft shadow (blue-tinted, layered) */
+  .shadow-premium {
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.04),
+      0 12px 40px -12px rgba(15, 98, 254, 0.18);
+  }
+  .shadow-premium-lg {
+    box-shadow:
+      0 2px 6px rgba(16, 24, 40, 0.05),
+      0 30px 80px -24px rgba(15, 98, 254, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-gradient {
+    -webkit-text-fill-color: currentColor;
   }
 }
 

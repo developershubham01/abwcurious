@@ -19,9 +19,11 @@ export function ScrollProgress() {
   );
 }
 
-/** Square IBM-style back-to-top control, appears after the hero. */
+/** Rounded premium back-to-top control with a scroll-progress ring. */
 export function BackToTop() {
   const [visible, setVisible] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const dash = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > window.innerHeight * 1.2);
@@ -35,17 +37,32 @@ export function BackToTop() {
       {visible && (
         <motion.button
           data-back-to-top
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 16 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 16, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.9 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label="Back to top"
-          className="focus-carbon fixed bottom-6 right-6 z-50 flex size-11 items-center justify-center border border-hairline-strong bg-card/90 text-foreground backdrop-blur-md transition-colors duration-300 hover:border-ibm-bright hover:text-ibm-bright"
+          title="Back to top"
+          className="focus-carbon group fixed bottom-6 right-6 z-50 flex size-12 items-center justify-center rounded-full border border-ink/[0.08] bg-white/85 text-ink shadow-[0_14px_40px_-12px_rgba(15,98,254,0.45)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-ibm-blue/40 hover:text-ibm-bright"
         >
-          <ArrowUp className="size-5" strokeWidth={1.5} aria-hidden="true" />
-          <span
-            className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-100 bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+          {/* progress ring */}
+          <svg viewBox="0 0 48 48" className="absolute inset-0 size-full -rotate-90" aria-hidden="true">
+            <circle cx="24" cy="24" r="22" fill="none" stroke="rgba(15,98,254,0.12)" strokeWidth="2" />
+            <motion.circle
+              cx="24"
+              cy="24"
+              r="22"
+              fill="none"
+              stroke="#0f62fe"
+              strokeWidth="2"
+              strokeLinecap="round"
+              style={{ pathLength: dash }}
+            />
+          </svg>
+          <ArrowUp
+            className="size-5 transition-transform duration-300 group-hover:-translate-y-0.5"
+            strokeWidth={1.75}
             aria-hidden="true"
           />
         </motion.button>
