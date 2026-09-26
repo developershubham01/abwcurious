@@ -21,6 +21,18 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["business", "technology", "productivity"],
     icons: [
       {
+        src: "/images/logo-abw-mark-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/images/logo-abw-mark-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
         src: "/logo-mark.svg",
         sizes: "any",
         type: "image/svg+xml",

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ScrollProgress, BackToTop } from "@/components/site/chrome";
+import { ViewPortals } from "@/components/site/view-portals";
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
@@ -37,7 +38,13 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "ABWcurious" }],
   icons: {
-    icon: "/logo-mark.svg",
+    icon: [
+      { url: "/images/logo-abw-mark-512.png", type: "image/png", sizes: "512x512" },
+      { url: "/images/logo-abw-mark.png", type: "image/png", sizes: "240x240" },
+      { url: "/logo-mark.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/images/logo-abw-mark-512.png",
+    apple: "/images/logo-abw-mark-512.png",
   },
   openGraph: {
     title: "ABWcurious — Curious Minds. Intelligent Software.",
@@ -82,7 +89,7 @@ const jsonLd = {
   "@id": "https://abwcurious.com/#organization",
   name: "ABWcurious",
   url: "https://abwcurious.com",
-  logo: "https://abwcurious.com/logo-mark.svg",
+  logo: "https://abwcurious.com/images/logo-abw-mark-512.png",
   description:
     "Technology studio building AI software, intelligent AI solutions, websites and digital design.",
   slogan: "Curious minds. Intelligent software.",
@@ -149,6 +156,10 @@ export default function RootLayout({
           {children}
           <Footer />
           <BackToTop />
+          {/* Hash-route virtual pages (products, product detail, blogs,
+              service categories, sitemap) — fixed overlays that open above
+              the landing page, each with the full navbar + footer. */}
+          <ViewPortals />
         </div>
         <Toaster />
       </body>

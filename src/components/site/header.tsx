@@ -211,9 +211,18 @@ export function Header({
                 </div>
                 <a
                   href={`mailto:${COMPANY.email}`}
+                  onClick={() => setOpen(false)}
                   className="focus-carbon inline-flex items-center gap-2 font-mono text-sm text-ibm-bright"
                 >
                   {COMPANY.email}
+                  <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                </a>
+                <a
+                  href="#/sitemap"
+                  onClick={() => setOpen(false)}
+                  className="focus-carbon inline-flex items-center gap-2 font-mono text-sm text-ink/60 transition-colors hover:text-ink"
+                >
+                  Sitemap — every page
                   <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
                 </a>
               </motion.div>

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Users, MousePointer2 } from "lucide-react";
-import { LogoMark } from "./logo";
+import { LogoMarkImage } from "./logo";
 import { Magnetic } from "./primitives";
 import { SplitText, Ticker } from "./text-anim";
 import { COMPANY } from "@/data/company";
@@ -120,7 +120,7 @@ export function Hero() {
             aria-label="ABWcurious home"
             className="focus-carbon rounded-2xl ring-ibm-blue/30 ring-offset-4 transition-transform duration-500 hover:scale-105"
           >
-            <LogoMark className="h-16 w-16 sm:h-20 sm:w-20" />
+            <LogoMarkImage className="h-16 sm:h-20 drop-shadow-[0_10px_30px_rgba(15,98,254,0.25)]" />
           </a>
           <p className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-ibm-blue/15 bg-white/70 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/60 shadow-[0_4px_20px_-8px_rgba(15,98,254,0.3)] backdrop-blur-md sm:text-xs">
             <span className="size-1.5 rounded-full bg-ibm-cyan animate-pulse-dot" aria-hidden="true" />

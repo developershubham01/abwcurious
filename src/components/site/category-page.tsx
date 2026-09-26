@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { CATEGORIES, CATEGORY_BY_SLUG, categoryServiceCount, type Category } from "@/lib/catalog";
 import { closeCategory, openCategory, useCatalogRoute, useCatalogRouter } from "@/lib/catalog-route";
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { useInquiryStore } from "@/lib/store";
 import { Eyebrow, RollButton } from "./primitives";
 import { SplitText, Typewriter, Ticker } from "./text-anim";
@@ -41,12 +42,11 @@ export function CategoryPortal() {
   useEffect(() => {
     if (!category) return;
     const prevTitle = document.title;
-    const prevOverflow = document.body.style.overflow;
     document.title = `${category.name} — ABWcurious Services`;
-    document.body.style.overflow = "hidden";
+    lockScroll();
     return () => {
       document.title = prevTitle;
-      document.body.style.overflow = prevOverflow;
+      unlockScroll();
     };
   }, [category]);
 

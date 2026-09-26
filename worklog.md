@@ -402,3 +402,25 @@ Stage Summary:
 - ✅ Round 17 shipped: footer→per-leader profile dialogs, upcoming-event toolkit (live countdown + .ics download + working email waitlist), and a no-API-key OpenStreetMap studio card — all placeholder-aware, all data-file driven, verified E2E on desktop+mobile.
 - Key decisions: useSyncExternalStore 1 Hz ticker instead of setState-in-effect (lint rule); source field encodes event id ("event:<id>") so console can segment waitlists later; OSM embed + Google Maps search link (no fabricated place data, no API keys).
 - Risks/next: user's pasted DESIGN file never arrived — awaiting re-paste before applying any redesign; sample content still placeholders by design; candidates: per-event OG image route, console waitlist tab segmentation by source, gallery category filters, event "recent/past" recap stats chips.
+
+---
+Task ID: 18
+Agent: Z.ai Code (main)
+Task: Round 18 — 用户素材落地：真实 logo 全站替换 + navbar/footer 覆盖所有页面 + footer 删 Pricing/加全页 Sitemap（含 #/sitemap 页与 sitemap.xml）
+
+Work Log:
+- 素材核实：用户上传目录 /home/z/my-project/upload 再次为空（FUSE 未落盘），但本次消息内嵌了 logo 的 CDN URL → curl 下载成功（/tmp/logo-abw.png, 499×500 RGBA）。与仓库已有 public/images/logo-abw*.png（471×231 紧裁剪亮/暗版 + mark 240/512）逐像素视觉比对为同一 ABW curious® 标志（蓝色双弧环 + ABW + curious + ®），直接采用已备好的紧裁剪变体渲染（方版留 /tmp 备用）。
+- LOGO（真实 PNG 全面替换 SVG 重绘版）：logo.tsx 重写 — <Logo> 用 next/image 渲染 logo-abw.png（亮面）/logo-abw-white.png（暗面，footer），保留 compact/onDark API，尺寸 h-10→sm:h-11（compact h-9），hover scale+drop-shadow 微交互；新增 <LogoMarkImage>（mark PNG）；旧 LogoMark SVG 仅为 parked 模块保留。hero 顶部徽标改用真实 mark PNG（h-16/sm:h-20 + 蓝色投影）。favicon/shortcut/apple-touch-icon → logo-abw-mark-512.png（保留 SVG fallback），manifest 加 512 any+maskable，JSON-LD Organization.logo 同步 → mark-512.png。
+- BUG（沙盒特有）：next/image 优化器 URL /_next/image 在 agent-browser 中永久 pending（curl 200 正常、cache-buster 探测正常）→ Logo/LogoMarkImage 加 unoptimized 直接静态服务（品牌 PNG 很小，无需优化）后恢复正常。
+- 页面覆盖：layout.tsx 全局 Chrome（skip-link/ScrollProgress/Header/Footer/BackToTop）本就作用于 landing + error + 404；本轮新建 view-portals.tsx（ProductsPortal+CategoryPortal+SitemapPortal）挂入 layout → 五类 hash 虚拟页（#/products、#/products/<slug>×6、#/blogs、#/services/<slug>×6、#/sitemap）全部复活且自带 ViewShell（真实 navbar+footer，浏览器验证 takeover 内 header/footer/sitemap 带 27 链接齐全）。
+- FOOTER：删除 Explore 列（与 Sitemap 重复）→ 网格改为 brand/Leadership/Contact 各 col-span-4；新增全宽 "Sitemap" 带（border-t 分隔，Sections·8 / Products·7 / Services·6 / Resources·5 四组共 26 链接 + "OPEN THE FULL SITEMAP ↗" pill），数据驱动自 PRODUCTS/CATEGORIES；锚点直跳、#/ 路由原生 hashchange 打开 takeover、API 类新窗口。Pricing 无任何入口（footer 原本无、新 Sitemap 明确排除）。
+- SITEMAP PAGE（#/sitemap）：LANDING_SECTIONS 更新为 8 个现行分区（top/about/leadership/achievements/events/gallery/follow/contact），删除 pricing/services/process/stack/work/cases/faq/notes/careers 等陈旧行；services 行 kind 改 "category" 并修 click 分支（原 bug：分类行误调 openProduct 落到产品总览）→ openCategory；删除 palette/console 两个死 action 行（组件已 parked），Resources = Blog/vCard/RSS/Sitemap XML；CTA "Quick actions"(palette 事件) 换成 "Save contact card"(vCard)；文案修正（all six product pages、typewriter/placeholder/空态提示去掉 careers/pricing）。
+- BUGFIX 滚动锁竞态：sitemap→product 快速切换时，ProductsPortal 在 SitemapPortal 清理前捕获 prev="hidden"，恢复链污染导致关闭后 body.overflow 卡死 hidden（页面不可滚）。新建 src/lib/scroll-lock.ts 引用计数锁（首 acquire 捕获原值并隐藏、末 release 恢复），三个 portal 统一替换，重放完整竞态序列验证：每步关闭后 overflow 均还原 ""。
+- MOBILE：菜单底部新增 "Sitemap — every page ↗" 链接（及 email 链接补 onClick 关闭菜单）；390×844 验证无横向溢出、Sitemap 带单列布局正常、takeover 移动端排版正常。
+- SEO：app/sitemap.ts 重写为全站索引 23 条 URL（/ + 7 分区锚点 + products 总览+6 详情 + 6 服务分类 + blogs + sitemap），curl 验证输出。
+- QA（agent-browser 桌面 1440 + 移动 390）：header/footer logo PNG 加载与尺寸、hero mark、footer Sitemap 带、#/sitemap 打开（25 destinations、过滤、typewriter）、产品详情页（CyberIntelligence360，breadcrumb/hero/统计）、分类页（AI & Automation）、拦截器（takeover 内点 About → 关闭+滑至 #about）、Esc 关闭全部干净、favicon 五条 link 标签、/sitemap.xml 23 URL、零 console 错误、footer 贴底 gap=0；lint 清零；dev.log 除编辑瞬态外全 200。
+
+Stage Summary:
+- ✅ Round 18 shipped: 真实品牌 logo（navbar 亮版 / footer 白版 / hero mark / favicon+manifest+JSON-LD）+ 全站页面覆盖（landing/error/404/五类 hash 虚拟页均有 navbar+footer）+ footer 全页 Sitemap（26 链接四组，无 Pricing）+ #/sitemap 全页索引（25 目的地可搜索）+ sitemap.xml 全 URL；修复滚动锁竞态与分类行跳转 bug。
+- 关键决策：多 takeover 共存场景用引用计数 scroll-lock 取代 prev 值捕获；品牌 PNG 走 unoptimized 绕开沙盒优化器 pending；Sitemap 三层一致（footer 带 / takeover 页 / sitemap.xml）。
+- 风险/下一步：设计 txt 两轮均未落盘（本次可实施需求来自用户文字描述 + logo）；候选：per-event OG 图、waitlist source 分域 console 面板、gallery 分类筛选、分类页 IBM 字母 3D 图替换（cat-ai.jpg 含 IBM 商标视觉）、真实社媒链接与联系方式仍是占位。

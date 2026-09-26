@@ -9,8 +9,13 @@ import {
   Phone,
   MapPin,
   ArrowUp,
+  ArrowUpRight,
   ShieldCheck,
   FileText,
+  Compass,
+  Package,
+  Layers,
+  Newspaper,
   type LucideIcon,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -21,6 +26,8 @@ import { LeaderDialog } from "./leader-dialog";
 import MaskedHeading from "@/components/reactbits/MaskedHeading";
 import { useToast } from "@/hooks/use-toast";
 import { COMPANY, ALL_LEADERS, type Leader } from "@/data/company";
+import { PRODUCTS } from "@/lib/products";
+import { CATEGORIES } from "@/lib/catalog";
 
 /* ----------------------------- newsletter ------------------------------- */
 
@@ -166,19 +173,66 @@ function LegalDialog({
 
 /* -------------------------------- footer --------------------------------- */
 
-const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Leadership", href: "#leadership" },
-  { label: "Events", href: "#events" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Achievements", href: "#achievements" },
-  { label: "Contact", href: "#contact" },
-];
-
 const CONTACT_ITEMS = [
   { icon: Mail, label: COMPANY.email, href: `mailto:${COMPANY.email}` },
   { icon: Phone, label: COMPANY.phone, href: COMPANY.phoneHref },
   { icon: MapPin, label: COMPANY.address, href: "#contact" },
+];
+
+/* ------------------------------- sitemap -------------------------------- */
+
+/** Every page of the site, grouped — rendered as the footer sitemap band.
+ *  Landing sections are plain anchors; products / services / blog / sitemap
+ *  are hash-route pages opened by the ViewPortals mounted in the layout. */
+
+const SITEMAP_GROUPS: {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  links: { label: string; href: string; external?: boolean }[];
+}[] = [
+  {
+    id: "sections",
+    label: "Sections",
+    icon: Compass,
+    links: [
+      { label: "Home", href: "#top" },
+      { label: "About", href: "#about" },
+      { label: "Leadership", href: "#leadership" },
+      { label: "Achievements", href: "#achievements" },
+      { label: "Events", href: "#events" },
+      { label: "Gallery", href: "#gallery" },
+      { label: "Follow the journey", href: "#follow" },
+      { label: "Contact", href: "#contact" },
+    ],
+  },
+  {
+    id: "products",
+    label: "Products",
+    icon: Package,
+    links: [
+      { label: "All products", href: "#/products" },
+      ...PRODUCTS.map((p) => ({ label: p.name, href: `#/products/${p.slug}` })),
+    ],
+  },
+  {
+    id: "services",
+    label: "Services",
+    icon: Layers,
+    links: CATEGORIES.map((c) => ({ label: c.name, href: `#/services/${c.slug}` })),
+  },
+  {
+    id: "resources",
+    label: "Resources",
+    icon: Newspaper,
+    links: [
+      { label: "Blog — field notes", href: "#/blogs" },
+      { label: "Full sitemap", href: "#/sitemap" },
+      { label: "vCard — contact card", href: "/api/vcard", external: true },
+      { label: "RSS feed", href: "/api/rss", external: true },
+      { label: "Sitemap XML", href: "/sitemap.xml", external: true },
+    ],
+  },
 ];
 
 export function Footer() {
@@ -219,28 +273,8 @@ export function Footer() {
             <SocialRow variant="dark" className="mt-6" />
           </div>
 
-          {/* explore */}
-          <nav aria-label="Footer navigation" className="lg:col-span-2">
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
-              Explore
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {NAV_LINKS.map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="focus-carbon group inline-flex items-center gap-1.5 text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
-                  >
-                    <span className="h-px w-0 bg-[#78a9ff] transition-all duration-300 group-hover:w-3" aria-hidden="true" />
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
           {/* leadership — opens the full profile dialog per person */}
-          <nav aria-label="Leadership" className="lg:col-span-3">
+          <nav aria-label="Leadership" className="lg:col-span-4">
             <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
               Leadership
             </h3>
@@ -270,7 +304,7 @@ export function Footer() {
           </nav>
 
           {/* contact + newsletter */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-4">
             <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
               Contact
             </h3>
@@ -302,6 +336,68 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      {/* ------------------------------ sitemap ------------------------------ */}
+      <nav
+        aria-label="Sitemap — every page"
+        className="relative border-t border-white/[0.07]"
+      >
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+                Sitemap
+              </h2>
+              <p className="mt-2 text-sm text-white/55">
+                Every page of the site — one click from anywhere.
+              </p>
+            </div>
+            <a
+              href="#/sitemap"
+              className="focus-carbon group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/70 transition-colors hover:border-[#78a9ff]/60 hover:text-[#78a9ff]"
+            >
+              Open the full sitemap
+              <ArrowUpRight
+                className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+            </a>
+          </div>
+
+          <div className="mt-9 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            {SITEMAP_GROUPS.map((group) => (
+              <div key={group.id}>
+                <h3 className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
+                  <group.icon className="size-3.5 text-[#78a9ff]/80" strokeWidth={1.5} aria-hidden="true" />
+                  {group.label}
+                  <span className="text-white/25" aria-hidden="true">·</span>
+                  <span className="text-white/30">{group.links.length}</span>
+                </h3>
+                <ul className="mt-4 space-y-2.5">
+                  {group.links.map((link) => (
+                    <li key={link.href + link.label}>
+                      <a
+                        href={link.href}
+                        {...(link.external
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        className="focus-carbon group inline-flex max-w-full items-center gap-1.5 text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
+                      >
+                        <span
+                          className="h-px w-0 shrink-0 bg-[#78a9ff] transition-all duration-300 group-hover:w-3"
+                          aria-hidden="true"
+                        />
+                        <span className="truncate">{link.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </nav>
 
       {/* ------------------- giant image-filled wordmark ------------------- */}
       <div className="relative border-t border-white/[0.07]" aria-hidden="true">

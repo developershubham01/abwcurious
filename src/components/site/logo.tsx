@@ -1,8 +1,83 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * ABWcurious logo — a faithful SVG recreation of the brand mark:
- * two blue swoosh arcs forming a circle + "ABW" (bold) + "curious" (light blue) + TM.
+ * ABWcurious logo — the REAL brand asset (user-supplied artwork):
+ * blue swoosh ring + bold "ABW" + light "curious" + ®.
+ *
+ * Two official variants ship as tight-cropped transparent PNGs:
+ *   /images/logo-abw.png        — dark "ABW" for light surfaces (header, hero)
+ *   /images/logo-abw-white.png  — white "ABW" for dark surfaces (footer)
+ * The standalone swoosh ring (/images/logo-abw-mark.png) is exposed via
+ * <LogoMarkImage /> for decorative spots (hero medallion, favicon source).
+ */
+
+export const LOGO_RATIO = 471 / 231;
+
+export function Logo({
+  className,
+  compact = false,
+  onDark = false,
+}: {
+  className?: string;
+  compact?: boolean;
+  onDark?: boolean;
+}) {
+  return (
+    <span
+      className={cn(
+        "group inline-flex select-none items-center transition-transform duration-300 ease-out hover:scale-[1.03]",
+        className
+      )}
+    >
+      <Image
+        src={onDark ? "/images/logo-abw-white.png" : "/images/logo-abw.png"}
+        alt="ABWcurious — home"
+        width={471}
+        height={231}
+        priority={!onDark}
+        unoptimized
+        draggable={false}
+        className={cn(
+          "h-auto w-auto transition-[filter] duration-300",
+          compact ? "h-9" : "h-10 sm:h-11",
+          onDark
+            ? "group-hover:drop-shadow-[0_0_14px_rgba(120,169,255,0.45)]"
+            : "group-hover:drop-shadow-[0_4px_14px_rgba(15,98,254,0.35)]"
+        )}
+      />
+    </span>
+  );
+}
+
+/**
+ * Standalone swoosh-ring mark (no wordmark) — real PNG, for decorative
+ * medallion spots. Swaps to the white variant on dark surfaces.
+ */
+export function LogoMarkImage({
+  className,
+  onDark = false,
+}: {
+  className?: string;
+  onDark?: boolean;
+}) {
+  return (
+    <Image
+      src={onDark ? "/images/logo-abw-mark-512.png" : "/images/logo-abw-mark.png"}
+      alt=""
+      aria-hidden="true"
+      width={240}
+      height={240}
+      unoptimized
+      draggable={false}
+      className={cn("h-auto w-auto select-none", className)}
+    />
+  );
+}
+
+/**
+ * Legacy SVG mark (animated arc draw). Kept for backwards compatibility
+ * with parked modules; live chrome now uses the real PNG artwork above.
  */
 export function LogoMark({ className }: { className?: string }) {
   return (
@@ -46,38 +121,5 @@ export function LogoMark({ className }: { className?: string }) {
         ABW
       </text>
     </svg>
-  );
-}
-
-export function Logo({
-  className,
-  compact = false,
-  onDark = false,
-}: {
-  className?: string;
-  compact?: boolean;
-  onDark?: boolean;
-}) {
-  return (
-    <span className={cn("inline-flex items-center gap-2.5 select-none", className)}>
-      <LogoMark className={cn("shrink-0", compact ? "h-8 w-8" : "h-9 w-9")} />
-      <span className="flex items-baseline leading-none whitespace-nowrap">
-        <span className={cn("font-bold tracking-tight", compact ? "text-xl" : "text-2xl")}>
-          ABW
-        </span>
-        <span
-          className={cn(
-            "font-light tracking-tight",
-            onDark ? "text-[#78a9ff]" : "text-ibm-bright",
-            compact ? "text-xl" : "text-2xl"
-          )}
-        >
-          curious
-        </span>
-        <span className={cn("text-[9px] font-mono ml-0.5 -translate-y-2", onDark ? "text-white/50" : "text-ibm-soft")}>
-          ™
-        </span>
-      </span>
-    </span>
   );
 }

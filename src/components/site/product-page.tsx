@@ -29,6 +29,7 @@ import { SplitText, Typewriter, Ticker } from "./text-anim";
 import { ProductDemo } from "./product-demo";
 import { ViewShell } from "./view-shell";
 import { cn } from "@/lib/utils";
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 
 /**
  * Full-screen virtual "pages" for the product line on hash routes:
@@ -73,12 +74,11 @@ export function ProductsPortal() {
   useEffect(() => {
     if (!active) return;
     const prevTitle = document.title;
-    const prevOverflow = document.body.style.overflow;
     document.title = title;
-    document.body.style.overflow = "hidden";
+    lockScroll();
     return () => {
       document.title = prevTitle;
-      document.body.style.overflow = prevOverflow;
+      unlockScroll();
     };
   }, [active, title]);
 

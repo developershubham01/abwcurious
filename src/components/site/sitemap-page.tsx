@@ -4,36 +4,34 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight,
-  Command as CommandIcon,
   FileCode2,
   Home,
   Layers,
   Map as MapIcon,
   Newspaper,
   Package,
-  Rss,
   Search,
-  Terminal,
   XCircle,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/catalog";
 import { PRODUCTS } from "@/lib/products";
 import { closeView, openBlogs, openProduct, openProducts, useViewRoute } from "@/lib/view-route";
 import { openCategory } from "@/lib/catalog-route";
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { Eyebrow, RollButton } from "./primitives";
 import { SplitText, Typewriter } from "./text-anim";
 import { ViewShell } from "./view-shell";
 
 /**
  * Sitemap page (#/sitemap) — an index of EVERY page on the site:
- * the landing sections, all 7 product pages, all 6 service-category
- * pages and the resource/utility destinations. Filterable, keyboard
- * friendly, and every row navigates for real.
+ * the live landing sections, all 6 product pages, all 6 service-category
+ * pages and the resource destinations. Filterable, keyboard friendly,
+ * and every row navigates for real.
  */
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-type RowKind = "anchor" | "view" | "external" | "action";
+type RowKind = "anchor" | "view" | "category" | "external";
 
 interface SitemapRow {
   num: string;
@@ -41,7 +39,7 @@ interface SitemapRow {
   desc: string;
   target: string;
   kind: RowKind;
-  /** anchor → href; view → hash route opener; external → url; action → callback id */
+  /** anchor → href; view/category → hash route opener; external → url */
   arg: string;
 }
 
@@ -54,18 +52,13 @@ interface SitemapGroup {
 
 const LANDING_SECTIONS: { id: string; label: string; desc: string }[] = [
   { id: "top", label: "Home", desc: "The hero — where curiosity starts" },
-  { id: "about", label: "About the studio", desc: "Who we are and how we think" },
-  { id: "services", label: "Services showcase", desc: "Six practices, 72 sub-services" },
-  { id: "products", label: "Product showcase", desc: "The SaaS platforms we ship" },
-  { id: "process", label: "Our process", desc: "Four steps, zero mystery" },
-  { id: "stack", label: "Tech stack", desc: "The tools we trust in production" },
-  { id: "work", label: "Selected work", desc: "Recent projects and outcomes" },
-  { id: "cases", label: "Case files", desc: "Deep dives into real builds" },
-  { id: "pricing", label: "Pricing", desc: "Engagement models that scale" },
-  { id: "faq", label: "FAQ", desc: "Common questions, straight answers" },
-  { id: "notes", label: "Field notes", desc: "Engineering journal on the home page" },
-  { id: "careers", label: "Careers", desc: "Open roles in the studio" },
-  { id: "contact", label: "Get in touch", desc: "Project brief, email, phone" },
+  { id: "about", label: "About", desc: "Who ABWcurious is and what we build" },
+  { id: "leadership", label: "Leadership", desc: "The people behind the products" },
+  { id: "achievements", label: "Achievements", desc: "Milestones on the journey timeline" },
+  { id: "events", label: "Events", desc: "Summits, launches, offsites and workshops" },
+  { id: "gallery", label: "Gallery", desc: "Moments from life at the studio" },
+  { id: "follow", label: "Follow the journey", desc: "Every social channel, one band" },
+  { id: "contact", label: "Contact", desc: "Project brief, email, phone and map" },
 ];
 
 function buildGroups(): SitemapGroup[] {
@@ -118,7 +111,7 @@ function buildGroups(): SitemapGroup[] {
         label: c.name,
         desc: `${c.short} · ${c.num} practice`,
         target: `#/services/${c.slug}`,
-        kind: "view" as const,
+        kind: "category" as const,
         arg: c.slug,
       })),
     },
@@ -145,27 +138,19 @@ function buildGroups(): SitemapGroup[] {
         },
         {
           num: nextNum(),
+          label: "vCard — contact card",
+          desc: "One-tap save of the studio's details",
+          target: "/api/vcard",
+          kind: "external",
+          arg: "/api/vcard",
+        },
+        {
+          num: nextNum(),
           label: "Sitemap XML",
           desc: "Machine-readable index for crawlers",
           target: "/sitemap.xml",
           kind: "external",
           arg: "/sitemap.xml",
-        },
-        {
-          num: nextNum(),
-          label: "Quick actions",
-          desc: "The ⌘K command palette — jump anywhere",
-          target: "⌘K",
-          kind: "action",
-          arg: "palette",
-        },
-        {
-          num: nextNum(),
-          label: "Studio console",
-          desc: "Internal inbox and stats (passcode)",
-          target: "⇧⌘K",
-          kind: "action",
-          arg: "console",
         },
       ],
     },
@@ -197,12 +182,11 @@ export function SitemapPortal() {
   useEffect(() => {
     if (!open) return;
     const prevTitle = document.title;
-    const prevOverflow = document.body.style.overflow;
     document.title = "Sitemap — ABWcurious";
-    document.body.style.overflow = "hidden";
+    lockScroll();
     return () => {
       document.title = prevTitle;
-      document.body.style.overflow = prevOverflow;
+      unlockScroll();
     };
   }, [open]);
 
@@ -285,13 +269,10 @@ function SitemapRowButton({
           {inner}
         </button>
       ) : (
+        /* category — service category playbook page */
         <button
           type="button"
-          onClick={() =>
-            window.dispatchEvent(
-              new CustomEvent(row.arg === "palette" ? "abw:palette-open" : "abw:console-open")
-            )
-          }
+          onClick={() => openCategory(row.arg)}
           className={cls}
         >
           {inner}
@@ -338,13 +319,13 @@ function SitemapPage() {
               </span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              The whole studio site on a single page — landing sections, all seven product
+              The whole studio site on a single page — landing sections, all six product
               pages, all six service playbooks and the utilities. Pick a destination.
             </p>
             <div className="mt-5 max-w-xl">
               <Typewriter
                 prefix="Try: "
-                phrases={["“qr” finds IntelliQR", "“careers” finds the roles", "“rss” finds the feed"]}
+                phrases={["“qr” finds IntelliQR", "“360” finds the 360 platforms", "“rss” finds the feed"]}
                 className="font-mono text-sm text-ibm-soft"
               />
             </div>
@@ -361,7 +342,7 @@ function SitemapPage() {
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Filter pages — try “qr” or “careers”"
+                  placeholder="Filter pages — try “qr” or “rss”"
                   className="h-full w-full min-w-0 bg-transparent px-3 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
                 />
                 {query && (
@@ -392,7 +373,7 @@ function SitemapPage() {
               <div className="border border-hairline bg-ibm-blue/[0.03] px-6 py-14 text-center">
                 <MapIcon className="mx-auto size-6 text-muted-foreground" strokeWidth={1.5} aria-hidden="true" />
                 <p className="mt-4 font-mono text-sm text-muted-foreground">
-                  No destinations match “{query}” — try “qr”, “blogs” or “pricing”.
+                  No destinations match “{query}” — try “qr”, “blogs” or “rss”.
                 </p>
               </div>
             ) : (
@@ -446,10 +427,10 @@ function SitemapPage() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <RollButton variant="outline" onClick={() => window.dispatchEvent(new CustomEvent("abw:palette-open"))}>
+                <RollButton href="/api/vcard" variant="outline">
                   <span className="inline-flex items-center gap-2">
-                    <CommandIcon className="size-4" strokeWidth={1.5} aria-hidden="true" />
-                    Quick actions
+                    <FileCode2 className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                    Save contact card
                   </span>
                 </RollButton>
                 <RollButton href="#contact" variant="primary" arrow>
