@@ -564,7 +564,7 @@ const STATUS_TABS: { value: StatusFilter; label: string }[] = [
   { value: "past", label: "Past" },
 ];
 
-export function Events() {
+export function Events({ id = "events" }: { id?: string } = {}) {
   const [status, setStatus] = useState<StatusFilter>("all");
   const [category, setCategory] = useState<CategoryFilter>("All");
   const [selected, setSelected] = useState<CompanyEvent | null>(null);
@@ -585,7 +585,7 @@ export function Events() {
 
   return (
     <section
-      id="events"
+      id={id}
       aria-label="Company events"
       className="relative scroll-mt-24 border-y border-hairline bg-ibm-layer py-24 sm:py-28"
     >

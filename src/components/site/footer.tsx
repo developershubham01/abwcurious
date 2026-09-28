@@ -192,16 +192,17 @@ const SITEMAP_GROUPS: {
 }[] = [
   {
     id: "sections",
-    label: "Sections",
+    label: "Company",
     icon: Compass,
     links: [
       { label: "Home", href: "#top" },
-      { label: "About", href: "#about" },
+      { label: "About — company profile", href: "#/about" },
+      { label: "Careers", href: "#/careers" },
+      { label: "Events", href: "#/events" },
+      { label: "Social media", href: "#/social" },
       { label: "Leadership", href: "#leadership" },
       { label: "Achievements", href: "#achievements" },
-      { label: "Events", href: "#events" },
       { label: "Gallery", href: "#gallery" },
-      { label: "Follow the journey", href: "#follow" },
       { label: "Contact", href: "#contact" },
     ],
   },

@@ -86,7 +86,7 @@ function CategoryPage({ category }: { category: Category }) {
     <ViewShell
       crumb={`Services / ${category.short}`}
       label={`${category.name} — service details`}
-      activeNav="#services"
+      activeNav="#/services"
       onClose={closeCategory}
     >
       {/* ================= hero ================= */}

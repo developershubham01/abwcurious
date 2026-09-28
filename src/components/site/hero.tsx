@@ -69,11 +69,11 @@ export function Hero() {
           </p>
         </motion.div>
 
-        {/* headline */}
+        {/* headline — the brand line, IBM-style light display */}
         <h1 className="mt-8 max-w-5xl text-balance text-5xl font-light leading-[1.1] tracking-tight text-ink sm:text-6xl lg:text-7xl">
-          <SplitText text="The people behind" immediate delay={0.28} />
+          <SplitText text="Curious minds." immediate delay={0.28} />
           <br />
-          <SplitText text="the products." immediate delay={0.62} wordClassName="text-gradient" />
+          <SplitText text="Intelligent software." immediate delay={0.62} wordClassName="text-gradient" />
         </h1>
 
         {/* description */}

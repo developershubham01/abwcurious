@@ -140,6 +140,7 @@ export function BlogsPage() {
     <ViewShell
       crumb="Blog / Field notes"
       label="Blog — ABWcurious field notes"
+      activeNav="#more"
       onClose={closeView}
     >
       <main className="flex-1">

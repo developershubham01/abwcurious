@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/catalog";
 import { PRODUCTS } from "@/lib/products";
-import { closeView, openBlogs, openProduct, openProducts, useViewRoute } from "@/lib/view-route";
+import { closeView, openAbout, openBlogs, openCareers, openEventsPage, openProduct, openProducts, openSocial, useViewRoute } from "@/lib/view-route";
 import { openCategory } from "@/lib/catalog-route";
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { Eyebrow, RollButton } from "./primitives";
@@ -78,6 +78,45 @@ function buildGroups(): SitemapGroup[] {
         kind: "anchor" as const,
         arg: `#${s.id}`,
       })),
+    },
+    {
+      id: "company",
+      label: "Company pages",
+      desc: "Full pages — profile, careers, events and social",
+      rows: [
+        {
+          num: nextNum(),
+          label: "About — company profile",
+          desc: "Story, values, stats and studio facts",
+          target: "#/about",
+          kind: "view",
+          arg: "about",
+        },
+        {
+          num: nextNum(),
+          label: "Careers",
+          desc: "Open roles and how we hire",
+          target: "#/careers",
+          kind: "view",
+          arg: "careers",
+        },
+        {
+          num: nextNum(),
+          label: "Events",
+          desc: "Every summit, workshop and meetup",
+          target: "#/events",
+          kind: "view",
+          arg: "events",
+        },
+        {
+          num: nextNum(),
+          label: "Social media",
+          desc: "All channels, one directory",
+          target: "#/social",
+          kind: "view",
+          arg: "social",
+        },
+      ],
     },
     {
       id: "products",
@@ -159,6 +198,7 @@ function buildGroups(): SitemapGroup[] {
 
 const GROUP_ICONS: Record<string, typeof Home> = {
   main: Home,
+  company: Home,
   products: Package,
   services: Layers,
   resources: Newspaper,
@@ -262,7 +302,15 @@ function SitemapRowButton({
               ? openProducts()
               : row.arg === "blogs"
                 ? openBlogs()
-                : openProduct(row.arg)
+                : row.arg === "about"
+                  ? openAbout()
+                  : row.arg === "careers"
+                    ? openCareers()
+                    : row.arg === "events"
+                      ? openEventsPage()
+                      : row.arg === "social"
+                        ? openSocial()
+                        : openProduct(row.arg)
           }
           className={cls}
         >
@@ -303,7 +351,7 @@ function SitemapPage() {
   const shown = filtered.reduce((acc, g) => acc + g.rows.length, 0);
 
   return (
-    <ViewShell crumb="Sitemap / Every page" label="Sitemap — every page of the site" onClose={closeView}>
+    <ViewShell crumb="Sitemap / Every page" label="Sitemap — every page of the site" activeNav="#more" onClose={closeView}>
       <main className="flex-1">
         {/* ================= hero ================= */}
         <section className="border-b border-hairline">

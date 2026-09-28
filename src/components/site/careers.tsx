@@ -113,7 +113,7 @@ export function Careers() {
               <Eyebrow className="justify-start">11 / Careers</Eyebrow>
               <h2 className="mt-5 text-4xl font-light leading-[1.15] tracking-tight sm:text-5xl">
                 Build with{" "}
-                <span className="text-ibm-bright">curious people.</span>
+                <span className="text-ink">curious people.</span>
               </h2>
               <p className="mt-5 max-w-md text-muted-foreground">
                 We are a small studio by design — every hire changes what we can
@@ -126,7 +126,7 @@ export function Careers() {
                   className="size-1.5 rounded-full bg-ibm-success animate-pulse-dot"
                   aria-hidden="true"
                 />
-                <p className="font-mono text-xs text-ibm-soft">
+                <p className="text-xs text-primary">
                   {ROLES.length} open roles — reviewed within a week
                 </p>
               </div>
@@ -137,7 +137,7 @@ export function Careers() {
                     key={perk.title}
                     className="group bg-card p-5 transition-colors hover:bg-ibm-blue/[0.05]"
                   >
-                    <span className="block font-mono text-xs uppercase tracking-[0.16em] text-foreground">
+                    <span className="block text-xs text-ink-muted">
                       {perk.title}
                     </span>
                     <span className="mt-2 block text-sm leading-relaxed text-muted-foreground">
@@ -160,14 +160,14 @@ export function Careers() {
                 >
                   <AccordionTrigger className="py-6 text-left hover:no-underline focus-carbon">
                     <span className="flex min-w-0 flex-1 items-start gap-4">
-                      <span className="mt-1 font-mono text-xs text-ibm-bright group-data-[state=open]:text-ibm-bright">
+                      <span className="mt-1 text-xs text-primary">
                         0{i + 1}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-lg tracking-tight text-foreground transition-colors group-data-[state=open]:text-ibm-bright">
+                        <span className="block text-lg tracking-tight text-ink transition-colors group-data-[state=open]:text-primary">
                           {role.title}
                         </span>
-                        <span className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
+                        <span className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-muted">
                           <span className="inline-flex items-center gap-1.5">
                             <BriefcaseBusiness
                               className="size-3.5 text-ibm-soft"
@@ -195,7 +195,7 @@ export function Careers() {
 
                     <div className="mt-6 grid gap-8 sm:grid-cols-2">
                       <div>
-                        <h4 className="font-mono text-[11px] uppercase tracking-[0.18em] text-ibm-soft">
+                        <h4 className="text-xs font-medium text-ink">
                           What you&apos;ll do
                         </h4>
                         <ul className="mt-3 space-y-2.5">
@@ -214,7 +214,7 @@ export function Careers() {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="font-mono text-[11px] uppercase tracking-[0.18em] text-ibm-soft">
+                        <h4 className="text-xs font-medium text-ink">
                           You bring
                         </h4>
                         <ul className="mt-3 space-y-2.5">
@@ -244,7 +244,7 @@ export function Careers() {
                       >
                         Apply for this role
                       </RollButton>
-                      <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
                         <Clock3 className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
                         Reply within a week — always a human
                       </span>
@@ -263,7 +263,7 @@ export function Careers() {
               </p>
               <a
                 href="mailto:hello@abwcurious.com?subject=Speculative%20application"
-                className="focus-carbon inline-flex shrink-0 items-center gap-1 font-mono text-xs text-ibm-soft transition-colors hover:text-ibm-bright"
+                className="focus-carbon inline-flex shrink-0 items-center gap-1 text-xs text-primary transition-colors hover:text-ibm-bright"
               >
                 Write to us
                 <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden="true" />

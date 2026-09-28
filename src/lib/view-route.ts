@@ -13,6 +13,10 @@ import { PRODUCT_BY_SLUG } from "./products";
  *   #/products/<slug>   → one product's detail page
  *   #/blogs             → the blog / field-notes page
  *   #/sitemap           → the full sitemap (every page of the site)
+ *   #/about             → company profile page
+ *   #/events            → events & meetups page
+ *   #/social            → social media page
+ *   #/careers           → careers / open roles page
  * Plain anchors (`#contact`, `#services`, `#note/x`) are untouched — the
  * router only reacts to hashes that begin with `#/`.
  */
@@ -22,7 +26,11 @@ export type ViewRoute =
   | { kind: "products" }
   | { kind: "product"; slug: string }
   | { kind: "blogs" }
-  | { kind: "sitemap" };
+  | { kind: "sitemap" }
+  | { kind: "about" }
+  | { kind: "events" }
+  | { kind: "social" }
+  | { kind: "careers" };
 
 interface ViewState {
   route: ViewRoute;
@@ -44,6 +52,10 @@ function routeFromLocation(): ViewRoute {
   if (/^#\/products\/?/.test(hash)) return { kind: "products" };
   if (/^#\/blogs\/?/.test(hash)) return { kind: "blogs" };
   if (/^#\/sitemap\/?/.test(hash)) return { kind: "sitemap" };
+  if (/^#\/about\/?/.test(hash)) return { kind: "about" };
+  if (/^#\/events\/?/.test(hash)) return { kind: "events" };
+  if (/^#\/social\/?/.test(hash)) return { kind: "social" };
+  if (/^#\/careers\/?/.test(hash)) return { kind: "careers" };
   return { kind: "none" };
 }
 
@@ -61,6 +73,22 @@ export function openBlogs() {
 
 export function openSitemap() {
   window.location.hash = "#/sitemap";
+}
+
+export function openAbout() {
+  window.location.hash = "#/about";
+}
+
+export function openEventsPage() {
+  window.location.hash = "#/events";
+}
+
+export function openSocial() {
+  window.location.hash = "#/social";
+}
+
+export function openCareers() {
+  window.location.hash = "#/careers";
 }
 
 /** Close is always history-linear: strip the hash in place (never back()),

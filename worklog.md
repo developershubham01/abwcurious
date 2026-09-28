@@ -545,3 +545,25 @@ Stage Summary:
 - ✅ Round 19 shipped: 全站（landing 8 段 + 5 类 hash 虚拟页 + footer）从 premium 玻璃拟态完整转换为忠实 IBM Carbon 扁平方角系统 — 0px 圆角、中性灰阶、单一蓝强调、weight-300 显示字型、hairline 卡片、蓝 banner、炭黑 footer，DESIGN.md 全部 Do/Don't 落地。
 - 关键决策：① 旧工具类（glass/shadow-premium/text-gradient）原地重定义实现零破坏迁移；② Tailwind 4 theme token 扁平化 radius-2xl/3xl 一行解决全站圆角；③ journey-social 定为 DESIGN.md cta-banner 唯一蓝面；④ section 节奏 white/surface-1 交替由各 agent 分工后像素验证。
 - 风险/下一步：设计 txt 始终未落盘（三轮），若后续到达可再对齐；parked 组件（pricing/console/palette 等 14 个）仍为旧风格（未挂载无影响）；可做：Carbon 数据表风格 events 列表视图、IBM rebus 风格几何图形装饰、产品页 Carbon structured list、真实社媒链接替换占位。
+
+---
+Task ID: 20
+Agent: Z.ai Code (main)
+Task: Round 20 — 用户需求：IBM 风格导航重构（About 独立页 / Services▾ / Products▾ / Contact us / 图标▾公司页面组）+ hero 换回 "Curious minds. Intelligent software."
+
+Work Log:
+- ROUTER (src/lib/view-route.ts)：新增 4 个 hash 页 kind — about/events/social/careers + routeFromLocation 正则 + openAbout/openEventsPage/openSocial/openCareers。
+- HEADER 全重写：主导航改为 About(→#/about) · Services▾(6 分类→#/services/<slug>) · Products▾(All products→#/products + 6 产品→#/products/<slug>) · Contact us(#contact) · [LayoutGrid 图标]More▾(Careers/Events/Social media/Blog/Gallery/Leadership/Achievements/Sitemap，带描述文案)。Carbon 下拉面板：白底 1px hairline 方角、句首大写 14px、hover bg-ibm-layer；按钮 aria-expanded/haspopup/controls、chevron 旋转、外侧 pointerdown 捕获关闭、Esc 语义（浏览器焦点）。激活态 = 2px 蓝下划线（key: #/about、#/services、#/products、#more、contact）；scroll-spy 只留 contact。
+- MOBILE 菜单重组分组：01 About / 02 Contact us + Services 组(6) + Products 组(All+6) + Company 组(8) + Start a project CTA + SocialRow + email；全部 hairline 分隔行，overflow-y-auto。
+- 新页面（4 个，全部 ViewShell takeover 自带 navbar+footer）：about-page.tsx 新建（display hero "Curious minds. Intelligent software." + story 双栏编辑排版 + VALUES gap-px 方角卡 + STATS dl 网格 + Studio facts 侧栏 border-l-4 蓝条 + 蓝色 cta-banner CTA）；company-pages.tsx = EventsPage(<Events id="events-page"> 复用 landing 组件，避免 id 冲突) + CareersPage(复活 parked careers.tsx) + SocialPage(SOCIALS 5 渠道占位感知卡 + 第 6 格蓝色 "Prefer email?" CTA 补位) + CompanyPagesPortal 路由分发；view-portals.tsx 挂载 CompanyPagesPortal。
+- events.tsx 加可选 id prop（默认 "events"）。
+- activeNav 对齐：product-page ×2 → "#/products"，category-page → "#/services"，blogs/sitemap → "#more"。
+- careers.tsx Carbon 化：font-mono 清零、uppercase tracked 标签 → 句首大写 text-sm、蓝色标题词 → ink、mono chip → Carbon 状态点。
+- FOOTER sitemap 带：Sections 组 → "Company" 组（Home/About—company profile/Careers/Events/Social media/Leadership/Achievements/Gallery/Contact）。
+- SITEMAP 页：新增 "Company pages" 组 4 行（view dispatch 扩展 openAbout/openCareers/openEventsPage/openSocial），destinations 25→29；GROUP_ICONS 补 company。
+- QA（agent-browser 1440+390）：Services/Products/More 三个下拉展开截图验证（6 分类/6 产品/8 页面齐全、chevron 旋转、激活蓝条）；Careers 页打开 + More 激活下划线 ✓；#/about 全页（About 激活下划线、story/values/stats/facts）✓；#/events 网格 ✓；#/social 5 占位卡+蓝 email 卡 ✓；/#/sitemap 29 destinations ✓；Esc 关闭后 overflow 恢复 "" ✓；sitemap.xml 23 URL ✓；mobile 390 scrollWidth=390 ✓；lint exit 0 ✓；console 零错误 ✓。
+
+Stage Summary:
+- ✅ Round 20 shipped: IBM.com 式信息架构 — About 独立公司档案页、Services/Products 下拉菜单、Contact us、图标 More▾ 收纳 Careers/Events/Social/Blog/Gallery/Leadership/Achievements/Sitemap 8 个公司页面（4 个新 hash 页 + 复用现有 4 个）；landing hero 换回品牌线 "Curious minds. Intelligent software."；全站 hash 页体系现共 9 类 takeover 全部带完整 navbar/footer。
+- 关键决策：About/Events/Social/Careers 走既有 hash-takeover 体系而非新 Next 路由（保持单路由约束 + 共享 chrome）；Events 页以 id prop 复用 landing 组件而非复制；More▾ 定位为"公司页面"收纳组（IBM "more" 模式）。
+- 风险/下一步：SOCIALS 链接仍为占位（页内已明确标注 "Coming soon"）；careers 职位为样例数据；候选：dropdown 键盘方向键导航、About 页 leadership 预览卡、events 页日历视图、/api/vcard 真实 vCard、公司 downlord 媒体包页。

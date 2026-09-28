@@ -3,6 +3,7 @@
 import { ProductsPortal } from "./product-page";
 import { CategoryPortal } from "./category-page";
 import { SitemapPortal } from "./sitemap-page";
+import { CompanyPagesPortal } from "./company-pages";
 
 /**
  * Mounts every hash-route virtual "page" site-wide, from the root layout:
@@ -11,6 +12,10 @@ import { SitemapPortal } from "./sitemap-page";
  *   #/blogs             → blog / field-notes page    (ProductsPortal)
  *   #/services/<slug>   → service category playbook  (CategoryPortal)
  *   #/sitemap           → full sitemap of the site   (SitemapPortal)
+ *   #/about             → company profile page       (CompanyPagesPortal)
+ *   #/events            → events listing page        (CompanyPagesPortal)
+ *   #/social            → social media page          (CompanyPagesPortal)
+ *   #/careers           → careers / open roles page  (CompanyPagesPortal)
  *
  * Each takeover renders inside ViewShell, so every page carries the
  * site's REAL navbar + footer. ProductsPortal owns the history listener
@@ -23,6 +28,7 @@ export function ViewPortals() {
       <ProductsPortal />
       <CategoryPortal />
       <SitemapPortal />
+      <CompanyPagesPortal />
     </>
   );
 }

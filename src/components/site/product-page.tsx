@@ -186,7 +186,7 @@ function ProductsIndexPage() {
     <ViewShell
       crumb="Products / All platforms"
       label="Our products — all platforms"
-      activeNav="#products"
+      activeNav="#/products"
       onClose={closeView}
     >
       <main className="flex-1">
@@ -305,7 +305,7 @@ function ProductDetailPage({ product }: { product: Product }) {
     <ViewShell
       crumb={`Products / ${product.shortName}`}
       label={`${product.name} — product page`}
-      activeNav="#products"
+      activeNav="#/products"
       onClose={closeView}
     >
       <main className="flex-1">
