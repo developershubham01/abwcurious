@@ -3,35 +3,37 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { Rocket, Flag, Trophy, Globe2, type LucideIcon } from "lucide-react";
-import { Reveal } from "./primitives";
+import { Eyebrow, Reveal } from "./primitives";
 import { SplitText } from "./text-anim";
 import { TIMELINE, SAMPLE_NOTE, type MilestoneKind } from "@/data/company";
 import { cn } from "@/lib/utils";
 
-const KIND_META: Record<MilestoneKind, { icon: LucideIcon; label: string; dot: string; chip: string }> = {
+/* Kind coding stays inside the documented Carbon ramp:
+   IBM Blue (#0f62fe) / cyan-50 (#1192e8) / blue-80 (#002d9c) / semantic green (#24a148). */
+const KIND_META: Record<MilestoneKind, { icon: LucideIcon; label: string; border: string; text: string }> = {
   founding: {
     icon: Rocket,
     label: "Founded",
-    dot: "border-ibm-blue",
-    chip: "bg-ibm-blue text-white",
+    border: "border-ibm-blue",
+    text: "text-primary",
   },
   milestone: {
     icon: Flag,
     label: "Milestone",
-    dot: "border-ibm-cyan",
-    chip: "bg-ibm-cyan text-white",
+    border: "border-ibm-cyan",
+    text: "text-ibm-cyan",
   },
   achievement: {
     icon: Trophy,
     label: "Achievement",
-    dot: "border-[#8a3ffc]",
-    chip: "bg-[#8a3ffc] text-white",
+    border: "border-ibm-blue-active",
+    text: "text-ibm-blue-active",
   },
   expansion: {
     icon: Globe2,
     label: "Expansion",
-    dot: "border-ibm-success",
-    chip: "bg-ibm-success text-white",
+    border: "border-ibm-success",
+    text: "text-ibm-success",
   },
 };
 
@@ -54,16 +56,16 @@ export function JourneyTimeline() {
         {/* header */}
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
-            <p className="justify-center font-mono text-xs uppercase tracking-[0.22em] text-ibm-soft">
-              03 — Our Journey
-            </p>
+            <Eyebrow tone="muted" className="justify-center">
+              03 — Our journey
+            </Eyebrow>
           </Reveal>
-          <h2 className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">
+          <h2 className="mt-5 text-balance text-4xl font-light leading-[1.1] tracking-tight text-ink sm:text-5xl">
             <SplitText text="Milestones that" />{" "}
-            <SplitText text="made us." delay={0.15} wordClassName="text-gradient font-normal" />
+            <SplitText text="made us." delay={0.15} wordClassName="text-gradient" />
           </h2>
           <Reveal delay={0.15}>
-            <p className="mt-5 text-pretty text-base leading-relaxed text-ink/60 sm:text-lg">
+            <p className="mt-5 text-pretty text-base leading-relaxed text-ink-muted sm:text-lg">
               From a two-person idea to a studio with its own products — the moments that shaped
               ABWcurious, revealed as you scroll.
             </p>
@@ -74,13 +76,13 @@ export function JourneyTimeline() {
         <div ref={trackRef} className="relative mx-auto mt-16 max-w-4xl">
           {/* rail */}
           <div
-            className="absolute bottom-0 left-[13px] top-0 w-px bg-ink/10 md:left-1/2 md:-translate-x-1/2"
+            className="absolute bottom-0 left-[13px] top-0 w-px bg-hairline md:left-1/2 md:-translate-x-1/2"
             aria-hidden="true"
           />
-          {/* scroll fill */}
+          {/* scroll fill — solid IBM Blue progress line */}
           <motion.div
             style={reduced ? { scaleY: 1 } : { scaleY: fill }}
-            className="absolute bottom-0 left-[13px] top-0 w-px origin-top bg-gradient-to-b from-ibm-blue via-ibm-cyan to-[#8a3ffc] md:left-1/2 md:-translate-x-1/2"
+            className="absolute bottom-0 left-[13px] top-0 w-px origin-top bg-primary md:left-1/2 md:-translate-x-1/2"
             aria-hidden="true"
           />
 
@@ -91,15 +93,15 @@ export function JourneyTimeline() {
               const leftSide = i % 2 === 0;
               return (
                 <li key={`${item.year}-${item.title}`} className="relative">
-                  {/* node */}
+                  {/* square node */}
                   <span
                     className={cn(
-                      "absolute left-[13px] top-6 z-10 flex size-7 -translate-x-1/2 items-center justify-center rounded-full border-2 bg-white shadow-[0_0_0_6px_rgba(255,255,255,0.9)] md:left-1/2",
-                      meta.dot
+                      "absolute left-[13px] top-6 z-10 flex size-7 -translate-x-1/2 items-center justify-center border-2 bg-white md:left-1/2",
+                      meta.border
                     )}
                     aria-hidden="true"
                   >
-                    <Icon className="size-3 text-ibm-blue-active" strokeWidth={2} />
+                    <Icon className={cn("size-3", meta.text)} strokeWidth={2} />
                   </span>
 
                   <div
@@ -116,35 +118,23 @@ export function JourneyTimeline() {
                         leftSide ? "md:col-start-1 md:pr-4 md:text-right" : "md:col-start-2 md:pl-4"
                       )}
                     >
-                      <article
-                        className={cn(
-                          "group relative rounded-2xl border border-ink/[0.07] bg-white/85 p-6 shadow-[0_10px_36px_-18px_rgba(15,98,254,0.3)] backdrop-blur transition-all duration-300",
-                          "hover:-translate-y-1 hover:shadow-[0_24px_54px_-22px_rgba(15,98,254,0.45)]"
-                        )}
-                      >
+                      <article className="group relative border border-hairline bg-white p-6 transition-colors duration-200 hover:bg-ibm-layer">
                         <div
                           className={cn(
                             "flex flex-wrap items-center gap-3",
                             leftSide && "md:flex-row-reverse"
                           )}
                         >
-                          <span className="font-mono text-2xl font-light tracking-tight text-ibm-bright">
+                          <span className="text-2xl font-light tabular-nums tracking-tight text-ink">
                             {item.year}
                           </span>
-                          <span
-                            className={cn(
-                              "inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em]",
-                              meta.chip
-                            )}
-                          >
-                            <Icon className="size-3" strokeWidth={2} aria-hidden="true" />
+                          <span className="inline-flex items-center gap-1.5 border border-hairline bg-white px-2 py-1 text-xs text-ink-muted">
+                            <Icon className={cn("size-3", meta.text)} strokeWidth={2} aria-hidden="true" />
                             {meta.label}
                           </span>
                         </div>
-                        <h3 className="mt-3 text-lg font-medium tracking-tight text-ink">
-                          {item.title}
-                        </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-ink/60">{item.description}</p>
+                        <h3 className="mt-3 text-lg font-normal text-ink">{item.title}</h3>
+                        <p className="mt-2 text-sm leading-relaxed text-ink-muted">{item.description}</p>
                       </article>
                     </Reveal>
                     <div className="hidden md:block md:[direction:ltr]" aria-hidden="true" />
@@ -156,9 +146,7 @@ export function JourneyTimeline() {
         </div>
 
         <Reveal delay={0.1}>
-          <p className="mt-14 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-ink/40">
-            {SAMPLE_NOTE}
-          </p>
+          <p className="mt-14 text-center text-xs text-ibm-subtle">{SAMPLE_NOTE}</p>
         </Reveal>
       </div>
     </section>

@@ -53,9 +53,9 @@ export function LeaderSocial({ leader }: { leader: Leader }) {
         const dead = isPlaceholder(href);
         const hint = ` — placeholder, add the real URL in src/data/company.ts`;
         const shell = cn(
-          "focus-carbon group/s relative inline-flex size-9 items-center justify-center rounded-full border border-ink/10 bg-white/90 text-ink/70 shadow-sm backdrop-blur",
-          "transition-all duration-300 hover:-translate-y-0.5 hover:border-ibm-blue hover:bg-ibm-blue hover:text-white hover:shadow-[0_10px_22px_-8px_rgba(15,98,254,0.55)]",
-          dead && "cursor-default hover:border-ink/10 hover:bg-white/90 hover:text-ink/70 hover:translate-y-0 hover:shadow-sm"
+          "focus-carbon group/s relative inline-flex size-9 items-center justify-center border border-hairline bg-white text-ink-muted",
+          "transition-colors duration-200 hover:border-ibm-blue hover:bg-ibm-blue hover:text-white",
+          dead && "cursor-default hover:border-hairline hover:bg-white hover:text-ink-muted"
         );
         return (
           <li key={key}>
@@ -93,41 +93,25 @@ function LeaderPhoto({ leader }: { leader: Leader }) {
           loading="lazy"
         />
       ) : (
-        <div
-          className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-          style={{
-            background:
-              "radial-gradient(120% 120% at 20% 0%, #e8f0ff 0%, #f6f9ff 45%, #eef3ff 100%)",
-          }}
-        >
-          {/* faint grid */}
-          <div
-            className="absolute inset-0 opacity-60"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(15,98,254,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(15,98,254,0.05) 1px, transparent 1px)",
-              backgroundSize: "26px 26px",
-            }}
-            aria-hidden="true"
-          />
-          {/* monogram medallion */}
+        <div className="absolute inset-0 bg-ibm-layer transition-transform duration-700 ease-out group-hover:scale-[1.05]">
+          {/* monogram tile — square Carbon avatar with a static dashed frame */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative flex size-32 items-center justify-center rounded-full border border-ibm-blue/25 bg-white/80 shadow-[0_20px_50px_-20px_rgba(15,98,254,0.4)] backdrop-blur transition-transform duration-500 group-hover:scale-105 sm:size-40">
+            <div className="relative flex size-32 items-center justify-center border border-hairline bg-white transition-colors duration-300 group-hover:border-ibm-blue sm:size-40">
               <span
-                className="text-6xl font-light tracking-tight text-gradient sm:text-7xl"
+                className="text-6xl font-light tracking-tight text-ink sm:text-7xl"
                 aria-hidden="true"
               >
                 {leader.monogram}
               </span>
               <span
-                className="absolute inset-0 rounded-full border border-dashed border-ibm-blue/30 [animation:spin_26s_linear_infinite]"
+                className="pointer-events-none absolute inset-1.5 border border-dashed border-ibm-blue/40"
                 aria-hidden="true"
               />
             </div>
           </div>
           {/* placeholder note */}
-          <span className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-white/85 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/55 backdrop-blur">
-            <Camera className="size-3" strokeWidth={1.5} aria-hidden="true" />
+          <span className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 rounded-[2px] border border-hairline bg-white px-3 py-1.5 text-xs text-ink-muted">
+            <Camera className="size-3 text-ibm-subtle" strokeWidth={1.5} aria-hidden="true" />
             Photo placeholder
           </span>
         </div>
@@ -150,8 +134,7 @@ function LeaderCard({ leader, delay = 0 }: { leader: Leader; delay?: number }) {
       <TiltCard max={4} className="h-full">
         <article
           className={cn(
-            "group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ink/[0.07] bg-white",
-            "shadow-[0_10px_44px_-18px_rgba(15,98,254,0.28)] transition-shadow duration-500 hover:shadow-[0_28px_70px_-24px_rgba(15,98,254,0.45)]",
+            "group relative flex h-full flex-col overflow-hidden border border-hairline bg-white",
             leader.featured ? "lg:flex-row" : ""
           )}
         >
@@ -160,8 +143,8 @@ function LeaderCard({ leader, delay = 0 }: { leader: Leader; delay?: number }) {
             <LeaderPhoto leader={leader} />
 
             {/* role chip */}
-            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/85 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-ibm-blue-active shadow-sm backdrop-blur">
-              <BadgeCheck className="size-3.5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-[2px] border border-hairline bg-white px-3 py-1.5 text-xs text-ink-muted">
+              <BadgeCheck className="size-3.5 text-primary" strokeWidth={1.5} aria-hidden="true" />
               {leader.role}
             </span>
 
@@ -176,7 +159,7 @@ function LeaderCard({ leader, delay = 0 }: { leader: Leader; delay?: number }) {
             <h3 className="text-2xl font-light tracking-tight text-ink sm:text-[1.7rem]">
               {leader.name}
             </h3>
-            <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.2em] text-ibm-bright">
+            <p className="mt-1 text-sm text-ink-muted">
               {leader.role}
             </p>
 
@@ -189,7 +172,7 @@ function LeaderCard({ leader, delay = 0 }: { leader: Leader; delay?: number }) {
               >
                 <p
                   className={cn(
-                    "text-sm leading-relaxed text-ink/65 transition-all",
+                    "text-sm leading-relaxed text-ink-muted transition-all",
                     !expanded && "line-clamp-3"
                   )}
                 >
@@ -201,7 +184,7 @@ function LeaderCard({ leader, delay = 0 }: { leader: Leader; delay?: number }) {
                 onClick={() => setExpanded((v) => !v)}
                 aria-expanded={expanded}
                 aria-controls={bioId}
-                className="focus-carbon mt-2 inline-flex items-center gap-1 rounded-full font-mono text-[11px] uppercase tracking-[0.16em] text-ibm-bright transition-colors hover:text-ibm-blue-active"
+                className="focus-carbon mt-2 inline-flex items-center gap-1 self-start text-sm text-primary underline-offset-4 transition-colors hover:text-ibm-blue-active hover:underline"
               >
                 {expanded ? "Read less" : "Read more"}
                 <ChevronDown
@@ -214,14 +197,14 @@ function LeaderCard({ leader, delay = 0 }: { leader: Leader; delay?: number }) {
 
             {/* expertise */}
             <div className="mt-5">
-              <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-ink/45">
+              <p className="text-sm text-ink-muted">
                 Areas of expertise
               </p>
               <ul className="mt-2.5 flex flex-wrap gap-1.5">
                 {leader.expertise.map((skill) => (
                   <li
                     key={skill}
-                    className="rounded-full border border-ibm-blue/15 bg-ibm-blue/[0.06] px-3 py-1 text-xs font-medium text-ibm-blue-active transition-colors hover:bg-ibm-blue hover:text-white"
+                    className="rounded-[2px] border border-hairline bg-ibm-layer px-3 py-1 text-xs text-ink-muted transition-colors hover:bg-ibm-layer-hover hover:text-ink"
                   >
                     {skill}
                   </li>
@@ -230,11 +213,11 @@ function LeaderCard({ leader, delay = 0 }: { leader: Leader; delay?: number }) {
             </div>
 
             {/* highlights */}
-            <dl className="mt-auto grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-ink/[0.06] bg-ink/[0.05] pt-0">
+            <dl className="mt-auto grid grid-cols-3 gap-px overflow-hidden border border-hairline bg-hairline">
               {leader.highlights.map((h) => (
-                <div key={h.label} className="bg-[#f8faff] px-3 py-3.5 text-center">
-                  <dd className="text-[13px] font-semibold leading-tight text-ink">{h.value}</dd>
-                  <dt className="mt-1 font-mono text-[8.5px] uppercase tracking-[0.16em] text-ink/45">
+                <div key={h.label} className="bg-white px-3 py-3.5 text-center">
+                  <dd className="text-[13px] font-semibold leading-tight tabular-nums text-ink">{h.value}</dd>
+                  <dt className="mt-1 text-xs text-ibm-subtle">
                     {h.label}
                   </dt>
                 </div>
@@ -253,22 +236,22 @@ export function Leaders() {
     <section
       id="leadership"
       aria-label="Meet our leadership"
-      className="relative scroll-mt-24 border-y border-ink/[0.05] bg-[#f6f9ff] py-24 sm:py-28"
+      className="relative scroll-mt-24 border-y border-hairline bg-ibm-layer py-24 sm:py-28"
     >
       <div className="mx-auto max-w-7xl px-6">
         {/* header */}
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
-            <p className="justify-center font-mono text-xs uppercase tracking-[0.22em] text-ibm-soft">
-              02 — Meet Our Leadership
+            <p className="justify-center text-sm text-ink-muted">
+              02 — Meet our leadership
             </p>
           </Reveal>
           <h2 className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">
             <SplitText text="The minds leading" />{" "}
-            <SplitText text="the curious." delay={0.15} wordClassName="text-gradient font-normal" />
+            <SplitText text="the curious." delay={0.15} />
           </h2>
           <Reveal delay={0.15}>
-            <p className="mt-5 text-pretty text-base leading-relaxed text-ink/60 sm:text-lg">
+            <p className="mt-5 text-pretty text-base leading-relaxed text-ink-muted sm:text-lg">
               Founders who still review pull-requests and join workshops — get to know the people
               setting the direction (and the vibe).
             </p>
@@ -288,7 +271,7 @@ export function Leaders() {
         </div>
 
         <Reveal delay={0.1}>
-          <p className="mt-10 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-ink/40">
+          <p className="mt-10 text-center text-sm text-ibm-subtle">
             {SAMPLE_NOTE} — hover a card for socials · all links are placeholders
           </p>
         </Reveal>

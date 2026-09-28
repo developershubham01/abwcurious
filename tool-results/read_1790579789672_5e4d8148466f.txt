@@ -1,0 +1,740 @@
+     1→"use client";
+     2→
+     3→import { useMemo, useState, useSyncExternalStore } from "react";
+     4→import { AnimatePresence, motion } from "framer-motion";
+     5→import Image from "next/image";
+     6→import {
+     7→  CalendarDays,
+     8→  MapPin,
+     9→  ArrowRight,
+    10→  ArrowUpRight,
+    11→  CalendarX2,
+    12→  CalendarPlus,
+    13→  Play,
+    14→  Link2,
+    15→  Images,
+    16→  BellRing,
+    17→  LoaderCircle,
+    18→  CheckCircle2,
+    19→  type LucideIcon,
+    20→} from "lucide-react";
+    21→import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+    22→import { Reveal } from "./primitives";
+    23→import { SplitText } from "./text-anim";
+    24→import { SocialButton } from "./social-row";
+    25→import { useToast } from "@/hooks/use-toast";
+    26→import {
+    27→  EVENTS,
+    28→  EVENT_CATEGORIES,
+    29→  EVENT_STATUS_LABEL,
+    30→  SOCIALS,
+    31→  isPlaceholder,
+    32→  SAMPLE_NOTE,
+    33→  type CompanyEvent,
+    34→  type EventCategory,
+    35→  type EventStatus,
+    36→} from "@/data/company";
+    37→import { cn } from "@/lib/utils";
+    38→
+    39→type StatusFilter = "all" | EventStatus;
+    40→type CategoryFilter = "All" | EventCategory;
+    41→
+    42→const STATUS_DOT: Record<EventStatus, string> = {
+    43→  upcoming: "bg-ibm-success",
+    44→  recent: "bg-ibm-cyan",
+    45→  past: "bg-ink/35",
+    46→};
+    47→
+    48→const STATUS_CHIP: Record<EventStatus, string> = {
+    49→  upcoming: "border-ibm-success/30 bg-ibm-success/10 text-[#17702b]",
+    50→  recent: "border-ibm-cyan/30 bg-ibm-cyan/10 text-[#0b6487]",
+    51→  past: "border-ink/15 bg-ink/[0.05] text-ink/60",
+    52→};
+    53→
+    54→function Meta({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
+    55→  return (
+    56→    <span className="inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.04em] text-ink/55">
+    57→      <Icon className="size-3.5 text-ibm-bright" strokeWidth={1.75} aria-hidden="true" />
+    58→      {children}
+    59→    </span>
+    60→  );
+    61→}
+    62→
+    63→/* ------------------------------ event card ------------------------------- */
+    64→
+    65→function EventCard({ event, onOpen }: { event: CompanyEvent; onOpen: () => void }) {
+    66→  return (
+    67→    <motion.article
+    68→      layout
+    69→      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+    70→      animate={{ opacity: 1, scale: 1, y: 0 }}
+    71→      exit={{ opacity: 0, scale: 0.94, y: -10 }}
+    72→      transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+    73→      className="h-full"
+    74→    >
+    75→      <div
+    76→        role="button"
+    77→        tabIndex={0}
+    78→        onClick={onOpen}
+    79→        onKeyDown={(e) => {
+    80→          if (e.key === "Enter" || e.key === " ") {
+    81→            e.preventDefault();
+    82→            onOpen();
+    83→          }
+    84→        }}
+    85→        aria-haspopup="dialog"
+    86→        aria-label={`Open event details: ${event.name}`}
+    87→        className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-ink/[0.07] bg-white shadow-[0_10px_40px_-20px_rgba(15,98,254,0.3)] outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ibm-blue/60 hover:-translate-y-1.5 hover:shadow-[0_28px_64px_-26px_rgba(15,98,254,0.5)]"
+    88→      >
+    89→        {/* cover */}
+    90→        <div className="relative aspect-[16/10] overflow-hidden">
+    91→          <Image
+    92→            src={event.cover}
+    93→            alt={`${event.name} — cover photo`}
+    94→            fill
+    95→            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+    96→            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+    97→          />
+    98→          <div
+    99→            className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent opacity-70"
+   100→            aria-hidden="true"
+   101→          />
+   102→          {/* status chip */}
+   103→          <span
+   104→            className={cn(
+   105→              "absolute left-3.5 top-3.5 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] backdrop-blur",
+   106→              STATUS_CHIP[event.status]
+   107→            )}
+   108→          >
+   109→            <span
+   110→              className={cn(
+   111→                "size-1.5 rounded-full",
+   112→                STATUS_DOT[event.status],
+   113→                event.status === "upcoming" && "animate-pulse-dot"
+   114→              )}
+   115→              aria-hidden="true"
+   116→            />
+   117→            {EVENT_STATUS_LABEL[event.status]}
+   118→          </span>
+   119→          {/* category chip */}
+   120→          <span className="absolute right-3.5 top-3.5 rounded-full border border-white/30 bg-white/80 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/70 backdrop-blur">
+   121→            {event.category}
+   122→          </span>
+   123→        </div>
+   124→
+   125→        {/* body */}
+   126→        <div className="flex flex-1 flex-col p-5 sm:p-6">
+   127→          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+   128→            <Meta icon={CalendarDays}>{event.date}</Meta>
+   129→            <Meta icon={MapPin}>{event.location}</Meta>
+   130→          </div>
+   131→          <h3 className="mt-3 text-lg font-medium leading-snug tracking-tight text-ink transition-colors group-hover:text-ibm-bright">
+   132→            {event.name}
+   133→          </h3>
+   134→          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink/60">{event.description}</p>
+   135→          <span className="mt-auto inline-flex items-center gap-1.5 pt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-ibm-bright">
+   136→            View Event
+   137→            <ArrowRight
+   138→              className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
+   139→              strokeWidth={1.75}
+   140→              aria-hidden="true"
+   141→            />
+   142→          </span>
+   143→        </div>
+   144→      </div>
+   145→    </motion.article>
+   146→  );
+   147→}
+   148→
+   149→/* --------------------------- upcoming toolkit ---------------------------- */
+   150→
+   151→/** 1 Hz ticker shared by countdowns — external store keeps the hooks rule happy. */
+   152→function subscribeTick(onStoreChange: () => void) {
+   153→  const t = window.setInterval(onStoreChange, 1000);
+   154→  return () => window.clearInterval(t);
+   155→}
+   156→
+   157→/** Live countdown to the event date — "–" until the store ticks (hydration-safe). */
+   158→function Countdown({ dateStr }: { dateStr: string }) {
+   159→  const target = useMemo(() => new Date(dateStr).getTime(), [dateStr]);
+   160→  const now = useSyncExternalStore(
+   161→    subscribeTick,
+   162→    () => Math.floor(Date.now() / 1000),
+   163→    () => null
+   164→  );
+   165→
+   166→  const valid = Number.isFinite(target);
+   167→  const diff = valid && now !== null ? Math.max(0, target - now * 1000) : null;
+   168→  const parts =
+   169→    diff === null
+   170→      ? null
+   171→      : {
+   172→          days: Math.floor(diff / 86_400_000),
+   173→          hours: Math.floor((diff % 86_400_000) / 3_600_000),
+   174→          minutes: Math.floor((diff % 3_600_000) / 60_000),
+   175→          seconds: Math.floor((diff % 60_000) / 1000),
+   176→        };
+   177→
+   178→  const cells = [
+   179→    { label: "Days", value: parts?.days },
+   180→    { label: "Hours", value: parts?.hours },
+   181→    { label: "Min", value: parts?.minutes },
+   182→    { label: "Sec", value: parts?.seconds },
+   183→  ];
+   184→
+   185→  return (
+   186→    <div className="flex items-center gap-2" role="timer" aria-label="Time until the event starts">
+   187→      {cells.map((c, i) => (
+   188→        <div key={c.label} className="flex items-center gap-2">
+   189→          <div className="min-w-[3.4rem] rounded-xl border border-ibm-blue/15 bg-white px-2 py-1.5 text-center shadow-[0_6px_16px_-10px_rgba(15,98,254,0.45)]">
+   190→            <span className="block font-mono text-base font-medium tabular-nums leading-none text-ibm-blue-active">
+   191→              {c.value === null || c.value === undefined ? "–" : String(c.value).padStart(2, "0")}
+   192→            </span>
+   193→            <span className="mt-1 block font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45">
+   194→              {c.label}
+   195→            </span>
+   196→          </div>
+   197→          {i < cells.length - 1 && (
+   198→            <span className="font-mono text-sm text-ibm-blue/40" aria-hidden="true">
+   199→              :
+   200→            </span>
+   201→          )}
+   202→        </div>
+   203→      ))}
+   204→    </div>
+   205→  );
+   206→}
+   207→
+   208→/** Build a RFC 5545 .ics file for the event (all-day-ish 8h hold, UTC). */
+   209→function buildICS(event: CompanyEvent): string {
+   210→  const start = new Date(event.date);
+   211→  const end = new Date(start.getTime() + 8 * 3_600_000);
+   212→  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+   213→  const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+   214→  return [
+   215→    "BEGIN:VCALENDAR",
+   216→    "VERSION:2.0",
+   217→    "PRODID:-//ABWcurious//Company Events//EN",
+   218→    "CALSCALE:GREGORIAN",
+   219→    "BEGIN:VEVENT",
+   220→    `UID:${event.id}@abwcurious`,
+   221→    `DTSTAMP:${fmt(new Date())}`,
+   222→    `DTSTART:${fmt(start)}`,
+   223→    `DTEND:${fmt(end)}`,
+   224→    `SUMMARY:${esc(event.name)}`,
+   225→    `LOCATION:${esc(event.location)}`,
+   226→    `DESCRIPTION:${esc(event.description)}`,
+   227→    `URL:${typeof window !== "undefined" ? window.location.origin + window.location.pathname : ""}`,
+   228→    "END:VEVENT",
+   229→    "END:VCALENDAR",
+   230→  ].join("\r\n");
+   231→}
+   232→
+   233→function AddToCalendarButton({ event }: { event: CompanyEvent }) {
+   234→  const [done, setDone] = useState(false);
+   235→
+   236→  function download() {
+   237→    try {
+   238→      const blob = new Blob([buildICS(event)], { type: "text/calendar;charset=utf-8" });
+   239→      const url = URL.createObjectURL(blob);
+   240→      const a = document.createElement("a");
+   241→      a.href = url;
+   242→      a.download = `${event.id}.ics`;
+   243→      document.body.appendChild(a);
+   244→      a.click();
+   245→      a.remove();
+   246→      URL.revokeObjectURL(url);
+   247→      setDone(true);
+   248→      window.setTimeout(() => setDone(false), 2600);
+   249→    } catch {
+   250→      /* download blocked — silent, button stays */
+   251→    }
+   252→  }
+   253→
+   254→  return (
+   255→    <button
+   256→      type="button"
+   257→      onClick={download}
+   258→      className={cn(
+   259→        "focus-carbon inline-flex h-10 items-center gap-2 rounded-full border border-ibm-blue/30 bg-white px-4",
+   260→        "font-mono text-[10px] uppercase tracking-[0.14em] text-ibm-bright transition-colors hover:bg-ibm-blue hover:text-white",
+   261→        done && "border-ibm-success/40 text-ibm-success hover:bg-ibm-success hover:text-white"
+   262→      )}
+   263→    >
+   264→      {done ? (
+   265→        <CheckCircle2 className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
+   266→      ) : (
+   267→        <CalendarPlus className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
+   268→      )}
+   269→      {done ? "Saved" : "Add to calendar"}
+   270→    </button>
+   271→  );
+   272→}
+   273→
+   274→/** Email waitlist for upcoming events → /api/newsletter (source: "event:<id>"). */
+   275→function WaitlistForm({ event }: { event: CompanyEvent }) {
+   276→  const { toast } = useToast();
+   277→  const [email, setEmail] = useState("");
+   278→  const [state, setState] = useState<"idle" | "loading" | "done">("idle");
+   279→
+   280→  async function submit(e: React.FormEvent<HTMLFormElement>) {
+   281→    e.preventDefault();
+   282→    if (!email || state === "loading") return;
+   283→    setState("loading");
+   284→    try {
+   285→      const res = await fetch("/api/newsletter", {
+   286→        method: "POST",
+   287→        headers: { "Content-Type": "application/json" },
+   288→        body: JSON.stringify({ email, source: `event:${event.id}`.slice(0, 60) }),
+   289→      });
+   290→      const json = await res.json();
+   291→      if (!res.ok) throw new Error(json.error || "Could not sign you up");
+   292→      setState("done");
+   293→      toast({
+   294→        title: json.alreadySubscribed ? "Already on the list" : "You're on the list",
+   295→        description: json.alreadySubscribed
+   296→          ? "We'll email you when this event opens up."
+   297→          : `We'll remind you before ${event.name}.`,
+   298→      });
+   299→    } catch (err) {
+   300→      setState("idle");
+   301→      toast({
+   302→        title: "Could not sign you up",
+   303→        description: err instanceof Error ? err.message : "Please try again.",
+   304→        variant: "destructive",
+   305→      });
+   306→    }
+   307→  }
+   308→
+   309→  if (state === "done") {
+   310→    return (
+   311→      <div className="flex items-center gap-2.5 rounded-2xl border border-ibm-success/30 bg-ibm-success/[0.08] px-4 py-3">
+   312→        <CheckCircle2 className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
+   313→        <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-ink/70">
+   314→          Reminder set — see you there
+   315→        </p>
+   316→      </div>
+   317→    );
+   318→  }
+   319→
+   320→  return (
+   321→    <form
+   322→      onSubmit={submit}
+   323→      className="flex overflow-hidden rounded-2xl border border-ibm-blue/20 bg-white shadow-[0_8px_24px_-14px_rgba(15,98,254,0.45)] transition-colors focus-within:border-ibm-blue/60"
+   324→    >
+   325→      <label htmlFor={`waitlist-${event.id}`} className="sr-only">
+   326→        Email for event reminders
+   327→      </label>
+   328→      <input
+   329→        id={`waitlist-${event.id}`}
+   330→        type="email"
+   331→        required
+   332→        value={email}
+   333→        onChange={(e) => setEmail(e.target.value)}
+   334→        placeholder="you@company.com"
+   335→        autoComplete="email"
+   336→        className="h-10 w-full min-w-0 bg-transparent px-4 font-mono text-xs text-ink placeholder:text-ink/35 focus:outline-none"
+   337→      />
+   338→      <button
+   339→        type="submit"
+   340→        disabled={state === "loading"}
+   341→        className="inline-flex h-10 shrink-0 items-center gap-1.5 bg-ibm-blue px-4 font-mono text-[10px] uppercase tracking-[0.14em] text-white transition-colors hover:bg-ibm-blue-hover focus-carbon disabled:opacity-60"
+   342→      >
+   343→        {state === "loading" ? (
+   344→          <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
+   345→        ) : (
+   346→          <BellRing className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
+   347→        )}
+   348→        Notify me
+   349→      </button>
+   350→    </form>
+   351→  );
+   352→}
+   353→
+   354→/** Panel shown in the dialog for upcoming events: countdown + reminders. */
+   355→function UpcomingPanel({ event }: { event: CompanyEvent }) {
+   356→  const dateOK = Number.isFinite(new Date(event.date).getTime());
+   357→  return (
+   358→    <div className="mt-6 overflow-hidden rounded-2xl border border-ibm-blue/15 bg-gradient-to-br from-ibm-blue/[0.06] via-transparent to-ibm-cyan/[0.08] p-4 sm:p-5">
+   359→      <div className="flex flex-wrap items-center justify-between gap-3">
+   360→        <p className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.22em] text-ibm-soft">
+   361→          <span className="size-1.5 animate-pulse-dot rounded-full bg-ibm-success" aria-hidden="true" />
+   362→          Starts in
+   363→        </p>
+   364→        <AddToCalendarButton event={event} />
+   365→      </div>
+   366→      {dateOK && (
+   367→        <div className="mt-3">
+   368→          <Countdown dateStr={event.date} />
+   369→        </div>
+   370→      )}
+   371→      <div className="mt-4 flex flex-col gap-2.5 border-t border-ibm-blue/10 pt-4 sm:flex-row sm:items-center">
+   372→        <p className="min-w-0 flex-1 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-ink/55">
+   373→          Get an email reminder when doors open — no spam, one email.
+   374→        </p>
+   375→        <div className="w-full sm:w-80">
+   376→          <WaitlistForm event={event} />
+   377→        </div>
+   378→      </div>
+   379→    </div>
+   380→  );
+   381→}
+   382→
+   383→/* ----------------------------- detail dialog ----------------------------- */
+   384→
+   385→function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: () => void }) {
+   386→  /* Viewer state keyed by event id — switches back to photo 0 whenever a
+   387→     different event is opened, without a state-syncing effect. */
+   388→  const [viewer, setViewer] = useState<{ id: string; shot: number }>({ id: "", shot: 0 });
+   389→  const shot = event && viewer.id === event.id ? viewer.shot : 0;
+   390→  const setShot = (n: number) => event && setViewer({ id: event.id, shot: n });
+   391→  const shots = event ? [event.cover, ...event.gallery] : [];
+   392→  const activeShot = shots[Math.min(shot, shots.length - 1)];
+   393→  const hasVideo = Boolean(event?.video) && !isPlaceholder(event?.video);
+   394→  const hasUrl = Boolean(event?.url) && !isPlaceholder(event?.url);
+   395→  const isUpcoming = event?.status === "upcoming";
+   396→
+   397→  return (
+   398→    <Dialog open={Boolean(event)} onOpenChange={(v) => !v && onClose()}>
+   399→      <DialogContent className="max-h-[92dvh] w-[calc(100vw-2rem)] max-w-3xl gap-0 overflow-hidden rounded-3xl border-white/60 bg-white p-0 shadow-[0_40px_120px_-30px_rgba(15,98,254,0.55)] focus:outline-none lg:max-w-4xl">
+   400→        <div className="max-h-[92dvh] overflow-y-auto overscroll-contain">
+   401→          {event && (
+   402→            <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+   403→              {/* main photo with in-dialog gallery */}
+   404→              <div className="relative aspect-[16/9] w-full bg-[#eef3ff]">
+   405→                <Image
+   406→                  key={activeShot}
+   407→                  src={activeShot}
+   408→                  alt={`${event.name} — photo ${shot + 1} of ${shots.length}`}
+   409→                  fill
+   410→                  sizes="(max-width: 1024px) 100vw, 896px"
+   411→                  className="object-cover"
+   412→                  priority
+   413→                />
+   414→                <div
+   415→                  className="absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-ink/10"
+   416→                  aria-hidden="true"
+   417→                />
+   418→                <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4">
+   419→                  <div className="flex flex-wrap gap-2">
+   420→                    <span
+   421→                      className={cn(
+   422→                        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] backdrop-blur",
+   423→                        STATUS_CHIP[event.status]
+   424→                      )}
+   425→                    >
+   426→                      <span className={cn("size-1.5 rounded-full", STATUS_DOT[event.status])} aria-hidden="true" />
+   427→                      {EVENT_STATUS_LABEL[event.status]}
+   428→                    </span>
+   429→                    <span className="rounded-full border border-white/30 bg-white/80 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/70 backdrop-blur">
+   430→                      {event.category}
+   431→                    </span>
+   432→                  </div>
+   433→                  <span className="hidden items-center gap-1.5 font-mono text-[10px] text-white/85 sm:inline-flex">
+   434→                    <Images className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   435→                    {shot + 1} / {shots.length}
+   436→                  </span>
+   437→                </div>
+   438→              </div>
+   439→
+   440→              {/* thumbs */}
+   441→              {shots.length > 1 && (
+   442→                <div className="flex gap-2 overflow-x-auto px-5 pt-4 sm:px-8" role="tablist" aria-label="Event photos">
+   443→                  {shots.map((src, i) => (
+   444→                    <button
+   445→                      key={`${src}-${i}`}
+   446→                      type="button"
+   447→                      role="tab"
+   448→                      aria-selected={i === shot}
+   449→                      aria-label={`Show photo ${i + 1}`}
+   450→                      onClick={() => setShot(i)}
+   451→                      className={cn(
+   452→                        "focus-carbon relative h-14 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300",
+   453→                        i === shot
+   454→                          ? "border-ibm-blue shadow-[0_8px_20px_-8px_rgba(15,98,254,0.5)]"
+   455→                          : "border-transparent opacity-70 hover:opacity-100"
+   456→                      )}
+   457→                    >
+   458→                      <Image src={src} alt="" fill sizes="96px" className="object-cover" />
+   459→                    </button>
+   460→                  ))}
+   461→                </div>
+   462→              )}
+   463→
+   464→              <div className="px-5 py-6 sm:px-8 sm:py-7">
+   465→                <DialogTitle asChild>
+   466→                  <h3 className="text-balance text-2xl font-light tracking-tight text-ink sm:text-3xl">
+   467→                    {event.name}
+   468→                  </h3>
+   469→                </DialogTitle>
+   470→
+   471→                {/* meta grid */}
+   472→                <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink/[0.07] bg-ink/[0.06] sm:grid-cols-4">
+   473→                  {[
+   474→                    { icon: CalendarDays, label: "Date", value: event.date },
+   475→                    { icon: MapPin, label: "Location", value: event.location },
+   476→                    { icon: Images, label: "Category", value: event.category },
+   477→                    {
+   478→                      icon: Play,
+   479→                      label: "Status",
+   480→                      value: EVENT_STATUS_LABEL[event.status],
+   481→                    },
+   482→                  ].map((m) => (
+   483→                    <div key={m.label} className="bg-[#f8faff] px-4 py-3.5">
+   484→                      <dt className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/45">
+   485→                        <m.icon className="size-3 text-ibm-bright" strokeWidth={1.75} aria-hidden="true" />
+   486→                        {m.label}
+   487→                      </dt>
+   488→                      <dd className="mt-1.5 text-[13px] font-medium leading-snug text-ink">{m.value}</dd>
+   489→                    </div>
+   490→                  ))}
+   491→                </dl>
+   492→
+   493→                <p className="mt-6 text-pretty text-[15px] leading-relaxed text-ink/70">
+   494→                  {event.description}
+   495→                </p>
+   496→
+   497→                {/* upcoming: countdown + waitlist + calendar */}
+   498→                {isUpcoming && <UpcomingPanel event={event} />}
+   499→
+   500→                {/* video */}
+   501→                {event.video && (
+   502→                  <div className="mt-6">
+   503→                    {hasVideo ? (
+   504→                      <video
+   505→                        controls
+   506→                        preload="metadata"
+   507→                        src={event.video}
+   508→                        className="aspect-video w-full rounded-2xl border border-ink/[0.07] bg-ink object-cover"
+   509→                      />
+   510→                    ) : (
+   511→                      <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-ink/15 bg-[#f6f9ff] text-center">
+   512→                        <span className="flex size-12 items-center justify-center rounded-full bg-ibm-blue/10 text-ibm-bright">
+   513→                          <Play className="size-5" strokeWidth={1.75} aria-hidden="true" />
+   514→                        </span>
+   515→                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/50">
+   516→                          Event video — add a URL in src/data/company.ts
+   517→                        </p>
+   518→                      </div>
+   519→                    )}
+   520→                  </div>
+   521→                )}
+   522→
+   523→                {/* socials + CTA */}
+   524→                <div className="mt-7 flex flex-col gap-5 border-t border-ink/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
+   525→                  <div>
+   526→                    <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-ink/45">
+   527→                      Relive it on social
+   528→                    </p>
+   529→                    <ul className="mt-2.5 flex flex-wrap gap-2" aria-label="Social media posts">
+   530→                      {SOCIALS.slice(0, 4).map((s) => (
+   531→                        <li key={s.platform}>
+   532→                          <SocialButton link={s} size="sm" />
+   533→                        </li>
+   534→                      ))}
+   535→                    </ul>
+   536→                  </div>
+   537→                  {hasUrl ? (
+   538→                    <a
+   539→                      href={event.url}
+   540→                      target="_blank"
+   541→                      rel="noopener noreferrer"
+   542→                      className="focus-carbon group inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-ibm-blue px-6 text-sm font-medium text-white shadow-[0_12px_30px_-10px_rgba(15,98,254,0.55)] transition-all hover:bg-ibm-blue-hover"
+   543→                    >
+   544→                      View Event
+   545→                      <ArrowUpRight
+   546→                        className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+   547→                        strokeWidth={1.75}
+   548→                        aria-hidden="true"
+   549→                      />
+   550→                    </a>
+   551→                  ) : (
+   552→                    <span
+   553→                      title="Add the real event URL in src/data/company.ts"
+   554→                      className="inline-flex h-11 shrink-0 cursor-default items-center gap-2 rounded-full border border-dashed border-ink/20 px-5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45"
+   555→                    >
+   556→                      <Link2 className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+   557→                      Event link — placeholder
+   558→                    </span>
+   559→                  )}
+   560→                </div>
+   561→              </div>
+   562→            </div>
+   563→          )}
+   564→        </div>
+   565→      </DialogContent>
+   566→    </Dialog>
+   567→  );
+   568→}
+   569→
+   570→/* ------------------------------- section --------------------------------- */
+   571→
+   572→const STATUS_TABS: { value: StatusFilter; label: string }[] = [
+   573→  { value: "all", label: "All" },
+   574→  { value: "upcoming", label: "Upcoming" },
+   575→  { value: "recent", label: "Recent" },
+   576→  { value: "past", label: "Past" },
+   577→];
+   578→
+   579→export function Events() {
+   580→  const [status, setStatus] = useState<StatusFilter>("all");
+   581→  const [category, setCategory] = useState<CategoryFilter>("All");
+   582→  const [selected, setSelected] = useState<CompanyEvent | null>(null);
+   583→
+   584→  const counts = useMemo(() => {
+   585→    const map: Record<StatusFilter, number> = { all: EVENTS.length, upcoming: 0, recent: 0, past: 0 };
+   586→    for (const e of EVENTS) map[e.status] += 1;
+   587→    return map;
+   588→  }, []);
+   589→
+   590→  const filtered = useMemo(
+   591→    () =>
+   592→      EVENTS.filter(
+   593→        (e) => (status === "all" || e.status === status) && (category === "All" || e.category === category)
+   594→      ),
+   595→    [status, category]
+   596→  );
+   597→
+   598→  return (
+   599→    <section
+   600→      id="events"
+   601→      aria-label="Company events"
+   602→      className="relative scroll-mt-24 border-y border-ink/[0.05] bg-[#f6f9ff] py-24 sm:py-28"
+   603→    >
+   604→      <div className="mx-auto max-w-7xl px-6">
+   605→        {/* header */}
+   606→        <div className="mx-auto max-w-2xl text-center">
+   607→          <Reveal>
+   608→            <p className="justify-center font-mono text-xs uppercase tracking-[0.22em] text-ibm-soft">
+   609→              04 — Company Events
+   610→            </p>
+   611→          </Reveal>
+   612→          <h2 className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">
+   613→            <SplitText text="Moments we build" />{" "}
+   614→            <SplitText text="together." delay={0.15} wordClassName="text-gradient font-normal" />
+   615→          </h2>
+   616→          <Reveal delay={0.15}>
+   617→            <p className="mt-5 text-pretty text-base leading-relaxed text-ink/60 sm:text-lg">
+   618→              Summits, workshops, launches and the occasional confetti explosion — every event is a
+   619→              chapter of the company story.
+   620→            </p>
+   621→          </Reveal>
+   622→        </div>
+   623→
+   624→        {/* filters */}
+   625→        <Reveal delay={0.1}>
+   626→          <div className="mt-12 flex flex-col items-center gap-4">
+   627→            {/* status tabs */}
+   628→            <div
+   629→              role="tablist"
+   630→              aria-label="Filter events by status"
+   631→              className="inline-flex flex-wrap justify-center gap-1 rounded-full border border-ink/[0.08] bg-white p-1 shadow-[0_6px_24px_-12px_rgba(15,98,254,0.35)]"
+   632→            >
+   633→              {STATUS_TABS.map((tab) => {
+   634→                const isActive = status === tab.value;
+   635→                return (
+   636→                  <button
+   637→                    key={tab.value}
+   638→                    type="button"
+   639→                    role="tab"
+   640→                    aria-selected={isActive}
+   641→                    onClick={() => setStatus(tab.value)}
+   642→                    className={cn(
+   643→                      "focus-carbon relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300",
+   644→                      isActive ? "text-white" : "text-ink/60 hover:text-ink"
+   645→                    )}
+   646→                  >
+   647→                    {isActive && (
+   648→                      <motion.span
+   649→                        layoutId="event-status-pill"
+   650→                        className="absolute inset-0 rounded-full bg-ibm-blue shadow-[0_8px_20px_-8px_rgba(15,98,254,0.7)]"
+   651→                        transition={{ type: "spring", stiffness: 400, damping: 32 }}
+   652→                      />
+   653→                    )}
+   654→                    <span className="relative">
+   655→                      {tab.label}
+   656→                      <span className={cn("ml-1.5 text-xs", isActive ? "text-white/75" : "text-ink/35")}>
+   657→                        {counts[tab.value]}
+   658→                      </span>
+   659→                    </span>
+   660→                  </button>
+   661→                );
+   662→              })}
+   663→            </div>
+   664→
+   665→            {/* category chips */}
+   666→            <div
+   667→              role="group"
+   668→              aria-label="Filter events by category"
+   669→              className="flex flex-wrap justify-center gap-2"
+   670→            >
+   671→              {(["All", ...EVENT_CATEGORIES] as CategoryFilter[]).map((cat) => {
+   672→                const isActive = category === cat;
+   673→                return (
+   674→                  <button
+   675→                    key={cat}
+   676→                    type="button"
+   677→                    aria-pressed={isActive}
+   678→                    onClick={() => setCategory(cat)}
+   679→                    className={cn(
+   680→                      "focus-carbon rounded-full border px-4 py-1.5 text-[13px] font-medium transition-all duration-300",
+   681→                      isActive
+   682→                        ? "border-ink bg-ink text-white shadow-[0_10px_24px_-10px_rgba(22,22,22,0.6)]"
+   683→                        : "border-ink/12 bg-white/80 text-ink/60 hover:border-ibm-blue/40 hover:text-ibm-bright"
+   684→                    )}
+   685→                  >
+   686→                    {cat}
+   687→                  </button>
+   688→                );
+   689→              })}
+   690→            </div>
+   691→          </div>
+   692→        </Reveal>
+   693→
+   694→        {/* grid */}
+   695→        <div className="mt-12 min-h-[24rem]">
+   696→          {filtered.length > 0 ? (
+   697→            <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+   698→              <AnimatePresence mode="popLayout">
+   699→                {filtered.map((event) => (
+   700→                  <EventCard key={event.id} event={event} onOpen={() => setSelected(event)} />
+   701→                ))}
+   702→              </AnimatePresence>
+   703→            </motion.div>
+   704→          ) : (
+   705→            <motion.div
+   706→              initial={{ opacity: 0, y: 14 }}
+   707→              animate={{ opacity: 1, y: 0 }}
+   708→              className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-ink/15 bg-white/60 px-8 py-16 text-center"
+   709→            >
+   710→              <span className="flex size-12 items-center justify-center rounded-full bg-ibm-blue/10 text-ibm-bright">
+   711→                <CalendarX2 className="size-5" strokeWidth={1.5} aria-hidden="true" />
+   712→              </span>
+   713→              <p className="mt-4 text-sm font-medium text-ink">No events in this combination</p>
+   714→              <p className="mt-1 text-sm text-ink/55">Try a different status or category.</p>
+   715→              <button
+   716→                type="button"
+   717→                onClick={() => {
+   718→                  setStatus("all");
+   719→                  setCategory("All");
+   720→                }}
+   721→                className="focus-carbon mt-5 rounded-full border border-ibm-blue/30 bg-white px-5 py-2 text-sm font-medium text-ibm-bright transition-colors hover:bg-ibm-blue hover:text-white"
+   722→              >
+   723→                Reset filters
+   724→              </button>
+   725→            </motion.div>
+   726→          )}
+   727→        </div>
+   728→
+   729→        <Reveal delay={0.1}>
+   730→          <p className="mt-12 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-ink/40">
+   731→            {SAMPLE_NOTE}
+   732→          </p>
+   733→        </Reveal>
+   734→      </div>
+   735→
+   736→      <EventDialog event={selected} onClose={() => setSelected(null)} />
+   737→    </section>
+   738→  );
+   739→}
+   740→

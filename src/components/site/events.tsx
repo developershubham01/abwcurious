@@ -41,20 +41,18 @@ type CategoryFilter = "All" | EventCategory;
 
 const STATUS_DOT: Record<EventStatus, string> = {
   upcoming: "bg-ibm-success",
-  recent: "bg-ibm-cyan",
-  past: "bg-ink/35",
+  recent: "bg-primary",
+  past: "bg-ibm-subtle",
 };
 
-const STATUS_CHIP: Record<EventStatus, string> = {
-  upcoming: "border-ibm-success/30 bg-ibm-success/10 text-[#17702b]",
-  recent: "border-ibm-cyan/30 bg-ibm-cyan/10 text-[#0b6487]",
-  past: "border-ink/15 bg-ink/[0.05] text-ink/60",
-};
+/** Flat Carbon chip: white tile + hairline; the dot alone carries the status color. */
+const COVER_CHIP =
+  "inline-flex items-center gap-1.5 rounded-[2px] border border-hairline bg-white px-2.5 py-1 text-xs text-ink-muted";
 
 function Meta({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.04em] text-ink/55">
-      <Icon className="size-3.5 text-ibm-bright" strokeWidth={1.75} aria-hidden="true" />
+    <span className="inline-flex items-center gap-1.5 text-sm text-ink-muted">
+      <Icon className="size-3.5 text-ibm-subtle" strokeWidth={1.75} aria-hidden="true" />
       {children}
     </span>
   );
@@ -84,7 +82,7 @@ function EventCard({ event, onOpen }: { event: CompanyEvent; onOpen: () => void 
         }}
         aria-haspopup="dialog"
         aria-label={`Open event details: ${event.name}`}
-        className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-ink/[0.07] bg-white shadow-[0_10px_40px_-20px_rgba(15,98,254,0.3)] outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ibm-blue/60 hover:-translate-y-1.5 hover:shadow-[0_28px_64px_-26px_rgba(15,98,254,0.5)]"
+        className="group flex h-full cursor-pointer flex-col overflow-hidden border border-hairline bg-white outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ibm-blue/60 hover:border-ibm-blue"
       >
         {/* cover */}
         <div className="relative aspect-[16/10] overflow-hidden">
@@ -100,12 +98,7 @@ function EventCard({ event, onOpen }: { event: CompanyEvent; onOpen: () => void 
             aria-hidden="true"
           />
           {/* status chip */}
-          <span
-            className={cn(
-              "absolute left-3.5 top-3.5 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] backdrop-blur",
-              STATUS_CHIP[event.status]
-            )}
-          >
+          <span className={cn("absolute left-3.5 top-3.5", COVER_CHIP)}>
             <span
               className={cn(
                 "size-1.5 rounded-full",
@@ -117,7 +110,7 @@ function EventCard({ event, onOpen }: { event: CompanyEvent; onOpen: () => void 
             {EVENT_STATUS_LABEL[event.status]}
           </span>
           {/* category chip */}
-          <span className="absolute right-3.5 top-3.5 rounded-full border border-white/30 bg-white/80 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/70 backdrop-blur">
+          <span className={cn("absolute right-3.5 top-3.5", COVER_CHIP)}>
             {event.category}
           </span>
         </div>
@@ -128,11 +121,11 @@ function EventCard({ event, onOpen }: { event: CompanyEvent; onOpen: () => void 
             <Meta icon={CalendarDays}>{event.date}</Meta>
             <Meta icon={MapPin}>{event.location}</Meta>
           </div>
-          <h3 className="mt-3 text-lg font-medium leading-snug tracking-tight text-ink transition-colors group-hover:text-ibm-bright">
+          <h3 className="mt-3 text-lg leading-snug tracking-tight text-ink transition-colors group-hover:text-primary">
             {event.name}
           </h3>
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink/60">{event.description}</p>
-          <span className="mt-auto inline-flex items-center gap-1.5 pt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-ibm-bright">
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-muted">{event.description}</p>
+          <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm text-primary">
             View Event
             <ArrowRight
               className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
@@ -186,16 +179,16 @@ function Countdown({ dateStr }: { dateStr: string }) {
     <div className="flex items-center gap-2" role="timer" aria-label="Time until the event starts">
       {cells.map((c, i) => (
         <div key={c.label} className="flex items-center gap-2">
-          <div className="min-w-[3.4rem] rounded-xl border border-ibm-blue/15 bg-white px-2 py-1.5 text-center shadow-[0_6px_16px_-10px_rgba(15,98,254,0.45)]">
-            <span className="block font-mono text-base font-medium tabular-nums leading-none text-ibm-blue-active">
+          <div className="min-w-[3.4rem] border border-hairline bg-white px-2 py-1.5 text-center">
+            <span className="block text-base tabular-nums leading-none text-ink">
               {c.value === null || c.value === undefined ? "–" : String(c.value).padStart(2, "0")}
             </span>
-            <span className="mt-1 block font-mono text-[8px] uppercase tracking-[0.16em] text-ink/45">
+            <span className="mt-1 block text-xs text-ibm-subtle">
               {c.label}
             </span>
           </div>
           {i < cells.length - 1 && (
-            <span className="font-mono text-sm text-ibm-blue/40" aria-hidden="true">
+            <span className="text-sm text-ibm-subtle" aria-hidden="true">
               :
             </span>
           )}
@@ -256,9 +249,9 @@ function AddToCalendarButton({ event }: { event: CompanyEvent }) {
       type="button"
       onClick={download}
       className={cn(
-        "focus-carbon inline-flex h-10 items-center gap-2 rounded-full border border-ibm-blue/30 bg-white px-4",
-        "font-mono text-[10px] uppercase tracking-[0.14em] text-ibm-bright transition-colors hover:bg-ibm-blue hover:text-white",
-        done && "border-ibm-success/40 text-ibm-success hover:bg-ibm-success hover:text-white"
+        "focus-carbon inline-flex h-10 items-center gap-2 bg-white px-4 text-sm ring-1 ring-inset ring-primary transition-colors",
+        "hover:bg-primary hover:text-white active:bg-ibm-blue-active",
+        done && "ring-ibm-success text-ibm-success hover:bg-ibm-success hover:text-white"
       )}
     >
       {done ? (
@@ -308,9 +301,9 @@ function WaitlistForm({ event }: { event: CompanyEvent }) {
 
   if (state === "done") {
     return (
-      <div className="flex items-center gap-2.5 rounded-2xl border border-ibm-success/30 bg-ibm-success/[0.08] px-4 py-3">
+      <div className="flex items-center gap-2.5 border border-hairline border-l-4 border-l-ibm-success bg-white px-4 py-3">
         <CheckCircle2 className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
-        <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-ink/70">
+        <p className="text-sm text-ink-muted">
           Reminder set — see you there
         </p>
       </div>
@@ -320,7 +313,7 @@ function WaitlistForm({ event }: { event: CompanyEvent }) {
   return (
     <form
       onSubmit={submit}
-      className="flex overflow-hidden rounded-2xl border border-ibm-blue/20 bg-white shadow-[0_8px_24px_-14px_rgba(15,98,254,0.45)] transition-colors focus-within:border-ibm-blue/60"
+      className="flex overflow-hidden rounded-none border border-hairline bg-ibm-layer transition-colors focus-within:border-b-2 focus-within:border-primary"
     >
       <label htmlFor={`waitlist-${event.id}`} className="sr-only">
         Email for event reminders
@@ -333,12 +326,12 @@ function WaitlistForm({ event }: { event: CompanyEvent }) {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
         autoComplete="email"
-        className="h-10 w-full min-w-0 bg-transparent px-4 font-mono text-xs text-ink placeholder:text-ink/35 focus:outline-none"
+        className="h-10 w-full min-w-0 bg-transparent px-4 text-sm text-ink placeholder:text-ibm-subtle focus:outline-none"
       />
       <button
         type="submit"
         disabled={state === "loading"}
-        className="inline-flex h-10 shrink-0 items-center gap-1.5 bg-ibm-blue px-4 font-mono text-[10px] uppercase tracking-[0.14em] text-white transition-colors hover:bg-ibm-blue-hover focus-carbon disabled:opacity-60"
+        className="inline-flex h-10 shrink-0 items-center gap-1.5 bg-primary px-4 text-sm text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active focus-carbon disabled:opacity-60"
       >
         {state === "loading" ? (
           <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
@@ -355,9 +348,9 @@ function WaitlistForm({ event }: { event: CompanyEvent }) {
 function UpcomingPanel({ event }: { event: CompanyEvent }) {
   const dateOK = Number.isFinite(new Date(event.date).getTime());
   return (
-    <div className="mt-6 overflow-hidden rounded-2xl border border-ibm-blue/15 bg-gradient-to-br from-ibm-blue/[0.06] via-transparent to-ibm-cyan/[0.08] p-4 sm:p-5">
+    <div className="mt-6 border border-hairline border-l-4 border-l-primary bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.22em] text-ibm-soft">
+        <p className="inline-flex items-center gap-2 text-sm text-ink-muted">
           <span className="size-1.5 animate-pulse-dot rounded-full bg-ibm-success" aria-hidden="true" />
           Starts in
         </p>
@@ -368,8 +361,8 @@ function UpcomingPanel({ event }: { event: CompanyEvent }) {
           <Countdown dateStr={event.date} />
         </div>
       )}
-      <div className="mt-4 flex flex-col gap-2.5 border-t border-ibm-blue/10 pt-4 sm:flex-row sm:items-center">
-        <p className="min-w-0 flex-1 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-ink/55">
+      <div className="mt-4 flex flex-col gap-2.5 border-t border-hairline pt-4 sm:flex-row sm:items-center">
+        <p className="min-w-0 flex-1 text-sm leading-relaxed text-ink-muted">
           Get an email reminder when doors open — no spam, one email.
         </p>
         <div className="w-full sm:w-80">
@@ -396,12 +389,12 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
 
   return (
     <Dialog open={Boolean(event)} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-h-[92dvh] w-[calc(100vw-2rem)] max-w-3xl gap-0 overflow-hidden rounded-3xl border-white/60 bg-white p-0 shadow-[0_40px_120px_-30px_rgba(15,98,254,0.55)] focus:outline-none lg:max-w-4xl">
+      <DialogContent className="max-h-[92dvh] w-[calc(100vw-2rem)] max-w-3xl gap-0 overflow-hidden rounded-none border-hairline bg-white p-0 focus:outline-none lg:max-w-4xl">
         <div className="max-h-[92dvh] overflow-y-auto overscroll-contain">
           {event && (
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
               {/* main photo with in-dialog gallery */}
-              <div className="relative aspect-[16/9] w-full bg-[#eef3ff]">
+              <div className="relative aspect-[16/9] w-full bg-ibm-layer">
                 <Image
                   key={activeShot}
                   src={activeShot}
@@ -417,20 +410,15 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                 />
                 <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4">
                   <div className="flex flex-wrap gap-2">
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] backdrop-blur",
-                        STATUS_CHIP[event.status]
-                      )}
-                    >
+                    <span className={cn(COVER_CHIP)}>
                       <span className={cn("size-1.5 rounded-full", STATUS_DOT[event.status])} aria-hidden="true" />
                       {EVENT_STATUS_LABEL[event.status]}
                     </span>
-                    <span className="rounded-full border border-white/30 bg-white/80 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink/70 backdrop-blur">
+                    <span className={cn(COVER_CHIP)}>
                       {event.category}
                     </span>
                   </div>
-                  <span className="hidden items-center gap-1.5 font-mono text-[10px] text-white/85 sm:inline-flex">
+                  <span className="hidden items-center gap-1.5 text-xs text-white/85 sm:inline-flex">
                     <Images className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
                     {shot + 1} / {shots.length}
                   </span>
@@ -449,9 +437,9 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                       aria-label={`Show photo ${i + 1}`}
                       onClick={() => setShot(i)}
                       className={cn(
-                        "focus-carbon relative h-14 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300",
+                        "focus-carbon relative h-14 w-24 shrink-0 overflow-hidden rounded-none border-2 transition-colors duration-200",
                         i === shot
-                          ? "border-ibm-blue shadow-[0_8px_20px_-8px_rgba(15,98,254,0.5)]"
+                          ? "border-primary"
                           : "border-transparent opacity-70 hover:opacity-100"
                       )}
                     >
@@ -469,7 +457,7 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                 </DialogTitle>
 
                 {/* meta grid */}
-                <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink/[0.07] bg-ink/[0.06] sm:grid-cols-4">
+                <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-hairline bg-hairline sm:grid-cols-4">
                   {[
                     { icon: CalendarDays, label: "Date", value: event.date },
                     { icon: MapPin, label: "Location", value: event.location },
@@ -480,17 +468,17 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                       value: EVENT_STATUS_LABEL[event.status],
                     },
                   ].map((m) => (
-                    <div key={m.label} className="bg-[#f8faff] px-4 py-3.5">
-                      <dt className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/45">
-                        <m.icon className="size-3 text-ibm-bright" strokeWidth={1.75} aria-hidden="true" />
+                    <div key={m.label} className="bg-white px-4 py-3.5">
+                      <dt className="flex items-center gap-1.5 text-xs text-ibm-subtle">
+                        <m.icon className="size-3 text-ibm-subtle" strokeWidth={1.75} aria-hidden="true" />
                         {m.label}
                       </dt>
-                      <dd className="mt-1.5 text-[13px] font-medium leading-snug text-ink">{m.value}</dd>
+                      <dd className="mt-1.5 text-[13px] leading-snug text-ink">{m.value}</dd>
                     </div>
                   ))}
                 </dl>
 
-                <p className="mt-6 text-pretty text-[15px] leading-relaxed text-ink/70">
+                <p className="mt-6 text-pretty text-[15px] leading-relaxed text-ink-muted">
                   {event.description}
                 </p>
 
@@ -505,14 +493,14 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                         controls
                         preload="metadata"
                         src={event.video}
-                        className="aspect-video w-full rounded-2xl border border-ink/[0.07] bg-ink object-cover"
+                        className="aspect-video w-full border border-hairline bg-ink object-cover"
                       />
                     ) : (
-                      <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-ink/15 bg-[#f6f9ff] text-center">
-                        <span className="flex size-12 items-center justify-center rounded-full bg-ibm-blue/10 text-ibm-bright">
+                      <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 border border-dashed border-hairline bg-ibm-layer text-center">
+                        <span className="flex size-12 items-center justify-center border border-hairline bg-white text-primary">
                           <Play className="size-5" strokeWidth={1.75} aria-hidden="true" />
                         </span>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/50">
+                        <p className="text-xs text-ibm-subtle">
                           Event video — add a URL in src/data/company.ts
                         </p>
                       </div>
@@ -521,9 +509,9 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                 )}
 
                 {/* socials + CTA */}
-                <div className="mt-7 flex flex-col gap-5 border-t border-ink/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-7 flex flex-col gap-5 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-ink/45">
+                    <p className="text-sm text-ink-muted">
                       Relive it on social
                     </p>
                     <ul className="mt-2.5 flex flex-wrap gap-2" aria-label="Social media posts">
@@ -539,7 +527,7 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                       href={event.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="focus-carbon group inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-ibm-blue px-6 text-sm font-medium text-white shadow-[0_12px_30px_-10px_rgba(15,98,254,0.55)] transition-all hover:bg-ibm-blue-hover"
+                      className="focus-carbon group inline-flex h-12 shrink-0 items-center gap-2 bg-primary px-4 text-sm text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active"
                     >
                       View Event
                       <ArrowUpRight
@@ -551,7 +539,7 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                   ) : (
                     <span
                       title="Add the real event URL in src/data/company.ts"
-                      className="inline-flex h-11 shrink-0 cursor-default items-center gap-2 rounded-full border border-dashed border-ink/20 px-5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45"
+                      className="inline-flex h-12 shrink-0 cursor-default items-center gap-2 border border-dashed border-hairline px-4 text-sm text-ibm-subtle"
                     >
                       <Link2 className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
                       Event link — placeholder
@@ -599,22 +587,22 @@ export function Events() {
     <section
       id="events"
       aria-label="Company events"
-      className="relative scroll-mt-24 border-y border-ink/[0.05] bg-[#f6f9ff] py-24 sm:py-28"
+      className="relative scroll-mt-24 border-y border-hairline bg-ibm-layer py-24 sm:py-28"
     >
       <div className="mx-auto max-w-7xl px-6">
         {/* header */}
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
-            <p className="justify-center font-mono text-xs uppercase tracking-[0.22em] text-ibm-soft">
-              04 — Company Events
+            <p className="justify-center text-sm text-ink-muted">
+              04 — Company events
             </p>
           </Reveal>
           <h2 className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">
             <SplitText text="Moments we build" />{" "}
-            <SplitText text="together." delay={0.15} wordClassName="text-gradient font-normal" />
+            <SplitText text="together." delay={0.15} />
           </h2>
           <Reveal delay={0.15}>
-            <p className="mt-5 text-pretty text-base leading-relaxed text-ink/60 sm:text-lg">
+            <p className="mt-5 text-pretty text-base leading-relaxed text-ink-muted sm:text-lg">
               Summits, workshops, launches and the occasional confetti explosion — every event is a
               chapter of the company story.
             </p>
@@ -628,7 +616,7 @@ export function Events() {
             <div
               role="tablist"
               aria-label="Filter events by status"
-              className="inline-flex flex-wrap justify-center gap-1 rounded-full border border-ink/[0.08] bg-white p-1 shadow-[0_6px_24px_-12px_rgba(15,98,254,0.35)]"
+              className="inline-flex flex-wrap justify-center rounded-none border-b border-hairline bg-white"
             >
               {STATUS_TABS.map((tab) => {
                 const isActive = status === tab.value;
@@ -640,20 +628,20 @@ export function Events() {
                     aria-selected={isActive}
                     onClick={() => setStatus(tab.value)}
                     className={cn(
-                      "focus-carbon relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300",
-                      isActive ? "text-white" : "text-ink/60 hover:text-ink"
+                      "focus-carbon relative -mb-px px-4 py-2.5 text-sm transition-colors duration-200",
+                      isActive ? "text-ink" : "text-ink-muted hover:text-ink"
                     )}
                   >
                     {isActive && (
                       <motion.span
-                        layoutId="event-status-pill"
-                        className="absolute inset-0 rounded-full bg-ibm-blue shadow-[0_8px_20px_-8px_rgba(15,98,254,0.7)]"
+                        layoutId="event-status-underline"
+                        className="absolute inset-x-0 -bottom-px h-0.5 bg-primary"
                         transition={{ type: "spring", stiffness: 400, damping: 32 }}
                       />
                     )}
                     <span className="relative">
                       {tab.label}
-                      <span className={cn("ml-1.5 text-xs", isActive ? "text-white/75" : "text-ink/35")}>
+                      <span className={cn("ml-1.5 text-xs", isActive ? "text-ink-muted" : "text-ibm-subtle")}>
                         {counts[tab.value]}
                       </span>
                     </span>
@@ -677,10 +665,10 @@ export function Events() {
                     aria-pressed={isActive}
                     onClick={() => setCategory(cat)}
                     className={cn(
-                      "focus-carbon rounded-full border px-4 py-1.5 text-[13px] font-medium transition-all duration-300",
+                      "focus-carbon rounded-[2px] border px-4 py-1.5 text-sm transition-colors duration-200",
                       isActive
-                        ? "border-ink bg-ink text-white shadow-[0_10px_24px_-10px_rgba(22,22,22,0.6)]"
-                        : "border-ink/12 bg-white/80 text-ink/60 hover:border-ibm-blue/40 hover:text-ibm-bright"
+                        ? "border-ink bg-ink text-white"
+                        : "border-hairline bg-white text-ink-muted hover:border-ink hover:text-ink"
                     )}
                   >
                     {cat}
@@ -705,20 +693,20 @@ export function Events() {
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-ink/15 bg-white/60 px-8 py-16 text-center"
+              className="flex flex-col items-center justify-center border border-dashed border-hairline bg-white px-8 py-16 text-center"
             >
-              <span className="flex size-12 items-center justify-center rounded-full bg-ibm-blue/10 text-ibm-bright">
+              <span className="flex size-12 items-center justify-center border border-hairline bg-ibm-layer text-primary">
                 <CalendarX2 className="size-5" strokeWidth={1.5} aria-hidden="true" />
               </span>
               <p className="mt-4 text-sm font-medium text-ink">No events in this combination</p>
-              <p className="mt-1 text-sm text-ink/55">Try a different status or category.</p>
+              <p className="mt-1 text-sm text-ink-muted">Try a different status or category.</p>
               <button
                 type="button"
                 onClick={() => {
                   setStatus("all");
                   setCategory("All");
                 }}
-                className="focus-carbon mt-5 rounded-full border border-ibm-blue/30 bg-white px-5 py-2 text-sm font-medium text-ibm-bright transition-colors hover:bg-ibm-blue hover:text-white"
+                className="focus-carbon mt-5 bg-white px-4 py-2.5 text-sm text-primary ring-1 ring-inset ring-primary transition-colors hover:bg-primary hover:text-white active:bg-ibm-blue-active"
               >
                 Reset filters
               </button>
@@ -727,7 +715,7 @@ export function Events() {
         </div>
 
         <Reveal delay={0.1}>
-          <p className="mt-12 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-ink/40">
+          <p className="mt-12 text-center text-sm text-ibm-subtle">
             {SAMPLE_NOTE}
           </p>
         </Reveal>

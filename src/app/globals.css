@@ -46,11 +46,16 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* Flatten the built-in Tailwind radius scale to Carbon's 0px square —
+     rounded-2xl / rounded-3xl usages across components collapse to 0. */
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
 
   /* IBM Carbon palette (white & blue light adaptation) */
   --color-ibm-blue: #0f62fe;
-  --color-ibm-blue-hover: #0353e9;
+  --color-ibm-blue-hover: #0050e6;
   --color-ibm-blue-active: #002d9c;
+  --color-ibm-blue-pressed: #002d9c;
   /* text-safe blues on white (Carbon blue-70 / blue-60 / cyan-50) */
   --color-ibm-bright: #0043ce;
   --color-ibm-soft: #0f62fe;
@@ -58,9 +63,17 @@
   --color-ibm-success: #24a148;
   --color-ibm-warning: #f1c21b;
   --color-ibm-error: #da1e28;
+  /* Carbon neutral gray ramp (gray-10/20/30/50/70/100) */
+  --color-ibm-layer: #f4f4f4;
+  --color-ibm-layer-hover: #e8e8e8;
+  --color-ibm-layer-selected: #e0e0e0;
+  --color-ibm-subtle: #8d8d8d;
+  --color-ibm-inverse: #161616;
+  --color-ibm-inverse-hover: #353535;
   --color-ink: #161616;
   --color-ink-muted: #525252;
-  --color-canvas-inverse: #001141;
+  /* DESIGN.md: the ONLY inverted marketing surface is the footer (#161616) */
+  --color-canvas-inverse: #161616;
   --color-hairline: var(--hairline);
   --color-hairline-strong: var(--hairline-strong);
 }
@@ -113,39 +126,39 @@
 
   --background: #ffffff;
   --foreground: #161616;
-  --card: #f7f9fe;
+  --card: #f4f4f4; /* Carbon surface-1 */
   --card-foreground: #161616;
   --popover: #ffffff;
   --popover-foreground: #161616;
   --primary: #0f62fe;
   --primary-foreground: #ffffff;
-  --secondary: #eef4fe;
+  --secondary: #f4f4f4; /* Carbon surface-1 */
   --secondary-foreground: #161616;
-  --muted: #f2f6fd;
-  --muted-foreground: #51617a;
-  --accent: rgba(15, 98, 254, 0.08);
-  --accent-foreground: #0043ce;
+  --muted: #f4f4f4; /* Carbon surface-1 */
+  --muted-foreground: #525252; /* Carbon ink-muted */
+  --accent: #e8e8e8; /* Carbon gray-20 hover layer */
+  --accent-foreground: #161616;
   --destructive: #da1e28;
-  --border: rgba(16, 40, 84, 0.14);
-  --input: rgba(16, 40, 84, 0.28);
+  --border: #e0e0e0; /* Carbon hairline */
+  --input: #8d8d8d; /* Carbon gray-50 field border */
   --ring: #0f62fe;
   --chart-1: #0f62fe;
   --chart-2: #1192e8;
   --chart-3: #0043ce;
   --chart-4: #007d79;
   --chart-5: #9f1853;
-  --sidebar: #f7f9fe;
+  --sidebar: #f4f4f4;
   --sidebar-foreground: #161616;
   --sidebar-primary: #0f62fe;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef4fe;
+  --sidebar-accent: #e8e8e8;
   --sidebar-accent-foreground: #161616;
-  --sidebar-border: rgba(16, 40, 84, 0.14);
+  --sidebar-border: #e0e0e0;
   --sidebar-ring: #0f62fe;
 
-  /* blue-ink hairlines (IBM blue-100 tint) */
-  --hairline: rgba(16, 40, 84, 0.14);
-  --hairline-strong: rgba(16, 40, 84, 0.32);
+  /* Carbon hairlines: neutral #e0e0e0; strong = charcoal (focus underline) */
+  --hairline: #e0e0e0;
+  --hairline-strong: #161616;
 }
 
 @layer base {
@@ -171,11 +184,11 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #ffffff;
+    background: #f4f4f4;
   }
   ::-webkit-scrollbar-thumb {
-    background: #cfdcec;
-    border: 2px solid #ffffff;
+    background: #c6c6c6;
+    border: 2px solid #f4f4f4;
   }
   ::-webkit-scrollbar-thumb:hover {
     background: #0f62fe;
@@ -224,7 +237,7 @@
   padding: 0.875rem 1.25rem;
   background: #0f62fe;
   color: #ffffff;
-  font-family: var(--font-plex-mono), monospace;
+  font-family: var(--font-plex-sans), sans-serif;
   font-size: 0.8125rem;
   transform: translateY(-120%);
   transition: transform 0.15s ease-out;
@@ -317,36 +330,34 @@
 }
 
 @layer utilities {
-  /* Gradient text (blue → cyan → violet) for display headlines */
+  /* Carbon-ized legacy utilities: the class names survive so existing markup
+     keeps working, but every treatment is now flat / square / hairline. */
   .text-gradient {
-    background: linear-gradient(92deg, #0f62fe 0%, #1192e8 52%, #8a3ffc 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    /* Gradient text removed: Carbon display type is solid charcoal */
+    background: none;
+    color: var(--color-ink, #161616);
+    -webkit-text-fill-color: currentColor;
   }
-  /* Frosted glass surface */
+  /* Frosted glass surface → flat white tile with 1px hairline */
   .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(18px) saturate(1.4);
-    -webkit-backdrop-filter: blur(18px) saturate(1.4);
-    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: #ffffff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid #e0e0e0;
   }
-  /* Premium soft shadow (blue-tinted, layered) */
+  /* Premium soft shadow → Carbon hairline ring (no drop shadows on marketing) */
   .shadow-premium {
-    box-shadow:
-      0 1px 2px rgba(16, 24, 40, 0.04),
-      0 12px 40px -12px rgba(15, 98, 254, 0.18);
+    box-shadow: 0 0 0 1px #e0e0e0;
   }
   .shadow-premium-lg {
-    box-shadow:
-      0 2px 6px rgba(16, 24, 40, 0.05),
-      0 30px 80px -24px rgba(15, 98, 254, 0.35);
+    box-shadow: 0 0 0 1px #e0e0e0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .text-gradient {
     -webkit-text-fill-color: currentColor;
+    color: var(--color-ink, #161616);
   }
 }
 

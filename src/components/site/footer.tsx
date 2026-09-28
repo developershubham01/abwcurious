@@ -21,7 +21,6 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Logo } from "./logo";
 import { SocialRow } from "./social-row";
-import { Reveal } from "./primitives";
 import { LeaderDialog } from "./leader-dialog";
 import MaskedHeading from "@/components/reactbits/MaskedHeading";
 import { useToast } from "@/hooks/use-toast";
@@ -70,9 +69,9 @@ function NewsletterForm() {
 
   if (state === "done") {
     return (
-      <div className="flex items-center gap-2.5 rounded-2xl border border-ibm-success/40 bg-ibm-success/10 px-4 py-3.5">
+      <div className="flex items-center gap-2.5 border border-ibm-success/60 bg-ibm-success/10 px-4 py-3.5">
         <CheckCircle2 className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
-        <p className="font-mono text-xs text-white/85">
+        <p className="text-sm text-[#c6c6c6]">
           You are on the list{total ? ` — subscriber #${total}` : ""}. No spam, ever.
         </p>
       </div>
@@ -82,7 +81,7 @@ function NewsletterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur transition-colors focus-within:border-[#78a9ff]"
+      className="flex overflow-hidden border border-[#393939] bg-[#262626] transition-colors focus-within:border-[#78a9ff]"
     >
       <label htmlFor="newsletter-email" className="sr-only">
         Email address
@@ -94,13 +93,13 @@ function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
-        className="h-11 w-full min-w-0 bg-transparent px-4 font-mono text-sm text-white placeholder:text-white/40 focus:outline-none"
+        className="h-11 w-full min-w-0 bg-transparent px-4 text-sm text-white placeholder:text-[#8d8d8d] focus:outline-none"
       />
       <button
         type="submit"
         disabled={state === "loading"}
         aria-label="Subscribe to the newsletter"
-        className="flex h-11 w-12 shrink-0 items-center justify-center bg-ibm-blue text-white transition-colors hover:bg-[#78a9ff] focus-carbon disabled:opacity-60"
+        className="flex h-11 w-12 shrink-0 items-center justify-center bg-primary text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active focus-carbon disabled:opacity-60"
       >
         {state === "loading" ? (
           <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -145,21 +144,21 @@ function LegalDialog({
   const doc = kind ? LEGAL[kind] : null;
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-h-[80dvh] w-[calc(100vw-2rem)] max-w-lg overflow-hidden rounded-3xl border-white/60 p-0 shadow-[0_40px_120px_-30px_rgba(15,98,254,0.5)]">
+      <DialogContent className="max-h-[80dvh] w-[calc(100vw-2rem)] max-w-lg overflow-hidden rounded-none border-hairline p-0 shadow-none">
         {doc && (
           <div className="max-h-[80dvh] overflow-y-auto p-7 sm:p-9">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2.5 text-xl font-light tracking-tight">
-                <doc.icon className="size-5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+              <DialogTitle className="flex items-center gap-2.5 text-xl font-normal">
+                <doc.icon className="size-5 text-ink-muted" strokeWidth={1.5} aria-hidden="true" />
                 {doc.title}
               </DialogTitle>
-              <DialogDescription className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/45">
+              <DialogDescription className="text-sm text-ink-muted">
                 Last updated — placeholder
               </DialogDescription>
             </DialogHeader>
             <div className="mt-5 space-y-4">
               {doc.body.map((p, i) => (
-                <p key={i} className="text-sm leading-relaxed text-ink/70">
+                <p key={i} className="text-sm leading-relaxed text-ink-muted">
                   {p}
                 </p>
               ))}
@@ -240,34 +239,14 @@ export function Footer() {
   const [profile, setProfile] = useState<Leader | null>(null);
 
   return (
-    <footer className="relative mt-auto overflow-hidden bg-[#0a0f1e] text-white">
-      {/* top glow */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ibm-blue/70 to-transparent"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[52rem] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(15,98,254,0.7), transparent 70%)" }}
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.35]"
-        aria-hidden="true"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
-          backgroundSize: "44px 44px",
-        }}
-      />
-
+    <footer className="relative mt-auto overflow-hidden bg-canvas-inverse text-white">
       {/* ------------------------- link columns ------------------------- */}
-      <div className="relative mx-auto max-w-7xl px-6 pb-4 pt-16 sm:pt-20">
+      <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-12">
           {/* brand */}
           <div className="lg:col-span-4">
             <Logo onDark />
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/60">
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#c6c6c6]">
               {COMPANY.description}
             </p>
             <SocialRow variant="dark" className="mt-6" />
@@ -275,7 +254,7 @@ export function Footer() {
 
           {/* leadership — opens the full profile dialog per person */}
           <nav aria-label="Leadership" className="lg:col-span-4">
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+            <h3 className="text-sm font-medium text-white">
               Leadership
             </h3>
             <ul className="mt-5 space-y-3">
@@ -286,14 +265,14 @@ export function Footer() {
                     onClick={() => setProfile(leader)}
                     aria-haspopup="dialog"
                     aria-label={`Open profile: ${leader.name} — ${leader.role}`}
-                    className="focus-carbon group flex w-full items-center gap-3 rounded-xl text-left text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
+                    className="focus-carbon group flex w-full items-center gap-3 text-left text-sm text-[#c6c6c6] transition-colors hover:text-white"
                   >
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] font-mono text-[9px] text-white/60 transition-colors group-hover:border-[#78a9ff]/50 group-hover:text-[#78a9ff]">
+                    <span className="flex size-7 shrink-0 items-center justify-center border border-[#393939] bg-[#262626] text-xs text-[#c6c6c6] transition-colors group-hover:border-[#8d8d8d] group-hover:text-white">
                       {leader.monogram}
                     </span>
                     <span className="min-w-0">
-                      <span className="block truncate">{leader.name}</span>
-                      <span className="block truncate font-mono text-[9px] uppercase tracking-[0.14em] text-white/35">
+                      <span className="block truncate group-hover:underline">{leader.name}</span>
+                      <span className="block truncate text-xs text-[#8d8d8d]">
                         {leader.role}
                       </span>
                     </span>
@@ -305,7 +284,7 @@ export function Footer() {
 
           {/* contact + newsletter */}
           <div className="lg:col-span-4">
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+            <h3 className="text-sm font-medium text-white">
               Contact
             </h3>
             <ul className="mt-5 space-y-3.5">
@@ -313,9 +292,9 @@ export function Footer() {
                 <li key={item.label}>
                   <a
                     href={item.href}
-                    className="focus-carbon group inline-flex items-center gap-3 text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
+                    className="focus-carbon group inline-flex items-center gap-3 text-sm text-[#c6c6c6] transition-colors hover:text-white hover:underline"
                   >
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-white/12 bg-white/[0.06] text-white/60 transition-colors group-hover:border-[#78a9ff]/50 group-hover:text-[#78a9ff]">
+                    <span className="flex size-8 shrink-0 items-center justify-center border border-[#393939] bg-[#262626] text-[#c6c6c6] transition-colors group-hover:text-white">
                       <item.icon className="size-3.5" strokeWidth={1.6} aria-hidden="true" />
                     </span>
                     {item.label}
@@ -325,10 +304,10 @@ export function Footer() {
             </ul>
 
             <div className="mt-8">
-              <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+              <h3 className="text-sm font-medium text-white">
                 Journey notes — monthly
               </h3>
-              <p className="mb-3 mt-2 text-xs leading-relaxed text-white/50">
+              <p className="mb-3 mt-2 text-sm leading-relaxed text-[#8d8d8d]">
                 One email a month: launches, events and lessons. Unsubscribe anytime.
               </p>
               <NewsletterForm />
@@ -340,21 +319,21 @@ export function Footer() {
       {/* ------------------------------ sitemap ------------------------------ */}
       <nav
         aria-label="Sitemap — every page"
-        className="relative border-t border-white/[0.07]"
+        className="relative border-t border-[#393939]"
       >
         <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h2 className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/45">
+              <h2 className="text-sm font-medium text-white">
                 Sitemap
               </h2>
-              <p className="mt-2 text-sm text-white/55">
+              <p className="mt-2 text-sm text-[#8d8d8d]">
                 Every page of the site — one click from anywhere.
               </p>
             </div>
             <a
               href="#/sitemap"
-              className="focus-carbon group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/70 transition-colors hover:border-[#78a9ff]/60 hover:text-[#78a9ff]"
+              className="focus-carbon group inline-flex items-center gap-1.5 border border-white/40 px-4 py-2 text-sm text-white transition-colors hover:border-white hover:bg-white/10"
             >
               Open the full sitemap
               <ArrowUpRight
@@ -368,11 +347,11 @@ export function Footer() {
           <div className="mt-9 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
             {SITEMAP_GROUPS.map((group) => (
               <div key={group.id}>
-                <h3 className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-                  <group.icon className="size-3.5 text-[#78a9ff]/80" strokeWidth={1.5} aria-hidden="true" />
+                <h3 className="flex items-center gap-2 text-sm font-medium text-white">
+                  <group.icon className="size-3.5 text-[#8d8d8d]" strokeWidth={1.5} aria-hidden="true" />
                   {group.label}
-                  <span className="text-white/25" aria-hidden="true">·</span>
-                  <span className="text-white/30">{group.links.length}</span>
+                  <span className="text-[#8d8d8d]" aria-hidden="true">·</span>
+                  <span className="tabular-nums text-[#8d8d8d]">{group.links.length}</span>
                 </h3>
                 <ul className="mt-4 space-y-2.5">
                   {group.links.map((link) => (
@@ -382,12 +361,8 @@ export function Footer() {
                         {...(link.external
                           ? { target: "_blank", rel: "noopener noreferrer" }
                           : {})}
-                        className="focus-carbon group inline-flex max-w-full items-center gap-1.5 text-sm text-white/65 transition-colors hover:text-[#78a9ff]"
+                        className="focus-carbon inline-flex max-w-full items-center gap-1.5 text-sm text-[#c6c6c6] transition-colors hover:text-white hover:underline"
                       >
-                        <span
-                          className="h-px w-0 shrink-0 bg-[#78a9ff] transition-all duration-300 group-hover:w-3"
-                          aria-hidden="true"
-                        />
                         <span className="truncate">{link.label}</span>
                       </a>
                     </li>
@@ -400,7 +375,7 @@ export function Footer() {
       </nav>
 
       {/* ------------------- giant image-filled wordmark ------------------- */}
-      <div className="relative border-t border-white/[0.07]" aria-hidden="true">
+      <div className="relative border-t border-[#393939]" aria-hidden="true">
         <div className="mx-auto max-w-7xl px-4 py-10 lg:px-6">
           <MaskedHeading
             text={COMPANY.wordmark}
@@ -420,35 +395,35 @@ export function Footer() {
             duration={1.4}
             className="select-none"
           />
-          <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-[0.32em] text-white/40">
+          <p className="mt-4 text-center text-sm text-[#8d8d8d]">
             People · Events · Journey — Pune, India
           </p>
         </div>
       </div>
 
       {/* --------------------------- bottom bar --------------------------- */}
-      <div className="relative border-t border-white/[0.07]">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-xs text-white/45 sm:flex-row">
+      <div className="relative border-t border-[#393939]">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-xs text-[#8d8d8d] sm:flex-row">
           <p>© {new Date().getFullYear()} {COMPANY.name}™. All rights reserved.</p>
 
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <button
               type="button"
               onClick={() => setLegal("privacy")}
-              className="focus-carbon rounded-full transition-colors hover:text-[#78a9ff]"
+              className="focus-carbon transition-colors hover:text-white hover:underline"
             >
               Privacy Policy
             </button>
             <button
               type="button"
               onClick={() => setLegal("terms")}
-              className="focus-carbon rounded-full transition-colors hover:text-[#78a9ff]"
+              className="focus-carbon transition-colors hover:text-white hover:underline"
             >
               Terms &amp; Conditions
             </button>
             <a
               href="#top"
-              className="focus-carbon group inline-flex items-center gap-1.5 rounded-full transition-colors hover:text-[#78a9ff]"
+              className="focus-carbon group inline-flex items-center gap-1.5 transition-colors hover:text-white hover:underline"
             >
               Back to top
               <ArrowUp

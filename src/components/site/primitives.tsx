@@ -34,7 +34,7 @@ export function Reveal({
   );
 }
 
-/* ---------------- Eyebrow: mono label with dash ornaments ---------------- */
+/* ---------------- Eyebrow: Carbon sentence-case 14px section label -------- */
 
 export function Eyebrow({
   children,
@@ -48,14 +48,13 @@ export function Eyebrow({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2.5 font-mono text-xs tracking-[0.22em] uppercase",
-        tone === "blue" ? "text-ibm-soft" : "text-muted-foreground",
+        "inline-flex items-center gap-2.5 text-sm",
+        tone === "blue" ? "text-primary" : "text-ink-muted",
         className
       )}
     >
       <span className="h-px w-6 bg-current inline-block" aria-hidden="true" />
       {children}
-      <span className="h-px w-6 bg-current inline-block" aria-hidden="true" />
     </span>
   );
 }
@@ -75,7 +74,7 @@ export function RollButton({
   children: React.ReactNode;
   href?: string;
   onClick?: () => void;
-  variant?: "primary" | "outline" | "ghost" | "light" | "outline-light";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "light" | "outline-light";
   className?: string;
   type?: "button" | "submit";
   arrow?: boolean;
@@ -95,13 +94,20 @@ export function RollButton({
     </>
   );
   const styles = cn(
-    "btn-roll group focus-carbon font-mono text-sm tracking-[0.02em] px-6 h-12 select-none",
-    variant === "primary" && "bg-primary text-primary-foreground hover:bg-ibm-blue-hover",
+    "btn-roll group focus-carbon text-sm px-4 h-12 select-none",
+    /* Carbon button-primary: blue solid, hover blue-hover, pressed blue-80 */
+    variant === "primary" &&
+      "bg-primary text-primary-foreground hover:bg-ibm-blue-hover active:bg-ibm-blue-active",
+    /* Carbon button-secondary: charcoal solid */
+    variant === "secondary" &&
+      "bg-ink text-white hover:bg-ibm-inverse-hover active:bg-ink",
+    /* Carbon button-tertiary: white with 1px blue border + blue text */
     variant === "outline" &&
-      "bg-transparent text-foreground ring-1 ring-inset ring-ink/35 hover:bg-ink/[0.05] hover:ring-ink/70",
-    variant === "ghost" && "text-foreground hover:text-ibm-bright",
+      "bg-white text-primary ring-1 ring-inset ring-primary hover:bg-primary hover:text-white active:bg-ibm-blue-active",
+    /* Carbon button-ghost: plain blue text, blue-10 wash on hover */
+    variant === "ghost" && "text-primary hover:bg-[#edf5ff] active:bg-ibm-blue-active active:text-white",
     /* white buttons for use on solid IBM blue surfaces */
-    variant === "light" && "bg-white text-ibm-blue-active hover:bg-white/85",
+    variant === "light" && "bg-white text-ibm-blue-active hover:bg-white",
     variant === "outline-light" &&
       "bg-transparent text-white ring-1 ring-inset ring-white/60 hover:bg-white/10 hover:ring-white",
     disabled && "opacity-50 pointer-events-none",

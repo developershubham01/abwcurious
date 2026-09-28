@@ -39,18 +39,18 @@ function ViewBreadcrumb({ crumb, onClose }: { crumb: string; onClose: () => void
   }, []);
 
   return (
-    <div className="sticky top-16 z-10 border-b border-hairline bg-background/90 backdrop-blur-md">
+    <div className="sticky top-16 z-10 border-b border-hairline bg-background">
       <div className="mx-auto flex h-10 max-w-7xl items-center gap-3 px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="min-w-0">
-          <ol className="flex min-w-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          <ol className="flex min-w-0 items-center gap-2 text-sm text-ink-muted">
             <li className="hidden sm:inline">ABWcurious</li>
-            <li className="hidden sm:inline text-hairline-strong" aria-hidden="true">
+            <li className="hidden sm:inline text-ibm-subtle" aria-hidden="true">
               /
             </li>
-            <li className="truncate text-foreground">{crumb}</li>
+            <li className="truncate text-ink">{crumb}</li>
           </ol>
         </nav>
-        <span className="ml-auto hidden items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/70 md:inline-flex">
+        <span className="ml-auto hidden items-center gap-1.5 text-xs text-ibm-subtle md:inline-flex">
           <kbd className="border border-hairline bg-white px-1 py-0.5" aria-hidden="true">
             Esc
           </kbd>
@@ -61,7 +61,7 @@ function ViewBreadcrumb({ crumb, onClose }: { crumb: string; onClose: () => void
           type="button"
           onClick={onClose}
           aria-label="Close page (Escape)"
-          className="inline-flex size-8 shrink-0 items-center justify-center border border-hairline text-muted-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
+          className="inline-flex size-8 shrink-0 items-center justify-center border border-hairline text-ink-muted transition-colors hover:border-ink hover:bg-ibm-layer-hover hover:text-ink focus-carbon"
         >
           <X className="size-4" strokeWidth={1.5} aria-hidden="true" />
         </button>

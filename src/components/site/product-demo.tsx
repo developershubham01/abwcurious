@@ -41,23 +41,23 @@ export function DemoWindow({
   status: string;
 }) {
   return (
-    <div className="overflow-hidden border border-hairline-strong bg-white shadow-[0_28px_56px_-32px_rgba(6,15,40,0.25)]">
-      <div className="h-0.5 bg-gradient-to-r from-ibm-blue to-ibm-cyan" aria-hidden="true" />
-      <div className="flex items-center gap-3 border-b border-hairline bg-ibm-blue/[0.03] px-4 py-2.5">
-        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ibm-bright">
+    <div className="overflow-hidden border border-hairline-strong bg-white">
+      <div className="h-0.5 bg-primary" aria-hidden="true" />
+      <div className="flex items-center gap-3 border-b border-hairline bg-ibm-layer px-4 py-2.5">
+        <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
           <span className="size-1.5 rounded-full bg-ibm-error animate-pulse-dot" aria-hidden="true" />
           Live
         </span>
-        <span className="truncate font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="truncate text-xs text-ink-muted">
           {product} — product tour
         </span>
-        <span className="ml-auto hidden truncate font-mono text-[10px] text-muted-foreground/70 sm:block">
+        <span className="ml-auto hidden truncate text-xs text-ibm-subtle sm:block">
           abwcurious.app/{product.toLowerCase().replace(/\s+/g, "-")}
         </span>
       </div>
       <p className="border-b border-hairline px-4 py-2 text-xs text-muted-foreground">{label}</p>
       <div className="p-4 sm:p-5">{children}</div>
-      <p className="border-t border-hairline bg-ibm-blue/[0.02] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="border-t border-hairline bg-ibm-layer px-4 py-2 text-xs text-ink-muted">
         {status}
       </p>
     </div>
@@ -77,10 +77,10 @@ const RADAR_BLIPS = [
 ] as const;
 
 const INCIDENT_FEED = [
-  { sev: "CRITICAL", tone: "text-ibm-error border-ibm-error/40 bg-ibm-error/[0.06]", msg: "Credential stuffing wave on api-eu-2", src: "Edge WAF" },
-  { sev: "HIGH", tone: "text-ibm-warning border-ibm-warning/40 bg-ibm-warning/[0.06]", msg: "Anomalous S3 egress from analytics-vpc", src: "Cloud trail" },
-  { sev: "HIGH", tone: "text-ibm-warning border-ibm-warning/40 bg-ibm-warning/[0.06]", msg: "Privilege escalation attempt — svc-k8s", src: "Identity" },
-  { sev: "LOW", tone: "text-ibm-blue border-ibm-blue/40 bg-ibm-blue/[0.05]", msg: "New device fingerprint on VPN pool", src: "Zero trust" },
+  { sev: "Critical", tone: "text-ibm-error border-ibm-error/40 bg-ibm-error/[0.06]", msg: "Credential stuffing wave on api-eu-2", src: "Edge WAF" },
+  { sev: "High", tone: "text-ibm-warning border-ibm-warning/40 bg-ibm-warning/[0.06]", msg: "Anomalous S3 egress from analytics-vpc", src: "Cloud trail" },
+  { sev: "High", tone: "text-ibm-warning border-ibm-warning/40 bg-ibm-warning/[0.06]", msg: "Privilege escalation attempt — svc-k8s", src: "Identity" },
+  { sev: "Low", tone: "text-ibm-blue border-ibm-blue/40 bg-ibm-blue/[0.05]", msg: "New device fingerprint on VPN pool", src: "Zero trust" },
 ] as const;
 
 function RadarDemo({ reduced }: { reduced: boolean }) {
@@ -100,7 +100,7 @@ function RadarDemo({ reduced }: { reduced: boolean }) {
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
       {/* radar */}
-      <div className="relative flex items-center justify-center border border-hairline bg-ibm-blue/[0.02] p-3">
+      <div className="relative flex items-center justify-center border border-hairline bg-ibm-layer p-3">
         <svg viewBox="0 0 180 180" className="h-auto w-full max-w-[300px]" role="img" aria-label="Threat radar with rotating sweep and detected blips">
           <defs>
             <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="0">
@@ -122,14 +122,14 @@ function RadarDemo({ reduced }: { reduced: boolean }) {
           />
           {RADAR_BLIPS.map((b, i) => (
             <g key={i}>
-              <circle cx={b.x} cy={b.y} r={b.r} fill={b.sev === "critical" ? "#da1e28" : b.sev === "high" ? "#ff832b" : "#0f62fe"} />
+              <circle cx={b.x} cy={b.y} r={b.r} fill={b.sev === "critical" ? "#da1e28" : b.sev === "high" ? "#f1c21b" : "#0f62fe"} />
               {!reduced && (
                 <motion.circle
                   cx={b.x}
                   cy={b.y}
                   r={b.r}
                   fill="none"
-                  stroke={b.sev === "critical" ? "#da1e28" : b.sev === "high" ? "#ff832b" : "#0f62fe"}
+                  stroke={b.sev === "critical" ? "#da1e28" : b.sev === "high" ? "#f1c21b" : "#0f62fe"}
                   strokeWidth="1"
                   animate={{ r: [b.r, b.r + 9], opacity: [0.7, 0] }}
                   transition={{ duration: 2.4, repeat: Infinity, delay: b.delay, ease: "easeOut" }}
@@ -138,14 +138,14 @@ function RadarDemo({ reduced }: { reduced: boolean }) {
             </g>
           ))}
         </svg>
-        <span className="absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+        <span className="absolute left-3 top-3 text-xs text-ink-muted">
           Global threat map
         </span>
       </div>
 
       {/* AI incident feed */}
       <div className="flex flex-col border border-hairline">
-        <p className="border-b border-hairline bg-ibm-blue/[0.03] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground">
+        <p className="border-b border-hairline bg-ibm-layer px-3 py-2 text-xs font-medium text-ink">
           AI incident feed
         </p>
         <ul className="flex flex-1 flex-col gap-2 p-3" aria-live="polite">
@@ -160,11 +160,11 @@ function RadarDemo({ reduced }: { reduced: boolean }) {
                 transition={{ duration: 0.45, ease: EASE }}
                 className="border border-hairline bg-white px-3 py-2"
               >
-                <span className={cn("inline-block border px-1.5 py-0.5 font-mono text-[9px] tracking-[0.14em]", inc.tone)}>
+                <span className={cn("inline-block border px-1.5 py-0.5 text-[10px] font-medium", inc.tone)}>
                   {inc.sev}
                 </span>
-                <p className="mt-1 text-xs leading-snug text-foreground/90">{inc.msg}</p>
-                <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">{inc.src}</p>
+                <p className="mt-1 text-xs leading-snug text-ink">{inc.msg}</p>
+                <p className="mt-0.5 text-xs text-ibm-subtle">{inc.src}</p>
               </motion.li>
             ))}
           </AnimatePresence>
@@ -214,7 +214,7 @@ function ArenaDemo({ reduced }: { reduced: boolean }) {
           initial={false}
           animate={reduced ? undefined : { scale: [1, 1.08, 1] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 border border-hairline-strong bg-white px-2.5 py-1 font-mono text-xs font-semibold text-ibm-bright sm:block"
+          className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 border border-hairline-strong bg-white px-2.5 py-1 text-xs font-medium text-primary sm:block"
           aria-hidden="true"
         >
           VS
@@ -225,16 +225,16 @@ function ArenaDemo({ reduced }: { reduced: boolean }) {
           const pct = Math.min(100, Math.round(((chars / total) * text.length * 100) / text.length));
           return (
             <div key={p.name} className="border border-hairline">
-              <div className="flex items-center justify-between border-b border-hairline bg-ibm-blue/[0.03] px-3 py-1.5">
-                <span className="font-mono text-[11px] text-foreground">{p.name}</span>
-                <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">{p.rank}</span>
+              <div className="flex items-center justify-between border-b border-hairline bg-ibm-layer px-3 py-1.5">
+                <span className="text-xs text-ink">{p.name}</span>
+                <span className="text-xs text-ink-muted">{p.rank}</span>
               </div>
               <pre className="min-h-[104px] overflow-hidden px-3 py-2.5 font-mono text-[11px] leading-relaxed text-foreground/85">
                 {shown}
                 {!done && !reduced && <span className="ml-0.5 inline-block h-3 w-[7px] animate-pulse bg-ibm-bright align-middle" aria-hidden="true" />}
               </pre>
               <div className="h-1 border-t border-hairline bg-hairline" aria-hidden="true">
-                <div className="h-full bg-gradient-to-r from-ibm-blue to-ibm-cyan transition-[width] duration-100" style={{ width: `${pct}%` }} />
+                <div className="h-full bg-primary transition-[width] duration-100" style={{ width: `${pct}%` }} />
               </div>
             </div>
           );
@@ -251,7 +251,7 @@ function ArenaDemo({ reduced }: { reduced: boolean }) {
             aria-live="polite"
           >
             <Trophy className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
-            <p className="font-mono text-xs text-foreground">
+            <p className="text-xs text-ink">
               cypher_9 wins · all tests green · <span className="text-ibm-success">12% faster</span>
             </p>
           </motion.div>
@@ -314,7 +314,7 @@ function OrdersDemo({ reduced }: { reduced: boolean }) {
       <div className="grid gap-3 sm:grid-cols-3">
         {meta.map(({ col, tone, bar }) => (
           <div key={col} className="border border-hairline">
-            <p className={cn("flex items-center justify-between border-b border-hairline bg-ibm-blue/[0.03] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em]", tone)}>
+            <p className={cn("flex items-center justify-between border-b border-hairline bg-ibm-layer px-3 py-1.5 text-xs font-medium", tone)}>
               {col}
               <span className="text-muted-foreground">{columns[col].length}</span>
             </p>
@@ -331,8 +331,8 @@ function OrdersDemo({ reduced }: { reduced: boolean }) {
                     className="border border-hairline bg-white px-2.5 py-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-[11px] text-foreground">{o.id}</span>
-                      <span className="border border-hairline px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground">{o.table}</span>
+                      <span className="text-xs tabular-nums text-ink">{o.id}</span>
+                      <span className="border border-hairline px-1.5 py-0.5 text-[10px] tabular-nums text-ink-muted">{o.table}</span>
                     </div>
                     <p className="mt-1 text-[11px] text-muted-foreground">
                       {o.items} items · {o.note}
@@ -353,7 +353,7 @@ function OrdersDemo({ reduced }: { reduced: boolean }) {
           </div>
         ))}
       </div>
-      <p className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+      <p className="mt-3 flex items-center gap-2 text-xs tabular-nums text-ink-muted">
         <span className="size-1.5 rounded-full bg-ibm-success animate-pulse-dot" aria-hidden="true" />
         orders today {String(148 + tick).padStart(3, "0")} · avg ticket 14:32 · kitchen load {60 + (tick % 3) * 8}%
       </p>
@@ -399,7 +399,7 @@ function QuizDemo({ reduced }: { reduced: boolean }) {
           transition={{ duration: 0.5, ease: EASE }}
           className="border border-hairline-strong bg-white p-4 [transform-style:preserve-3d]"
         >
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="text-xs text-ink-muted">
             {q.skill} · adaptive pick
           </p>
           <p className="mt-2 text-base font-medium text-foreground sm:text-lg">{q.q}</p>
@@ -428,7 +428,7 @@ function QuizDemo({ reduced }: { reduced: boolean }) {
                   {isPicked ? (
                     <Check className="size-4 shrink-0 text-ibm-success" strokeWidth={2} aria-hidden="true" />
                   ) : (
-                    <span className="font-mono text-[10px] text-muted-foreground">{String.fromCharCode(65 + i)}</span>
+                    <span className="text-xs tabular-nums text-ink-muted">{String.fromCharCode(65 + i)}</span>
                   )}
                   {opt}
                 </motion.li>
@@ -441,9 +441,9 @@ function QuizDemo({ reduced }: { reduced: boolean }) {
                 initial={reduced ? false : { opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduced ? undefined : { opacity: 0 }}
-                className="mt-3 flex items-center gap-2 border border-hairline bg-ibm-blue/[0.03] px-3 py-2 text-xs text-muted-foreground"
+                className="mt-3 flex items-center gap-2 border border-hairline bg-ibm-layer px-3 py-2 text-xs text-ink-muted"
               >
-                <Sparkles className="size-3.5 shrink-0 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                <Sparkles className="size-3.5 shrink-0 text-primary" strokeWidth={1.5} aria-hidden="true" />
                 Path rebuilt: spacing +12% on {q.skill.split("·")[0].trim()}, micro-review queued
               </motion.p>
             )}
@@ -454,14 +454,14 @@ function QuizDemo({ reduced }: { reduced: boolean }) {
       {/* adaptive rail */}
       <div className="flex flex-col gap-3">
         <div className="border border-hairline p-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Difficulty</p>
-          <p className="mt-1 font-mono text-2xl text-ibm-bright">{difficulty}%</p>
+          <p className="text-xs text-ink-muted">Difficulty</p>
+          <p className="mt-1 text-2xl font-light tabular-nums text-ink">{difficulty}%</p>
           <div className="mt-2 h-1 bg-hairline" aria-hidden="true">
-            <motion.div className="h-full bg-gradient-to-r from-ibm-blue to-ibm-cyan" animate={{ width: `${difficulty}%` }} transition={{ duration: 0.8, ease: EASE }} />
+            <motion.div className="h-full bg-primary" animate={{ width: `${difficulty}%` }} transition={{ duration: 0.8, ease: EASE }} />
           </div>
         </div>
         <div className="border border-hairline p-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Session path</p>
+          <p className="text-xs text-ink-muted">Session path</p>
           <div className="mt-2 flex gap-1.5" aria-hidden="true">
             {Array.from({ length: 6 }).map((_, i) => (
               <span key={i} className={cn("h-1.5 flex-1", i < dots ? "bg-ibm-blue" : "bg-hairline")} />
@@ -510,8 +510,8 @@ function ShelfDemo({ reduced }: { reduced: boolean }) {
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,280px)]">
       {/* shelf */}
-      <div className="border border-hairline bg-ibm-blue/[0.02] p-4">
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Your shelf · 42 titles</p>
+      <div className="border border-hairline bg-ibm-layer p-4">
+        <p className="text-xs text-ink-muted">Your shelf · 42 titles</p>
         <div className="mt-3 flex h-[86px] items-end gap-1.5 border-b-2 border-ink/70 pb-0" aria-hidden="true">
           {SHELF_BOOKS.map((b, i) => (
             <motion.div
@@ -531,18 +531,18 @@ function ShelfDemo({ reduced }: { reduced: boolean }) {
               className="ml-2 flex h-[72px] w-[92px] origin-left flex-col overflow-hidden border border-hairline-strong bg-white px-2 py-1.5"
               style={{ transformPerspective: 600 }}
             >
-              <BookOpen className="size-3 text-ibm-bright" strokeWidth={1.75} aria-hidden="true" />
+              <BookOpen className="size-3 text-primary" strokeWidth={1.75} aria-hidden="true" />
               <span className="mt-1 block h-1 w-full bg-hairline" />
               <span className="mt-1 block h-1 w-4/5 bg-hairline" />
               <span className="mt-1 block h-1 w-3/5 bg-hairline" />
-              <span className="mt-auto font-mono text-[8px] uppercase tracking-[0.14em] text-muted-foreground">open</span>
+              <span className="mt-auto text-[10px] text-ink-muted">open</span>
             </motion.div>
           )}
         </div>
 
         {/* AI summary card */}
         <div className="mt-4 border border-hairline bg-white p-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-foreground">AI key ideas</p>
+          <p className="text-xs font-medium text-ink">AI key ideas</p>
           <ul className="mt-2 space-y-1.5" aria-live="polite">
             {["Constraint loops beat willpower for habit design", "Rate of change matters more than averages"].map((line, i) => (
               <motion.li
@@ -552,7 +552,7 @@ function ShelfDemo({ reduced }: { reduced: boolean }) {
                 transition={{ duration: 0.4, ease: EASE }}
                 className="flex items-start gap-2 text-xs text-foreground/85"
               >
-                <span className="mt-1.5 size-1 shrink-0 bg-ibm-bright" aria-hidden="true" />
+                <span className="mt-1.5 size-1 shrink-0 bg-primary" aria-hidden="true" />
                 {line}
               </motion.li>
             ))}
@@ -563,7 +563,7 @@ function ShelfDemo({ reduced }: { reduced: boolean }) {
       {/* discovery rail */}
       <div className="flex flex-col gap-3">
         <div className="border border-hairline p-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Taste graph</p>
+          <p className="text-xs text-ink-muted">Taste graph</p>
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
               key={tag}
@@ -571,7 +571,7 @@ function ShelfDemo({ reduced }: { reduced: boolean }) {
               animate={{ opacity: 1, y: 0 }}
               exit={reduced ? undefined : { opacity: 0, y: -8 }}
               transition={{ duration: 0.35 }}
-              className="mt-2 border border-hairline bg-ibm-blue/[0.04] px-2 py-1 font-mono text-[11px] text-ibm-bright"
+              className="mt-2 border border-hairline bg-ibm-layer px-2 py-1 text-xs text-primary"
             >
               {tag}
             </motion.p>
@@ -579,10 +579,10 @@ function ShelfDemo({ reduced }: { reduced: boolean }) {
           <p className="mt-2 text-xs text-muted-foreground">Because you finished 3 systems titles this month.</p>
         </div>
         <div className="border border-hairline p-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Now reading</p>
-          <p className="mt-1 font-mono text-2xl text-ibm-bright">{progress}%</p>
+          <p className="text-xs text-ink-muted">Now reading</p>
+          <p className="mt-1 text-2xl font-light tabular-nums text-ink">{progress}%</p>
           <div className="mt-2 h-1 bg-hairline" aria-hidden="true">
-            <motion.div className="h-full bg-gradient-to-r from-ibm-blue to-ibm-cyan" animate={{ width: `${progress}%` }} transition={{ duration: 0.7, ease: EASE }} />
+            <motion.div className="h-full bg-primary" animate={{ width: `${progress}%` }} transition={{ duration: 0.7, ease: EASE }} />
           </div>
         </div>
       </div>
@@ -636,7 +636,7 @@ function QrDemo({ reduced }: { reduced: boolean }) {
   return (
     <div className="grid gap-4 sm:grid-cols-[190px_minmax(0,1fr)]">
       {/* QR matrix */}
-      <div className="relative flex items-center justify-center border border-hairline bg-ibm-blue/[0.02] p-4">
+      <div className="relative flex items-center justify-center border border-hairline bg-ibm-layer p-4">
         <div className="relative">
           <div className="grid aspect-square w-[150px] grid-cols-9 gap-[2px]" role="img" aria-label="QR code assembling from modules with a scanning beam">
             {QR_MATRIX.map((on, i) => (
@@ -651,15 +651,15 @@ function QrDemo({ reduced }: { reduced: boolean }) {
           </div>
           {!reduced && (
             <motion.span
-              className="pointer-events-none absolute inset-x-[-6px] h-0.5 bg-ibm-bright shadow-[0_0_12px_2px_rgba(15,98,254,0.55)]"
+              className="pointer-events-none absolute inset-x-[-6px] h-0.5 bg-primary"
               animate={{ top: ["-2px", "calc(100% + 2px)"] }}
               transition={{ duration: 1.9, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.4 }}
               aria-hidden="true"
             />
           )}
         </div>
-        <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-          <QrCode className="size-3" strokeWidth={1.5} aria-hidden="true" />
+        <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 text-[10px] text-ink-muted">
+          <QrCode className="size-3 text-primary" strokeWidth={1.5} aria-hidden="true" />
           dynamic
         </span>
       </div>
@@ -668,14 +668,14 @@ function QrDemo({ reduced }: { reduced: boolean }) {
       <div className="flex flex-col gap-3">
         <div className="flex items-stretch gap-3">
           <div className="flex-1 border border-hairline p-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Scans today</p>
-            <p className="mt-1 font-mono text-3xl tabular-nums text-ibm-bright">{scans.toLocaleString("en-IN")}</p>
+            <p className="text-xs text-ink-muted">Scans today</p>
+            <p className="mt-1 text-3xl font-light tabular-nums text-ink">{scans.toLocaleString("en-IN")}</p>
           </div>
           <div className="hidden w-[150px] flex-col justify-center gap-1.5 border border-hairline p-3 sm:flex">
             {channels.map((c, i) => (
               <div key={c.label} className="flex items-center gap-2">
-                <ScanLine className={cn("size-3.5 shrink-0", i === activeChannel ? "text-ibm-bright" : "text-muted-foreground/50")} strokeWidth={1.5} aria-hidden="true" />
-                <span className={cn("font-mono text-[10px] uppercase tracking-[0.12em]", i === activeChannel ? "text-foreground" : "text-muted-foreground/60")}>
+                <ScanLine className={cn("size-3.5 shrink-0", i === activeChannel ? "text-primary" : "text-muted-foreground/50")} strokeWidth={1.5} aria-hidden="true" />
+                <span className={cn("text-xs", i === activeChannel ? "text-ink" : "text-muted-foreground/60")}>
                   {c.label} {c.pct}%
                 </span>
               </div>
@@ -683,19 +683,19 @@ function QrDemo({ reduced }: { reduced: boolean }) {
           </div>
         </div>
         <div className="flex-1 border border-hairline p-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Live geo</p>
+          <p className="text-xs text-ink-muted">Live geo</p>
           <ul className="mt-2 space-y-2">
             {QR_CITIES.map((c, i) => (
               <li key={c.city} className="flex items-center gap-3">
-                <span className="w-20 shrink-0 font-mono text-[11px] text-foreground/85">{c.city}</span>
+                <span className="w-20 shrink-0 text-xs text-ink-muted">{c.city}</span>
                 <span className="h-1.5 flex-1 bg-hairline" aria-hidden="true">
                   <motion.span
-                    className="block h-full bg-gradient-to-r from-ibm-blue to-ibm-cyan"
+                    className="block h-full bg-primary"
                     animate={{ width: reduced ? `${c.pct}%` : [`0%`, `${c.pct + (i === tick % 4 ? 3 : 0)}%`] }}
                     transition={{ duration: 1.2, ease: EASE }}
                   />
                 </span>
-                <span className="w-9 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{c.pct}%</span>
+                <span className="w-9 shrink-0 text-right text-xs tabular-nums text-ink-muted">{c.pct}%</span>
               </li>
             ))}
           </ul>

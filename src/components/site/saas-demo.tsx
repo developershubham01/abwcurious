@@ -51,15 +51,15 @@ function DemoWindow({
       aria-label={`Animated product demo: ${label}`}
       className="relative border border-hairline-strong bg-white select-none"
     >
-      <div className="h-1 bg-gradient-to-r from-ibm-blue via-ibm-cyan to-ibm-blue" aria-hidden="true" />
+      <div className="h-0.5 bg-primary" aria-hidden="true" />
       <div className="flex items-center gap-3 border-b border-hairline px-4 py-2.5">
         <span className="flex gap-1.5" aria-hidden="true">
           <span className="size-2 border border-hairline-strong" />
           <span className="size-2 border border-hairline-strong" />
           <span className="size-2 bg-ibm-blue" />
         </span>
-        <span className="truncate font-mono text-xs text-muted-foreground">{url}</span>
-        <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ibm-bright">
+        <span className="truncate text-xs text-ink-muted">{url}</span>
+        <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 text-xs text-ink-muted">
           <span className="size-1.5 rounded-full bg-ibm-success animate-pulse-dot" aria-hidden="true" />
           Live
         </span>
@@ -68,11 +68,11 @@ function DemoWindow({
         {children}
       </div>
       <div className="flex items-center justify-between border-t border-hairline px-4 py-2">
-        <span className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="truncate text-xs text-ink-muted">
           {status}
         </span>
-        <span className="hidden shrink-0 items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:inline-flex">
-          <Sparkles className="size-3 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+        <span className="hidden shrink-0 items-center gap-1.5 text-xs text-ink-muted sm:inline-flex">
+          <Sparkles className="size-3 text-primary" strokeWidth={1.5} aria-hidden="true" />
           ABWcurious product tour
         </span>
       </div>
@@ -82,7 +82,7 @@ function DemoWindow({
 
 /** tiny skeleton block */
 function Block({ className }: { className?: string }) {
-  return <div className={cn("bg-ibm-blue/10 border border-hairline", className)} aria-hidden="true" />;
+  return <div className={cn("bg-ibm-layer border border-hairline", className)} aria-hidden="true" />;
 }
 
 /* ================= 01 · WEB — code to production ================= */
@@ -92,8 +92,8 @@ function WebDemo({ reduced }: { reduced: boolean }) {
   return (
     <div className="grid h-full grid-cols-2">
       {/* code editor */}
-      <div className="flex flex-col gap-2.5 border-r border-hairline bg-canvas-inverse/95 p-4">
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-white/60">
+      <div className="flex flex-col gap-2.5 border-r border-hairline bg-canvas-inverse p-4">
+        <div className="flex items-center gap-2 text-xs text-white/60">
           <Terminal className="size-3 text-ibm-cyan" strokeWidth={1.5} aria-hidden="true" />
           page.tsx
         </div>
@@ -117,8 +117,8 @@ function WebDemo({ reduced }: { reduced: boolean }) {
       {/* preview assembling */}
       <div className="flex flex-col gap-2.5 p-4">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Preview</span>
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] text-ibm-success">
+          <span className="text-xs text-ink-muted">Preview</span>
+          <span className="inline-flex items-center gap-1 text-xs text-ibm-success">
             <Check className="size-3" strokeWidth={2} aria-hidden="true" /> Build passing
           </span>
         </div>
@@ -136,8 +136,8 @@ function WebDemo({ reduced }: { reduced: boolean }) {
           </div>
           <div className="h-6 w-24 bg-ibm-blue" aria-hidden="true" />
         </motion.div>
-        <div className="mt-auto flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
-          <Gauge className="size-3.5 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+        <div className="mt-auto flex items-center gap-2 text-xs text-ink-muted">
+          <Gauge className="size-3.5 text-primary" strokeWidth={1.5} aria-hidden="true" />
           Lighthouse 98 · CWV green
         </div>
       </div>
@@ -179,12 +179,12 @@ function MobileDemo({ reduced }: { reduced: boolean }) {
         {["Android", "iOS", "Flutter"].map((p, i) => (
           <motion.span
             key={p}
-            className="inline-flex items-center gap-2 border border-hairline-strong bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-foreground"
+            className="inline-flex items-center gap-2 border border-hairline-strong bg-white px-3 py-1.5 text-xs text-ink"
             animate={reduced ? undefined : { y: [0, -6, 0] }}
             transition={{ duration: 3, repeat: Infinity, delay: i * 0.5, ease: "easeInOut" }}
             aria-hidden="true"
           >
-            <Smartphone className="size-3 text-ibm-bright" strokeWidth={1.5} />
+            <Smartphone className="size-3 text-primary" strokeWidth={1.5} />
             {p}
           </motion.span>
         ))}
@@ -229,7 +229,7 @@ function MobileDemo({ reduced }: { reduced: boolean }) {
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="absolute inset-x-2 top-6 z-10 border border-hairline-strong bg-ink px-2 py-1.5"
             >
-              <span className="flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.14em] text-ibm-cyan">
+              <span className="flex items-center gap-1.5 text-[10px] text-white/70">
                 <Zap className="size-2.5" strokeWidth={1.5} /> Push
               </span>
               <span className="block text-[9px] leading-tight text-white">Your order is out for delivery</span>
@@ -246,11 +246,11 @@ function MobileDemo({ reduced }: { reduced: boolean }) {
 
       {/* right meta */}
       <div className="hidden flex-col gap-3 md:flex">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Release</span>
+        <span className="text-xs text-ink-muted">Release</span>
         {["v2.4 staged", "Crash-free 99.8%", "Review: passed"].map((t, i) => (
           <motion.span
             key={t}
-            className="inline-flex items-center gap-2 border border-hairline bg-card px-3 py-1.5 font-mono text-[10px] text-foreground"
+            className="inline-flex items-center gap-2 border border-hairline bg-card px-3 py-1.5 text-xs text-ink"
             animate={reduced ? undefined : { opacity: [0.6, 1, 0.6] }}
             transition={{ duration: 2.6, repeat: Infinity, delay: i * 0.6 }}
             aria-hidden="true"
@@ -284,7 +284,7 @@ function AiDemo({ reduced }: { reduced: boolean }) {
     <div className="grid h-full grid-cols-5">
       {/* chat */}
       <div className="col-span-3 flex flex-col gap-2.5 border-r border-hairline p-4" aria-hidden="true">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="text-xs text-ink-muted">
           Support assistant
         </span>
         <div key={round} className="flex flex-col gap-2.5">
@@ -314,7 +314,7 @@ function AiDemo({ reduced }: { reduced: boolean }) {
             </motion.div>
           )}
           <motion.div
-            className="max-w-[85%] border border-ibm-blue/40 bg-ibm-blue/[0.06] px-3 py-2 text-xs"
+            className="max-w-[85%] border border-hairline bg-ibm-layer px-3 py-2 text-xs"
             initial={reduced ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.1, duration: 0.4 }}
@@ -322,7 +322,7 @@ function AiDemo({ reduced }: { reduced: boolean }) {
             It&apos;s out for delivery — arriving today 4–6 PM. I&apos;ve sent the live map to your WhatsApp. ✦
           </motion.div>
           <motion.span
-            className="inline-flex w-fit items-center gap-1.5 border border-ibm-success/50 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ibm-success"
+            className="inline-flex w-fit items-center gap-1.5 border border-ibm-success/50 px-2 py-1 text-[10px] font-medium text-ibm-success"
             initial={reduced ? false : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 2.9, duration: 0.3 }}
@@ -332,7 +332,7 @@ function AiDemo({ reduced }: { reduced: boolean }) {
         </div>
         <div className="mt-auto flex items-center gap-2 border border-hairline px-3 py-2 text-[10px] text-muted-foreground">
           Ask anything…
-          <span className="ml-auto inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.14em] text-ibm-bright">
+          <span className="ml-auto inline-flex items-center gap-1 text-[10px] text-primary">
             Grounded on 12,400 docs
           </span>
         </div>
@@ -343,8 +343,8 @@ function AiDemo({ reduced }: { reduced: boolean }) {
           <div key={n.label} className="flex w-full flex-col items-center gap-2" aria-hidden="true">
             <motion.span
               className={cn(
-                "flex w-full items-center gap-2 border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.14em]",
-                i === 2 ? "border-ibm-bright bg-ibm-blue/[0.08] text-ibm-bright" : "border-hairline-strong text-foreground"
+                "flex w-full items-center gap-2 border px-3 py-2 text-xs",
+                i === 2 ? "border-primary bg-ibm-layer text-primary" : "border-hairline text-ink"
               )}
               animate={reduced ? undefined : { borderColor: i === 2 ? ["#a6c8ff", "#0043ce", "#a6c8ff"] : undefined }}
               transition={{ duration: 2.2, repeat: Infinity }}
@@ -352,7 +352,7 @@ function AiDemo({ reduced }: { reduced: boolean }) {
               <n.icon className="size-3.5" strokeWidth={1.5} /> {n.label}
             </motion.span>
             {i < nodes.length - 1 && (
-              <div className="relative h-4 w-px bg-hairline-strong">
+              <div className="relative h-4 w-px bg-hairline">
                 {!reduced && (
                   <motion.span
                     className="absolute left-1/2 size-1.5 -translate-x-1/2 bg-ibm-blue"
@@ -364,7 +364,7 @@ function AiDemo({ reduced }: { reduced: boolean }) {
             )}
           </div>
         ))}
-        <span className="mt-1 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+        <span className="mt-1 text-xs text-ink-muted">
           Automated 24/7
         </span>
       </div>
@@ -379,10 +379,10 @@ function MarketingDemo({ reduced }: { reduced: boolean }) {
   return (
     <div className="flex h-full flex-col gap-3 p-4">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="text-xs text-ink-muted">
           Growth dashboard
         </span>
-        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-ibm-bright">
+        <span className="inline-flex items-center gap-1.5 text-xs text-primary">
           <TrendingUp className="size-3.5" strokeWidth={1.5} aria-hidden="true" /> +184% organic / 6 mo
         </span>
       </div>
@@ -401,7 +401,7 @@ function MarketingDemo({ reduced }: { reduced: boolean }) {
             transition={{ duration: 2.8, repeat: Infinity, delay: i * 0.4 }}
             aria-hidden="true"
           >
-            <span className="block font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">{t.k}</span>
+            <span className="block text-[10px] text-ink-muted">{t.k}</span>
             <span className="block text-sm font-medium tabular-nums">{t.v}</span>
           </motion.div>
         ))}
@@ -432,7 +432,7 @@ function MarketingDemo({ reduced }: { reduced: boolean }) {
               animate={reduced ? undefined : { strokeDashoffset: [160, 0, 0, -160] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             />
-            <path d="M0 55 L100 55" stroke="rgba(16,40,84,0.2)" strokeWidth="1" />
+            <path d="M0 55 L100 55" stroke="#e0e0e0" strokeWidth="1" />
           </svg>
         </div>
       </div>
@@ -441,7 +441,7 @@ function MarketingDemo({ reduced }: { reduced: boolean }) {
         {["SEO", "Google Ads", "Meta", "Email"].map((c, i) => (
           <span
             key={c}
-            className="inline-flex items-center gap-1.5 border border-hairline-strong px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em]"
+            className="inline-flex items-center gap-1.5 border border-hairline px-2.5 py-1 text-xs text-ink-muted"
           >
             <motion.span
               className="size-1.5 rounded-full bg-ibm-success"
@@ -491,20 +491,20 @@ function HrDemo({ reduced }: { reduced: boolean }) {
   return (
     <div className="flex h-full flex-col p-4">
       <div className="flex items-center justify-between pb-2.5">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="text-xs text-ink-muted">
           Hiring pipeline — Senior Engineer
         </span>
-        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-ibm-bright">
+        <span className="inline-flex items-center gap-1.5 text-xs text-primary">
           <Users className="size-3.5" strokeWidth={1.5} aria-hidden="true" /> 42 in process
         </span>
       </div>
       <LayoutGroup>
         <div className="grid flex-1 grid-cols-4 gap-2" aria-hidden="true">
           {HR_COLS.map((col, ci) => (
-            <div key={col} className="flex flex-col gap-2 border border-hairline bg-card/60 p-2">
-              <span className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+            <div key={col} className="flex flex-col gap-2 border border-hairline bg-ibm-layer p-2">
+              <span className="flex items-center justify-between text-[10px] text-ink-muted">
                 {col}
-                <span className={cn("tabular-nums", cols[ci].length ? "text-ibm-bright" : "text-muted-foreground/50")}>
+                <span className={cn("tabular-nums", cols[ci].length ? "text-primary" : "text-muted-foreground/50")}>
                   {cols[ci].length}
                 </span>
               </span>
@@ -521,7 +521,7 @@ function HrDemo({ reduced }: { reduced: boolean }) {
                       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                       className={cn(
                         "flex items-center gap-1.5 border bg-white px-2 py-1.5",
-                        ci === 3 ? "border-ibm-success/60" : "border-hairline-strong"
+                        ci === 3 ? "border-ibm-success/60" : "border-hairline"
                       )}
                     >
                       <span className="size-4 shrink-0 bg-ibm-blue/25" />
@@ -535,9 +535,9 @@ function HrDemo({ reduced }: { reduced: boolean }) {
           ))}
         </div>
       </LayoutGroup>
-      <div className="flex items-center justify-between pt-2.5 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+      <div className="flex items-center justify-between pt-2.5 text-xs text-ink-muted">
         <span>Median time-to-offer · 18 days</span>
-        <span className="inline-flex items-center gap-1 text-ibm-bright">
+        <span className="inline-flex items-center gap-1 text-primary">
           Screening <ArrowRight className="size-3" strokeWidth={1.5} /> Interview-ready only
         </span>
       </div>
@@ -573,7 +573,7 @@ function CloudDemo({ reduced }: { reduced: boolean }) {
     <div className="grid h-full grid-cols-5">
       {/* terminal */}
       <div className="col-span-3 flex flex-col gap-2 border-r border-hairline bg-canvas-inverse p-4" aria-hidden="true">
-        <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-white/50">
+        <span className="flex items-center gap-2 text-xs text-white/50">
           <Terminal className="size-3 text-ibm-cyan" strokeWidth={1.5} /> deploy.log
         </span>
         {CLOUD_STEPS.slice(0, step).map((l, i) => (
@@ -597,7 +597,7 @@ function CloudDemo({ reduced }: { reduced: boolean }) {
       </div>
       {/* infra status */}
       <div className="col-span-2 flex flex-col gap-2.5 p-4">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground" aria-hidden="true">
+        <span className="text-xs text-ink-muted" aria-hidden="true">
           Regions
         </span>
         <div className="grid grid-cols-4 gap-1.5" aria-hidden="true">
@@ -607,7 +607,7 @@ function CloudDemo({ reduced }: { reduced: boolean }) {
               <span
                 key={r}
                 className={cn(
-                  "flex items-center justify-center gap-1 border px-1 py-1.5 font-mono text-[9px]",
+                  "flex items-center justify-center gap-1 border px-1 py-1.5 text-[10px]",
                   up ? "border-ibm-success/50 text-ibm-success" : "border-hairline text-muted-foreground/50"
                 )}
               >
@@ -617,11 +617,11 @@ function CloudDemo({ reduced }: { reduced: boolean }) {
           })}
         </div>
         <div className="mt-auto flex flex-col gap-2" aria-hidden="true">
-          <span className="inline-flex items-center gap-2 border border-ibm-success/50 bg-ibm-success/[0.06] px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ibm-success">
+          <span className="inline-flex items-center gap-2 border border-ibm-success/50 bg-ibm-success/[0.06] px-2.5 py-1.5 text-xs font-medium text-ibm-success">
             <ShieldCheck className="size-3.5" strokeWidth={1.5} /> Uptime 99.98%
           </span>
-          <div className="flex items-center gap-3 border border-hairline px-2.5 py-1.5 font-mono text-[10px] text-muted-foreground">
-            <Cloud className="size-3.5 text-ibm-bright" strokeWidth={1.5} />
+          <div className="flex items-center gap-3 border border-hairline px-2.5 py-1.5 text-xs text-ink-muted">
+            <Cloud className="size-3.5 text-primary" strokeWidth={1.5} />
             <span className="inline-flex items-center gap-1"><Lock className="size-3" strokeWidth={1.5} /> TLS 1.3</span>
             <span className="inline-flex items-center gap-1"><Globe className="size-3" strokeWidth={1.5} /> CDN on</span>
           </div>

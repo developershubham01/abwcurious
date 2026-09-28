@@ -213,21 +213,21 @@ function SitemapRowButton({
 }) {
   const inner = (
     <>
-      <span className="w-7 shrink-0 font-mono text-[10px] text-ibm-bright" aria-hidden="true">
+      <span className="w-7 shrink-0 text-sm text-ibm-subtle tabular-nums" aria-hidden="true">
         {row.num}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium text-foreground">{row.label}</span>
-        <span className="mt-0.5 block truncate text-xs text-muted-foreground">{row.desc}</span>
+        <span className="block truncate text-sm font-medium text-ink">{row.label}</span>
+        <span className="mt-0.5 block truncate text-sm text-ink-muted">{row.desc}</span>
       </span>
       <span
-        className="hidden shrink-0 border border-hairline px-2 py-0.5 font-mono text-[10px] text-muted-foreground md:block"
+        className="hidden shrink-0 text-xs text-ibm-subtle tabular-nums md:block"
         aria-hidden="true"
       >
         {row.target}
       </span>
       <ArrowUpRight
-        className="size-4 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ibm-bright"
+        className="size-4 shrink-0 text-ibm-subtle transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
         strokeWidth={1.5}
         aria-hidden="true"
       />
@@ -235,7 +235,7 @@ function SitemapRowButton({
   );
 
   const cls =
-    "group flex w-full items-center gap-3 px-4 py-3.5 text-left transition-all duration-200 hover:bg-ibm-blue/[0.05] hover:shadow-[inset_2px_0_0_0_#0f62fe] focus-carbon sm:gap-4 sm:px-5";
+    "group flex w-full items-center gap-3 px-4 py-4 text-left transition-colors hover:bg-ibm-layer focus-carbon sm:gap-4 sm:px-5";
 
   return (
     <motion.li
@@ -311,14 +311,12 @@ function SitemapPage() {
             <Eyebrow className="justify-start">
               Sitemap — {total} destinations · every page indexed
             </Eyebrow>
-            <h1 className="mt-7 max-w-4xl text-4xl font-light leading-[1.05] tracking-tight sm:text-6xl">
+            <h1 className="mt-7 max-w-4xl text-4xl font-light leading-[1.05] tracking-tight text-ink sm:text-6xl">
               <SplitText text="Every page," immediate />
               <br />
-              <span className="text-ibm-bright">
-                <SplitText text="one map." immediate delay={0.22} />
-              </span>
+              <SplitText text="one map." immediate delay={0.22} />
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted">
               The whole studio site on a single page — landing sections, all six product
               pages, all six service playbooks and the utilities. Pick a destination.
             </p>
@@ -326,14 +324,14 @@ function SitemapPage() {
               <Typewriter
                 prefix="Try: "
                 phrases={["“qr” finds IntelliQR", "“360” finds the 360 platforms", "“rss” finds the feed"]}
-                className="font-mono text-sm text-ibm-soft"
+                className="text-sm text-ink-muted"
               />
             </div>
 
-            {/* filter */}
+            {/* filter — Carbon text-input: gray field, charcoal rule, 2px blue focus underline */}
             <div className="mt-10 flex max-w-xl flex-col gap-3 sm:flex-row sm:items-center">
-              <div className="flex h-11 flex-1 items-center border border-hairline-strong bg-white focus-within:border-ibm-bright">
-                <Search className="ml-3 size-4 shrink-0 text-muted-foreground" strokeWidth={1.5} aria-hidden="true" />
+              <div className="flex h-12 flex-1 items-center border-b border-[#8d8d8d] bg-ibm-layer transition-colors focus-within:border-b-2 focus-within:border-primary">
+                <Search className="ml-3 size-4 shrink-0 text-ibm-subtle" strokeWidth={1.5} aria-hidden="true" />
                 <label htmlFor="sitemap-filter" className="sr-only">
                   Filter destinations
                 </label>
@@ -343,21 +341,21 @@ function SitemapPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Filter pages — try “qr” or “rss”"
-                  className="h-full w-full min-w-0 bg-transparent px-3 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+                  className="h-full w-full min-w-0 bg-transparent px-3 text-sm text-ink placeholder:text-ibm-subtle focus:outline-none"
                 />
                 {query && (
                   <button
                     type="button"
                     onClick={() => setQuery("")}
                     aria-label="Clear filter"
-                    className="mr-2 inline-flex size-7 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-ibm-bright focus-carbon"
+                    className="mr-2 inline-flex size-7 shrink-0 items-center justify-center text-ibm-subtle transition-colors hover:text-ink focus-carbon"
                   >
                     <XCircle className="size-4" strokeWidth={1.5} aria-hidden="true" />
                   </button>
                 )}
               </div>
               <p
-                className="shrink-0 border border-hairline bg-ibm-blue/[0.04] px-3 py-2.5 font-mono text-[11px] text-muted-foreground"
+                className="shrink-0 border border-hairline bg-ibm-layer px-3 py-2.5 text-sm text-ink-muted tabular-nums"
                 role="status"
               >
                 {shown} / {total} destinations
@@ -370,9 +368,9 @@ function SitemapPage() {
         <section aria-label="All destinations" className="border-b border-hairline">
           <div className="mx-auto max-w-7xl px-6 py-12">
             {filtered.length === 0 ? (
-              <div className="border border-hairline bg-ibm-blue/[0.03] px-6 py-14 text-center">
-                <MapIcon className="mx-auto size-6 text-muted-foreground" strokeWidth={1.5} aria-hidden="true" />
-                <p className="mt-4 font-mono text-sm text-muted-foreground">
+              <div className="border border-hairline bg-ibm-layer px-6 py-14 text-center">
+                <MapIcon className="mx-auto size-6 text-ibm-subtle" strokeWidth={1.5} aria-hidden="true" />
+                <p className="mt-4 text-sm text-ink-muted">
                   No destinations match “{query}” — try “qr”, “blogs” or “rss”.
                 </p>
               </div>
@@ -388,16 +386,16 @@ function SitemapPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: gi * 0.08, ease: EASE }}
                     >
-                      <div className="flex flex-wrap items-baseline justify-between gap-2 border-t-2 border-foreground pt-4">
-                        <h2 className="inline-flex items-center gap-2.5 text-xl tracking-tight">
-                          <GroupIcon className="size-4 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                      <div className="flex flex-wrap items-baseline justify-between gap-2 border-t-2 border-ink pt-4">
+                        <h2 className="inline-flex items-center gap-2.5 text-xl tracking-tight text-ink">
+                          <GroupIcon className="size-4 text-ibm-subtle" strokeWidth={1.5} aria-hidden="true" />
                           {group.label}
                         </h2>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                        <p className="text-sm text-ink-muted tabular-nums">
                           {group.rows.length} {group.rows.length === 1 ? "page" : "pages"}
                         </p>
                       </div>
-                      <p className="mt-1.5 text-sm text-muted-foreground">{group.desc}</p>
+                      <p className="mt-1.5 text-sm text-ink-muted">{group.desc}</p>
                       <ul className="mt-4 divide-y divide-hairline border border-hairline bg-white">
                         {group.rows.map((row) => (
                           <SitemapRowButton
@@ -419,10 +417,10 @@ function SitemapPage() {
         {/* ================= CTA ================= */}
         <section>
           <div className="mx-auto max-w-7xl px-6 py-14">
-            <div className="flex flex-col items-start justify-between gap-6 border border-hairline bg-ibm-blue/[0.03] px-6 py-8 sm:px-10 lg:flex-row lg:items-center">
+            <div className="flex flex-col items-start justify-between gap-6 border border-hairline bg-ibm-layer px-6 py-8 sm:px-10 lg:flex-row lg:items-center">
               <div>
-                <h2 className="text-2xl tracking-tight">Can&apos;t find what you were looking for?</h2>
-                <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
+                <h2 className="text-2xl tracking-tight text-ink">Can&apos;t find what you were looking for?</h2>
+                <p className="mt-2 max-w-lg text-sm leading-relaxed text-ink-muted">
                   Skip the map — tell us what you need and a human answers within one business day.
                 </p>
               </div>

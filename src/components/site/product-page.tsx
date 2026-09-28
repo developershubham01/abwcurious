@@ -115,7 +115,7 @@ function useCatalogOpen(): boolean {
 const STATUS_DOT: Record<Product["status"], string> = {
   live: "bg-ibm-success",
   beta: "bg-ibm-blue",
-  soon: "bg-muted-foreground/60",
+  soon: "bg-ibm-subtle",
 };
 
 function ProductIndexCard({ product, index }: { product: Product; index: number }) {
@@ -129,7 +129,7 @@ function ProductIndexCard({ product, index }: { product: Product; index: number 
         <button
           type="button"
           onClick={() => openProduct(product.slug)}
-          className="flex h-full w-full flex-col border border-hairline bg-white text-left transition-[border-color,box-shadow] duration-300 focus-carbon group-hover:border-ibm-blue/50 group-hover:shadow-[0_28px_56px_-28px_rgba(15,98,254,0.28)]"
+          className="flex h-full w-full flex-col border border-hairline bg-white text-left transition-colors duration-300 focus-carbon group-hover:border-primary"
         >
           <DepthLayer z={18}>
             <div className="relative aspect-[16/8] overflow-hidden border-b border-hairline bg-card">
@@ -140,18 +140,18 @@ function ProductIndexCard({ product, index }: { product: Product; index: number 
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
               />
-              <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 border border-hairline-strong bg-white/90 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-foreground backdrop-blur-sm">
+              <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 border border-hairline bg-white px-2 py-1 text-xs text-ink-muted">
                 <span className={cn("size-1.5 rounded-full", STATUS_DOT[product.status])} aria-hidden="true" />
                 {product.statusLabel}
               </span>
             </div>
           </DepthLayer>
-          <div className="flex flex-1 flex-col p-5 lg:p-6">
+          <div className="flex flex-1 flex-col p-6 lg:p-8">
             <DepthLayer z={26}>
               <div className="flex items-baseline justify-between gap-2">
-                <span className="font-mono text-[10px] tracking-[0.18em] text-ibm-bright">{product.num}</span>
+                <span className="text-sm tabular-nums text-ibm-subtle">{product.num}</span>
                 <ArrowUpRight
-                  className="size-4 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ibm-bright"
+                  className="size-4 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
                   strokeWidth={1.5}
                   aria-hidden="true"
                 />
@@ -162,12 +162,12 @@ function ProductIndexCard({ product, index }: { product: Product; index: number 
             <DepthLayer z={12} className="mt-auto pt-4">
               <div className="flex flex-wrap gap-1.5" aria-label={`${product.name} stack`}>
                 {product.stack.slice(0, 3).map((chip) => (
-                  <span key={chip} className="border border-hairline bg-ibm-blue/[0.04] px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+                  <span key={chip} className="border border-hairline bg-ibm-layer px-1.5 py-0.5 text-[11px] text-ink-muted">
                     {chip}
                   </span>
                 ))}
               </div>
-              <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-xs text-ibm-soft transition-colors group-hover:text-ibm-blue">
+              <span className="mt-3 inline-flex items-center gap-1.5 text-sm text-primary transition-colors group-hover:text-ibm-blue-hover">
                 Explore product
                 <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
               </span>
@@ -197,7 +197,7 @@ function ProductsIndexPage() {
             <h1 className="mt-7 max-w-4xl text-4xl font-light leading-[1.05] tracking-tight sm:text-6xl">
               <SplitText text="SaaS platforms" immediate />
               <br />
-              <span className="text-ibm-bright">
+              <span className="text-primary">
                 <SplitText text="built for scale" immediate delay={0.22} />
               </span>
             </h1>
@@ -216,7 +216,7 @@ function ProductsIndexPage() {
                   "KapiKitab — your library, superintelligent",
                   "IntelliQR — print once, retarget forever",
                 ]}
-                className="font-mono text-sm text-ibm-soft"
+                className="text-sm text-primary"
               />
             </div>
             <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-4">
@@ -228,7 +228,7 @@ function ProductsIndexPage() {
               ].map((s) => (
                 <div key={s.l} className="bg-background px-4 py-4">
                   <dt className="order-2 mt-1 text-xs text-muted-foreground">{s.l}</dt>
-                  <dd className="font-mono text-2xl text-ibm-bright">{s.v}</dd>
+                  <dd className="text-2xl font-light tabular-nums text-ink">{s.v}</dd>
                 </div>
               ))}
             </dl>
@@ -260,20 +260,11 @@ function ProductsIndexPage() {
         {/* CTA band */}
         <section>
           <div className="mx-auto max-w-7xl px-6 py-16">
-            <div className="relative overflow-hidden border border-ibm-blue/70 bg-ibm-blue px-8 py-12 text-center sm:px-12">
-              <div
-                className="pointer-events-none absolute inset-0 opacity-60"
-                aria-hidden="true"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px)",
-                  backgroundSize: "28px 28px",
-                }}
-              />
+            <div className="relative overflow-hidden bg-primary px-8 py-12 text-center sm:px-12">
               <div className="relative">
-                <p className="font-mono text-xs uppercase tracking-[0.24em] text-white/75">Need one of these tailored to you?</p>
+                <p className="text-sm text-white/80">Need one of these tailored to you?</p>
                 <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-light leading-tight tracking-tight text-white sm:text-4xl">
-                  Every platform started as a client problem. <span className="text-[#a6c8ff]">Yours could be next.</span>
+                  Every platform started as a client problem. Yours could be next.
                 </h2>
                 <div className="mt-8">
                   <RollButton variant="light" arrow onClick={() => gotoSectionFromView("#contact")}>
@@ -329,14 +320,14 @@ function ProductDetailPage({ product }: { product: Product }) {
                 <SplitText text={product.name} immediate />
               </h1>
               <div className="mt-5 min-h-[2rem]">
-                <Typewriter phrases={[product.tagline]} typingMs={34} deletingMs={0} holdMs={3600} gapMs={0} className="font-mono text-sm text-ibm-soft" />
+                <Typewriter phrases={[product.tagline]} typingMs={34} deletingMs={0} holdMs={3600} gapMs={0} className="text-sm text-primary" />
               </div>
               <p className="mt-6 max-w-xl leading-relaxed text-muted-foreground">{product.description}</p>
 
               <dl className="mt-9 grid max-w-xl grid-cols-3 gap-px border border-hairline bg-hairline">
                 {product.metrics.map((m) => (
                   <div key={m.label} className="bg-background px-4 py-4">
-                    <dd className="font-mono text-xl text-ibm-bright sm:text-2xl">{m.value}</dd>
+                    <dd className="text-xl font-light tabular-nums text-ink sm:text-2xl">{m.value}</dd>
                     <dt className="mt-1 text-[11px] leading-snug text-muted-foreground">{m.label}</dt>
                   </div>
                 ))}
@@ -357,11 +348,7 @@ function ProductDetailPage({ product }: { product: Product }) {
 
             {/* DitherVeil hero — the product artwork, dithered & revealable */}
             <div className="lg:pt-2">
-              <div className="relative border border-hairline-strong bg-card">
-                <span className="absolute -left-px -top-px z-10 h-3 w-3 border-l-2 border-t-2 border-ibm-bright" aria-hidden="true" />
-                <span className="absolute -right-px -top-px z-10 h-3 w-3 border-r-2 border-t-2 border-ibm-bright" aria-hidden="true" />
-                <span className="absolute -bottom-px -left-px z-10 h-3 w-3 border-b-2 border-l-2 border-ibm-bright" aria-hidden="true" />
-                <span className="absolute -bottom-px -right-px z-10 h-3 w-3 border-b-2 border-r-2 border-ibm-bright" aria-hidden="true" />
+              <div className="relative border border-hairline bg-white">
                 <div className="relative h-[300px] sm:h-[380px] lg:h-[440px]">
                   <DitherVeil
                     src={product.image}
@@ -369,7 +356,7 @@ function ProductDetailPage({ product }: { product: Product }) {
                     pattern={product.dither.pattern}
                     palette={product.dither.palette}
                     pixelSize={3}
-                    inkColor="#001141"
+                    inkColor="#161616"
                     paperColor="#ffffff"
                     rimColor="#0f62fe"
                     rim={0.24}
@@ -379,8 +366,8 @@ function ProductDetailPage({ product }: { product: Product }) {
                     contrast={1.22}
                   />
                 </div>
-                <p className="flex items-center gap-2 border-t border-hairline px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                  <MousePointer2 className="size-3 text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                <p className="flex items-center gap-2 border-t border-hairline px-4 py-2.5 text-xs text-ink-muted">
+                  <MousePointer2 className="size-3 text-primary" strokeWidth={1.5} aria-hidden="true" />
                   Dither reveal — move to see the platform in full colour · click for a burst
                 </p>
               </div>
@@ -389,7 +376,7 @@ function ProductDetailPage({ product }: { product: Product }) {
         </section>
 
         {/* ================= product tour demo ================= */}
-        <section className="border-b border-hairline bg-ibm-blue/[0.02]" ref={demoRef}>
+        <section className="border-b border-hairline bg-ibm-layer" ref={demoRef}>
           <div className="mx-auto max-w-7xl px-6 py-14 lg:py-16">
             <Eyebrow className="justify-start">Product tour — live mock</Eyebrow>
             <h2 className="mt-5 text-2xl tracking-tight sm:text-3xl">
@@ -413,18 +400,18 @@ function ProductDetailPage({ product }: { product: Product }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.55, delay: i * 0.06, ease: EASE }}
-                  className="flex items-start gap-3 bg-white px-5 py-5"
+                  className="flex items-start gap-3 bg-white p-6"
                 >
-                  <Check className="mt-0.5 size-4 shrink-0 text-ibm-bright" strokeWidth={2} aria-hidden="true" />
-                  <p className="text-sm leading-relaxed text-foreground/90">{feature}</p>
+                  <Check className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={2} aria-hidden="true" />
+                  <p className="text-sm leading-relaxed text-ink-muted">{feature}</p>
                 </motion.div>
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-2 border border-hairline bg-ibm-blue/[0.03] px-5 py-4">
-              <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Stack</span>
+            <div className="mt-8 flex flex-wrap items-center gap-2 border border-hairline bg-ibm-layer px-5 py-4">
+              <span className="mr-2 text-sm text-ink-muted">Stack</span>
               {product.stack.map((chip) => (
-                <span key={chip} className="border border-hairline-strong bg-white px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-foreground">
+                <span key={chip} className="border border-hairline bg-white px-2.5 py-1 text-[11px] text-ink-muted">
                   {chip}
                 </span>
               ))}
@@ -435,19 +422,10 @@ function ProductDetailPage({ product }: { product: Product }) {
         {/* ================= CTA band ================= */}
         <section className="border-b border-hairline">
           <div className="mx-auto max-w-7xl px-6 py-14">
-            <div className="relative overflow-hidden border border-ibm-blue/70 bg-ibm-blue px-8 py-12 sm:px-12">
-              <div
-                className="pointer-events-none absolute inset-0 opacity-60"
-                aria-hidden="true"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px)",
-                  backgroundSize: "28px 28px",
-                }}
-              />
+            <div className="relative overflow-hidden bg-primary px-8 py-12 sm:px-12">
               <div className="relative flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
                 <div>
-                  <p className="font-mono text-xs uppercase tracking-[0.24em] text-white/75">{product.statusLabel} · {product.name}</p>
+                  <p className="text-sm text-white/80">{product.statusLabel} · {product.name}</p>
                   <h2 className="mt-3 max-w-xl text-2xl font-light leading-tight tracking-tight text-white sm:text-3xl">
                     {product.cta} — talk to the team that builds it.
                   </h2>
@@ -484,12 +462,12 @@ function ProductDetailPage({ product }: { product: Product }) {
                 key={dir}
                 type="button"
                 onClick={() => openProduct(p.slug)}
-                className="group flex items-center gap-4 bg-background px-6 py-6 text-left transition-colors hover:bg-ibm-blue/[0.04] focus-carbon"
+                className="group flex items-center gap-4 bg-background px-6 py-6 text-left transition-colors hover:bg-ibm-layer focus-carbon"
               >
-                <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-ibm-bright" strokeWidth={1.5} aria-hidden="true" />
+                <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" strokeWidth={1.5} aria-hidden="true" />
                 <span className="min-w-0">
-                  <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{dir}</span>
-                  <span className="mt-1 block truncate text-lg tracking-tight text-foreground group-hover:text-ibm-blue">{p.name}</span>
+                  <span className="block text-xs text-ink-muted">{dir}</span>
+                  <span className="mt-1 block truncate text-lg tracking-tight text-ink group-hover:text-primary">{p.name}</span>
                 </span>
               </button>
             ))}

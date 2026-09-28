@@ -35,22 +35,21 @@ export function SocialButton({
 
   const sizeCls =
     size === "lg"
-      ? "size-14 rounded-2xl [&_svg]:size-6"
+      ? "size-14 [&_svg]:size-6"
       : size === "sm"
-        ? "size-8 rounded-lg [&_svg]:size-3.5"
-        : "size-10 rounded-xl [&_svg]:size-[18px]";
+        ? "size-8 [&_svg]:size-3.5"
+        : "size-10 [&_svg]:size-[18px]";
 
   const variantCls =
     variant === "dark"
-      ? "border-white/15 bg-white/10 text-white hover:border-white hover:bg-white hover:text-ibm-blue"
-      : "border-ink/10 bg-white text-ink hover:border-ibm-blue hover:bg-ibm-blue hover:text-white";
+      ? "border-white/40 bg-transparent text-white hover:border-white hover:bg-white hover:text-ibm-blue-active"
+      : "border-hairline bg-white text-ink hover:border-ink hover:bg-ink hover:text-white";
 
   const shell = cn(
-    "group/soc relative inline-flex shrink-0 items-center justify-center border shadow-[0_2px_10px_rgba(15,98,254,0.08)]",
-    "transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgba(15,98,254,0.45)] focus-carbon",
+    "group/soc relative inline-flex shrink-0 items-center justify-center border transition-colors duration-200 focus-carbon",
     sizeCls,
     variantCls,
-    dead && "cursor-default opacity-80 hover:translate-y-0",
+    dead && "cursor-default opacity-80",
     className
   );
 
@@ -60,7 +59,7 @@ export function SocialButton({
     <>
       <Icon aria-hidden="true" strokeWidth={1.75} />
       {showLabel && (
-        <span className="pointer-events-none absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] opacity-0 transition-all duration-300 group-hover/soc:-translate-y-0.5 group-hover/soc:opacity-100">
+        <span className="pointer-events-none absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs opacity-0 transition-all duration-300 group-hover/soc:-translate-y-0.5 group-hover/soc:opacity-100">
           {link.label}
         </span>
       )}

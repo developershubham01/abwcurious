@@ -108,7 +108,7 @@ function CategoryPage({ category }: { category: Category }) {
             </h1>
 
             <motion.p
-              className="mt-5 font-mono text-sm text-ibm-bright sm:text-base"
+              className="mt-5 text-sm text-primary sm:text-base"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
@@ -134,10 +134,10 @@ function CategoryPage({ category }: { category: Category }) {
             >
               {category.stats.map((s, i) => (
                 <div key={s.label} className={i === 0 ? "px-4 py-4" : "px-4 py-4"}>
-                  <dt className="order-2 mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                  <dt className="order-2 mt-1 text-xs text-ink-muted">
                     {s.label}
                   </dt>
-                  <dd className="order-1 text-xl font-light tabular-nums text-ibm-bright sm:text-2xl">{s.value}</dd>
+                  <dd className="order-1 text-xl font-light tabular-nums text-ink sm:text-2xl">{s.value}</dd>
                 </div>
               ))}
             </motion.dl>
@@ -167,7 +167,7 @@ function CategoryPage({ category }: { category: Category }) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.25, duration: 0.6, ease: EASE }}
           >
-            <div className="relative aspect-[4/3] overflow-hidden border border-hairline-strong bg-card lg:mt-2">
+            <div className="relative aspect-[4/3] overflow-hidden border border-hairline bg-card lg:mt-2">
               <Image
                 src={category.image}
                 alt={category.imageAlt}
@@ -176,15 +176,9 @@ function CategoryPage({ category }: { category: Category }) {
                 sizes="(min-width: 1024px) 44vw, 100vw"
                 className="object-cover"
               />
-              <span className="absolute inset-0 bg-gradient-to-t from-ibm-blue/[0.12] via-transparent to-transparent" aria-hidden="true" />
             </div>
-            {/* corner ticks */}
-            <span className="absolute -left-1 -top-1 size-2 bg-ibm-blue" aria-hidden="true" />
-            <span className="absolute -right-1 -top-1 size-2 bg-ibm-blue" aria-hidden="true" />
-            <span className="absolute -bottom-1 -left-1 size-2 bg-ibm-blue" aria-hidden="true" />
-            <span className="absolute -bottom-1 -right-1 size-2 bg-ibm-blue" aria-hidden="true" />
             {/* floating badge */}
-            <span className="absolute -bottom-4 left-4 inline-flex items-center gap-2 border border-hairline-strong bg-white px-3.5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-foreground shadow-[0_2px_0_0_rgba(16,40,84,0.14)] sm:left-6">
+            <span className="absolute -bottom-4 left-4 inline-flex items-center gap-2 border border-hairline bg-white px-3.5 py-2.5 text-xs text-ink-muted sm:left-6">
               <span className="size-1.5 rounded-full bg-ibm-success animate-pulse-dot" aria-hidden="true" />
               {count} services · SLA-backed
             </span>
@@ -196,7 +190,7 @@ function CategoryPage({ category }: { category: Category }) {
       <Ticker
         items={category.groups.flatMap((g) => g.items.map((i) => i.name))}
         slow
-        className="border-b border-hairline bg-ibm-blue/[0.03] py-3.5"
+        className="border-b border-hairline bg-ibm-layer py-3.5"
       />
 
       {/* ================= product tour (SaaS video) ================= */}
@@ -240,12 +234,12 @@ function CategoryPage({ category }: { category: Category }) {
             {category.groups.map((group, gi) => (
               <div key={group.label}>
                 <div className="flex items-baseline gap-4">
-                  <span className="font-mono text-sm text-ibm-bright tabular-nums">
+                  <span className="text-sm tabular-nums text-ibm-subtle">
                     {category.num}.{gi + 1}
                   </span>
-                  <h3 className="font-mono text-xs uppercase tracking-[0.22em] text-foreground">{group.label}</h3>
+                  <h3 className="text-sm font-medium text-ink">{group.label}</h3>
                   <span className="hidden h-px flex-1 bg-hairline sm:block" aria-hidden="true" />
-                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                  <span className="text-xs tabular-nums text-ink-muted">
                     {String(group.items.length).padStart(2, "0")}
                   </span>
                 </div>
@@ -253,7 +247,7 @@ function CategoryPage({ category }: { category: Category }) {
                   {group.items.map((item, ii) => (
                     <motion.article
                       key={item.name}
-                      className="group relative bg-white p-5 transition-colors duration-300 hover:bg-ibm-blue/[0.04]"
+                      className="group relative bg-white p-5 transition-colors duration-300 hover:bg-ibm-layer"
                       initial={{ opacity: 0, y: 14 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-32px" }}
@@ -262,7 +256,7 @@ function CategoryPage({ category }: { category: Category }) {
                       <div className="flex items-start justify-between gap-3">
                         <h4 className="text-[15px] leading-snug">{item.name}</h4>
                         <ArrowUpRight
-                          className="mt-0.5 size-4 shrink-0 text-muted-foreground/40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ibm-bright"
+                          className="mt-0.5 size-4 shrink-0 text-muted-foreground/40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
                           strokeWidth={1.5}
                           aria-hidden="true"
                         />
@@ -287,7 +281,7 @@ function CategoryPage({ category }: { category: Category }) {
       </div>
 
       {/* ================= process ================= */}
-      <div className="border-b border-hairline bg-card">
+      <div className="border-b border-hairline bg-ibm-layer">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:py-16">
           <Eyebrow className="justify-start">How it runs</Eyebrow>
           <h2 className="mt-4 text-3xl font-light tracking-tight sm:text-4xl">
@@ -296,14 +290,14 @@ function CategoryPage({ category }: { category: Category }) {
           <ol className="mt-10 grid gap-px border border-hairline bg-hairline md:grid-cols-4">
             {category.process.map((step, si) => (
               <li key={step.title} className="relative bg-card p-6">
-                <span className="font-mono text-4xl font-light text-ink/10" aria-hidden="true">
+                <span className="text-4xl font-light tabular-nums text-ink/10" aria-hidden="true">
                   {String(si + 1).padStart(2, "0")}
                 </span>
                 <h3 className="mt-3 text-lg">{step.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
                 {si < category.process.length - 1 && (
                   <ArrowRight
-                    className="absolute -right-[13px] top-1/2 z-10 hidden size-5 -translate-y-1/2 bg-card text-ibm-bright md:block"
+                    className="absolute -right-[13px] top-1/2 z-10 hidden size-5 -translate-y-1/2 bg-card text-primary md:block"
                     strokeWidth={1.5}
                     aria-hidden="true"
                   />
@@ -319,7 +313,7 @@ function CategoryPage({ category }: { category: Category }) {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:py-16">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <span className="font-mono text-xs uppercase tracking-[0.22em] text-white/70">
+              <span className="text-sm text-white/80">
                 {category.num} / Get started
               </span>
               <h2 className="mt-4 max-w-2xl text-3xl font-light leading-tight tracking-tight sm:text-4xl">
@@ -348,9 +342,9 @@ function CategoryPage({ category }: { category: Category }) {
           <button
             type="button"
             onClick={() => openCategory(prev.slug)}
-            className="group flex flex-col items-start gap-1.5 px-4 py-6 text-left transition-colors hover:bg-ibm-blue/[0.04] focus-carbon sm:px-6"
+            className="group flex flex-col items-start gap-1.5 px-4 py-6 text-left transition-colors hover:bg-ibm-layer focus-carbon sm:px-6"
           >
-            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
               <ArrowLeft className="size-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" strokeWidth={1.5} aria-hidden="true" />
               Previous · {prev.num}
             </span>
@@ -359,9 +353,9 @@ function CategoryPage({ category }: { category: Category }) {
           <button
             type="button"
             onClick={() => openCategory(next.slug)}
-            className="group flex flex-col items-end gap-1.5 px-4 py-6 text-right transition-colors hover:bg-ibm-blue/[0.04] focus-carbon sm:px-6"
+            className="group flex flex-col items-end gap-1.5 px-4 py-6 text-right transition-colors hover:bg-ibm-layer focus-carbon sm:px-6"
           >
-            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
               Next · {next.num}
               <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={1.5} aria-hidden="true" />
             </span>

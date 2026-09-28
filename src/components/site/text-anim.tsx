@@ -140,7 +140,7 @@ export function Typewriter({
   );
 }
 
-/* ---------------- Ticker: mono label marquee row ---------------- */
+/* ---------------- Ticker: marquee label row ---------------- */
 
 export function Ticker({
   items,
@@ -165,10 +165,10 @@ export function Ticker({
         {row.map((item, i) => (
           <span
             key={`${item}-${i}`}
-            className="flex items-center gap-10 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground"
+            className="flex items-center gap-10 text-sm text-ink-muted"
           >
             {item}
-            <span className="size-1.5 bg-ibm-blue/60" aria-hidden="true" />
+            <span className="size-1.5 bg-ibm-subtle" aria-hidden="true" />
           </span>
         ))}
       </div>
