@@ -1,7 +1,10 @@
 /**
- * ABWcurious product line — the studio's own SaaS platforms, shown in the
- * "Our products" home section, the navbar Products dropdown and their own
- * full-screen product pages (#/products/<slug>).
+ * ABWcurious product line — the company's own platforms, shown in the
+ * "Innovation Beyond Services" home section, the navbar Products dropdown
+ * and their own full-screen product pages (#/products/<slug>).
+ *
+ * Source of the product names + taglines: "ABWcurious Website.docx"
+ * (Kapikitab.in · TheCodeArena.com · Restaurant360 · Business360 · IntelliQR).
  *
  * Each product carries:
  *  - a `demo` kind rendered as a looping product-tour animation
@@ -13,7 +16,7 @@
 export type ProductStatus = "live" | "beta" | "soon";
 
 /** Which looping product-tour demo the detail page plays. */
-export type ProductDemoKind = "radar" | "arena" | "orders" | "quiz" | "shelf" | "qr";
+export type ProductDemoKind = "radar" | "arena" | "orders" | "quiz" | "shelf" | "qr" | "ops";
 
 export interface Product {
   slug: string;
@@ -43,42 +46,42 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [
   {
-    slug: "cyberintelligence360",
+    slug: "kapikitab",
     num: "P1",
-    name: "CyberIntelligence360",
-    shortName: "Cyber360",
-    tagline: "Enterprise AI-powered cybersecurity platform",
+    name: "Kapikitab.in",
+    shortName: "Kapikitab",
+    tagline: "Digital learning for a changing world.",
     description:
-      "A unified threat-intelligence platform that watches your entire stack — cloud, endpoints and identities — and turns raw signals into ranked, actionable incidents. AI correlation cuts alert noise so your team sees the five threats that matter, not the five thousand that don't.",
+      "Learning should not be limited to books and classrooms. Kapikitab combines traditional learning with modern technology — helping students master concepts by visualizing them in 3D and practicing to excel in their goals. By integrating artificial intelligence and augmented reality, we aren't just digitizing textbooks: we are creating a personalized, interactive environment where understanding comes naturally, and every student receives personalized tutoring.",
     status: "live",
     statusLabel: "Live",
-    image: "/images/prod-cyber360.jpg",
+    image: "/images/prod-kapikitab.jpg",
     imageAlt:
-      "Isometric illustration of an AI cybersecurity platform with a glowing shield over a data center, radar sweeps and a world threat map",
+      "Isometric illustration of a digital education platform with 3D geometry models rising from a laptop, AR book layers and an AI tutor panel",
     features: [
-      "AI threat detection across cloud & endpoints",
-      "24/7 SOC-style monitoring dashboards",
-      "Automated incident response playbooks",
-      "Compliance reports — ISO 27001, SOC 2, GDPR",
+      "Concepts visualized in interactive 3D",
+      "AI personalized tutoring for every student",
+      "Augmented-reality layers on top of textbooks",
+      "Learn → Practice → Build → Apply → Grow paths",
     ],
-    stack: ["SIEM", "EDR", "Zero Trust", "MITRE ATT&CK"],
+    stack: ["3D", "AR", "AI tutoring", "Web + Mobile"],
     metrics: [
-      { value: "99.2%", label: "Threat detection accuracy" },
-      { value: "<40s", label: "Median alert-to-triage" },
-      { value: "24/7", label: "Autonomous monitoring" },
+      { value: "3D", label: "Core concepts visualized" },
+      { value: "1:1", label: "AI tutoring per student" },
+      { value: "5", label: "Stages: learn to grow" },
     ],
-    prefill: "Cloud, IT & Business Solutions",
-    cta: "Request a security demo",
-    demo: "radar",
-    demoLabel: "Live threat operations — radar sweep, blips and the AI incident feed",
-    dither: { pattern: "lines", palette: "duotone" },
+    prefill: "AI & Automation",
+    cta: "Explore Kapikitab.in",
+    demo: "shelf",
+    demoLabel: "The shelf — your library, annotated and alive",
+    dither: { pattern: "atkinson", palette: "duotone" },
   },
   {
     slug: "thecodearena",
     num: "P2",
-    name: "TheCodeArena",
+    name: "TheCodeArena.com",
     shortName: "CodeArena",
-    tagline: "Developer ecosystem for coding & collaboration",
+    tagline: "A platform for learning, coding, and technology skills.",
     description:
       "Where developers sharpen each other: realtime coding arenas, ranked challenges and git-native project rooms with AI review copilots. Teams run pair-programming battles, hiring assessments and open-source sprints in one collaborative surface.",
     status: "live",
@@ -109,7 +112,7 @@ export const PRODUCTS: Product[] = [
     num: "P3",
     name: "Restaurant360",
     shortName: "Resto360",
-    tagline: "All-in-one restaurant management SaaS",
+    tagline: "Digital solutions for modern restaurant operations.",
     description:
       "One system of record for the whole house: POS, kitchen display, QR menu ordering, inventory and staff intelligence — synced in real time. Owners see food cost and table turns live; kitchens see tickets the second a guest taps order.",
     status: "live",
@@ -136,73 +139,42 @@ export const PRODUCTS: Product[] = [
     dither: { pattern: "noise", palette: "duotone" },
   },
   {
-    slug: "studyspark",
+    slug: "business360",
     num: "P4",
-    name: "StudySpark",
-    shortName: "StudySpark",
-    tagline: "AI-powered adaptive learning platform",
+    name: "Business360",
+    shortName: "Biz360",
+    tagline: "Technology for connected business operations and decision-making.",
     description:
-      "An adaptive tutor that rebuilds the learning path after every answer: spaced repetition, instant doubt-solving and gamified streaks keep students moving, while educator dashboards show exactly where a cohort is struggling.",
-    status: "beta",
-    statusLabel: "Beta",
-    image: "/images/prod-studyspark.jpg",
+      "One connected core for the whole company: CRM, HRMS, inventory, billing and analytics on a single operational layer. Business360 turns everyday transactions into live dashboards and decision-ready insight — so leaders steer by evidence, not guesswork, and every team works from the same source of truth.",
+    status: "live",
+    statusLabel: "Live",
+    image: "/images/prod-business360.jpg",
     imageAlt:
-      "Isometric illustration of an adaptive learning platform with an open book and spark, quiz cards, rising progress chart and a graduation cap",
+      "Isometric illustration of a connected business operations platform with CRM pipeline, HRMS panels, invoice and inventory cards flowing into one analytics dashboard",
     features: [
-      "Adaptive learning paths per student",
-      "AI tutor with instant doubt-solving",
-      "Gamified quizzes, streaks & badges",
-      "Educator analytics for every cohort",
+      "CRM, HRMS & billing on one operational core",
+      "Live dashboards for revenue, stock & people",
+      "Decision-ready reports for every role",
+      "Integrations — payments, WhatsApp, accounting",
     ],
-    stack: ["LLM", "Spaced repetition", "Analytics", "PWA"],
+    stack: ["CRM", "HRMS", "ERP", "Analytics"],
     metrics: [
-      { value: "1.8x", label: "Concept retention uplift" },
-      { value: "26k", label: "Questions attempted daily" },
-      { value: "92%", label: "Weekly active learners" },
+      { value: "360°", label: "View of your operations" },
+      { value: "80+", label: "Business systems delivered" },
+      { value: "<1 hr", label: "Support response SLA" },
     ],
-    prefill: "AI & Automation",
-    cta: "Join the beta",
-    demo: "quiz",
-    demoLabel: "Adaptive session — the path rebuilds after every answer",
-    dither: { pattern: "floyd", palette: "duotone" },
-  },
-  {
-    slug: "kapikitab",
-    num: "P5",
-    name: "KapiKitab",
-    shortName: "KapiKitab",
-    tagline: "Digital knowledge management & book discovery",
-    description:
-      "Your library, superintelligent: import books and papers, get AI summaries and key-idea extraction, discover what to read next from your taste graph, and share annotated reading circles with your team or book club.",
-    status: "beta",
-    statusLabel: "Beta",
-    image: "/images/prod-kapikitab.jpg",
-    imageAlt:
-      "Isometric illustration of a digital book discovery platform with floating hardcover books rising from a laptop, library shelf and tag chips",
-    features: [
-      "Personal cloud library for books & papers",
-      "AI summaries & key-idea extraction",
-      "Taste-graph based book discovery",
-      "Reading circles with shared notes",
-    ],
-    stack: ["Embeddings", "OCR", "Recsys", "Web+Mobile"],
-    metrics: [
-      { value: "40k+", label: "Titles catalogued" },
-      { value: "3 min", label: "Average summary read" },
-      { value: "1.4k", label: "Active reading circles" },
-    ],
-    prefill: "AI & Automation",
-    cta: "Join the beta",
-    demo: "shelf",
-    demoLabel: "The shelf — your library, annotated and alive",
-    dither: { pattern: "atkinson", palette: "duotone" },
+    prefill: "Cloud, IT & Business Solutions",
+    cta: "See Business360 in action",
+    demo: "ops",
+    demoLabel: "The operations board — pipeline, tickets and cash flowing live",
+    dither: { pattern: "bayer", palette: "duotone" },
   },
   {
     slug: "intelliqr",
-    num: "P6",
+    num: "P5",
     name: "IntelliQR",
     shortName: "IntelliQR",
-    tagline: "Dynamic QR codes with real-time analytics",
+    tagline: "Intelligent QR for developers. Built for the intelligence age.",
     description:
       "Print once, retarget forever: dynamic QR destinations you can edit after the poster goes up, with real-time scan analytics, geo maps, device breakdowns and smart fallback pages that A/B test themselves.",
     status: "soon",

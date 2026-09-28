@@ -32,14 +32,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // canonical entry
     page("/", 1),
 
-    // landing sections
+    // landing sections — DOCX chapters first, then the company profile
     page("/#about", 0.9),
+    page("/#capabilities", 0.9),
+    page("/#products", 0.9),
+    page("/#approach", 0.8),
+    page("/#why", 0.8),
+    page("/#industries", 0.8),
+    page("/#vision", 0.7),
     page("/#leadership", 0.9),
     page("/#achievements", 0.8),
     page("/#events", 0.9),
     page("/#gallery", 0.8),
     page("/#follow", 0.6),
     page("/#contact", 0.9),
+
+    // hash-route pages — company
+    page("/#/about", 0.8),
+    page("/#/careers", 0.7),
+    page("/#/events", 0.7),
+    page("/#/social", 0.6),
 
     // hash-route pages — products
     page("/#/products", 0.9),

@@ -1,0 +1,763 @@
+     1→"use client";
+     2→
+     3→import { useEffect, useMemo, useState } from "react";
+     4→import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+     5→import {
+     6→  AlertTriangle,
+     7→  BookOpen,
+     8→  Check,
+     9→  Flame,
+    10→  QrCode,
+    11→  ScanLine,
+    12→  ShieldAlert,
+    13→  Sparkles,
+    14→  Trophy,
+    15→} from "lucide-react";
+    16→import type { ProductDemoKind } from "@/lib/products";
+    17→import { cn } from "@/lib/utils";
+    18→
+    19→/**
+    20→ * ProductDemo — six looping "product tour" animations, one per product.
+    21→ * Pure DOM/SVG/framer-motion loops (transform/opacity/width only),
+    22→ * reduced-motion aware (static end state) and fully deterministic so
+    23→ * hydration stays clean.
+    24→ */
+    25→
+    26→const EASE = [0.22, 1, 0.36, 1] as const;
+    27→
+    28→/* ------------------------------------------------------------------ */
+    29→/* Shared window chrome                                                */
+    30→/* ------------------------------------------------------------------ */
+    31→
+    32→export function DemoWindow({
+    33→  label,
+    34→  product,
+    35→  children,
+    36→  status,
+    37→}: {
+    38→  label: string;
+    39→  product: string;
+    40→  children: React.ReactNode;
+    41→  status: string;
+    42→}) {
+    43→  return (
+    44→    <div className="overflow-hidden border border-hairline-strong bg-white">
+    45→      <div className="h-0.5 bg-primary" aria-hidden="true" />
+    46→      <div className="flex items-center gap-3 border-b border-hairline bg-ibm-layer px-4 py-2.5">
+    47→        <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
+    48→          <span className="size-1.5 rounded-full bg-ibm-error animate-pulse-dot" aria-hidden="true" />
+    49→          Live
+    50→        </span>
+    51→        <span className="truncate text-xs text-ink-muted">
+    52→          {product} — product tour
+    53→        </span>
+    54→        <span className="ml-auto hidden truncate text-xs text-ibm-subtle sm:block">
+    55→          abwcurious.app/{product.toLowerCase().replace(/\s+/g, "-")}
+    56→        </span>
+    57→      </div>
+    58→      <p className="border-b border-hairline px-4 py-2 text-xs text-muted-foreground">{label}</p>
+    59→      <div className="p-4 sm:p-5">{children}</div>
+    60→      <p className="border-t border-hairline bg-ibm-layer px-4 py-2 text-xs text-ink-muted">
+    61→        {status}
+    62→      </p>
+    63→    </div>
+    64→  );
+    65→}
+    66→
+    67→/* ------------------------------------------------------------------ */
+    68→/* 1 — CyberIntelligence360: threat radar + AI incident feed           */
+    69→/* ------------------------------------------------------------------ */
+    70→
+    71→const RADAR_BLIPS = [
+    72→  { x: 62, y: 34, r: 3, sev: "critical", delay: 0 },
+    73→  { x: 108, y: 82, r: 2.5, sev: "high", delay: 0.9 },
+    74→  { x: 48, y: 118, r: 2.5, sev: "low", delay: 1.6 },
+    75→  { x: 132, y: 140, r: 3, sev: "high", delay: 2.2 },
+    76→  { x: 92, y: 58, r: 2, sev: "low", delay: 2.8 },
+    77→] as const;
+    78→
+    79→const INCIDENT_FEED = [
+    80→  { sev: "Critical", tone: "text-ibm-error border-ibm-error/40 bg-ibm-error/[0.06]", msg: "Credential stuffing wave on api-eu-2", src: "Edge WAF" },
+    81→  { sev: "High", tone: "text-ibm-warning border-ibm-warning/40 bg-ibm-warning/[0.06]", msg: "Anomalous S3 egress from analytics-vpc", src: "Cloud trail" },
+    82→  { sev: "High", tone: "text-ibm-warning border-ibm-warning/40 bg-ibm-warning/[0.06]", msg: "Privilege escalation attempt — svc-k8s", src: "Identity" },
+    83→  { sev: "Low", tone: "text-ibm-blue border-ibm-blue/40 bg-ibm-blue/[0.05]", msg: "New device fingerprint on VPN pool", src: "Zero trust" },
+    84→] as const;
+    85→
+    86→function RadarDemo({ reduced }: { reduced: boolean }) {
+    87→  const [count, setCount] = useState(0);
+    88→
+    89→  useEffect(() => {
+    90→    if (reduced) return;
+    91→    const t = window.setInterval(() => setCount((c) => c + 1), 2100);
+    92→    return () => window.clearInterval(t);
+    93→  }, [reduced]);
+    94→
+    95→  const visible = useMemo(() => {
+    96→    const end = Math.min(4, 1 + (count % 5));
+    97→    return INCIDENT_FEED.slice(0, end);
+    98→  }, [count]);
+    99→
+   100→  return (
+   101→    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
+   102→      {/* radar */}
+   103→      <div className="relative flex items-center justify-center border border-hairline bg-ibm-layer p-3">
+   104→        <svg viewBox="0 0 180 180" className="h-auto w-full max-w-[300px]" role="img" aria-label="Threat radar with rotating sweep and detected blips">
+   105→          <defs>
+   106→            <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="0">
+   107→              <stop offset="0%" stopColor="#0f62fe" stopOpacity="0.45" />
+   108→              <stop offset="100%" stopColor="#0f62fe" stopOpacity="0" />
+   109→            </linearGradient>
+   110→          </defs>
+   111→          {[28, 52, 76].map((r) => (
+   112→            <circle key={r} cx="90" cy="90" r={r} fill="none" stroke="#0f62fe" strokeOpacity="0.22" strokeWidth="0.8" />
+   113→          ))}
+   114→          <line x1="90" y1="12" x2="90" y2="168" stroke="#0f62fe" strokeOpacity="0.14" strokeWidth="0.7" />
+   115→          <line x1="12" y1="90" x2="168" y2="90" stroke="#0f62fe" strokeOpacity="0.14" strokeWidth="0.7" />
+   116→          <motion.path
+   117→            d="M90 90 L90 14 A76 76 0 0 1 150 36 Z"
+   118→            fill="url(#sweepGrad)"
+   119→            style={{ originX: "90px", originY: "90px" }}
+   120→            animate={reduced ? undefined : { rotate: 360 }}
+   121→            transition={{ duration: 5.2, ease: "linear", repeat: Infinity }}
+   122→          />
+   123→          {RADAR_BLIPS.map((b, i) => (
+   124→            <g key={i}>
+   125→              <circle cx={b.x} cy={b.y} r={b.r} fill={b.sev === "critical" ? "#da1e28" : b.sev === "high" ? "#f1c21b" : "#0f62fe"} />
+   126→              {!reduced && (
+   127→                <motion.circle
+   128→                  cx={b.x}
+   129→                  cy={b.y}
+   130→                  r={b.r}
+   131→                  fill="none"
+   132→                  stroke={b.sev === "critical" ? "#da1e28" : b.sev === "high" ? "#f1c21b" : "#0f62fe"}
+   133→                  strokeWidth="1"
+   134→                  animate={{ r: [b.r, b.r + 9], opacity: [0.7, 0] }}
+   135→                  transition={{ duration: 2.4, repeat: Infinity, delay: b.delay, ease: "easeOut" }}
+   136→                />
+   137→              )}
+   138→            </g>
+   139→          ))}
+   140→        </svg>
+   141→        <span className="absolute left-3 top-3 text-xs text-ink-muted">
+   142→          Global threat map
+   143→        </span>
+   144→      </div>
+   145→
+   146→      {/* AI incident feed */}
+   147→      <div className="flex flex-col border border-hairline">
+   148→        <p className="border-b border-hairline bg-ibm-layer px-3 py-2 text-xs font-medium text-ink">
+   149→          AI incident feed
+   150→        </p>
+   151→        <ul className="flex flex-1 flex-col gap-2 p-3" aria-live="polite">
+   152→          <AnimatePresence mode="popLayout" initial={false}>
+   153→            {visible.map((inc) => (
+   154→              <motion.li
+   155→                key={inc.msg}
+   156→                layout
+   157→                initial={reduced ? false : { opacity: 0, y: -10 }}
+   158→                animate={{ opacity: 1, y: 0 }}
+   159→                exit={reduced ? undefined : { opacity: 0 }}
+   160→                transition={{ duration: 0.45, ease: EASE }}
+   161→                className="border border-hairline bg-white px-3 py-2"
+   162→              >
+   163→                <span className={cn("inline-block border px-1.5 py-0.5 text-[10px] font-medium", inc.tone)}>
+   164→                  {inc.sev}
+   165→                </span>
+   166→                <p className="mt-1 text-xs leading-snug text-ink">{inc.msg}</p>
+   167→                <p className="mt-0.5 text-xs text-ibm-subtle">{inc.src}</p>
+   168→              </motion.li>
+   169→            ))}
+   170→          </AnimatePresence>
+   171→        </ul>
+   172→      </div>
+   173→    </div>
+   174→  );
+   175→}
+   176→
+   177→/* ------------------------------------------------------------------ */
+   178→/* 2 — TheCodeArena: live typing race                                  */
+   179→/* ------------------------------------------------------------------ */
+   180→
+   181→const ARENA_CODE = [
+   182→  {
+   183→    name: "cypher_9",
+   184→    rank: "Rank #12",
+   185→    lines: ["fn solve(nums: Vec<i32>)", "  let win = nums.windows(3);", "  win.map(|w| w.iter().sum())", "    .max().unwrap_or(0)"],
+   186→  },
+   187→  {
+   188→    name: "delta_wave",
+   189→    rank: "Rank #27",
+   190→    lines: ["def solve(nums):", "  return max(", "    sum(nums[i:i+3])", "    for i in range(len(nums)-2))"],
+   191→  },
+   192→] as const;
+   193→
+   194→function ArenaDemo({ reduced }: { reduced: boolean }) {
+   195→  const total = 72;
+   196→  const [chars, setChars] = useState(0);
+   197→  const done = chars >= total;
+   198→
+   199→  useEffect(() => {
+   200→    if (reduced) return;
+   201→    if (done) {
+   202→      const hold = window.setTimeout(() => setChars(0), 2600);
+   203→      return () => window.clearTimeout(hold);
+   204→    }
+   205→    const t = window.setInterval(() => setChars((c) => Math.min(total, c + 1)), 42);
+   206→    return () => window.clearInterval(t);
+   207→  }, [done, reduced]);
+   208→
+   209→  return (
+   210→    <div>
+   211→      <div className="relative grid gap-3 sm:grid-cols-2">
+   212→        {/* VS badge */}
+   213→        <motion.span
+   214→          initial={false}
+   215→          animate={reduced ? undefined : { scale: [1, 1.08, 1] }}
+   216→          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+   217→          className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 border border-hairline-strong bg-white px-2.5 py-1 text-xs font-medium text-primary sm:block"
+   218→          aria-hidden="true"
+   219→        >
+   220→          VS
+   221→        </motion.span>
+   222→        {ARENA_CODE.map((p) => {
+   223→          const text = p.lines.join("\n");
+   224→          const shown = reduced ? text : text.slice(0, Math.round((chars / total) * text.length));
+   225→          const pct = Math.min(100, Math.round(((chars / total) * text.length * 100) / text.length));
+   226→          return (
+   227→            <div key={p.name} className="border border-hairline">
+   228→              <div className="flex items-center justify-between border-b border-hairline bg-ibm-layer px-3 py-1.5">
+   229→                <span className="text-xs text-ink">{p.name}</span>
+   230→                <span className="text-xs text-ink-muted">{p.rank}</span>
+   231→              </div>
+   232→              <pre className="min-h-[104px] overflow-hidden px-3 py-2.5 font-mono text-[11px] leading-relaxed text-foreground/85">
+   233→                {shown}
+   234→                {!done && !reduced && <span className="ml-0.5 inline-block h-3 w-[7px] animate-pulse bg-ibm-bright align-middle" aria-hidden="true" />}
+   235→              </pre>
+   236→              <div className="h-1 border-t border-hairline bg-hairline" aria-hidden="true">
+   237→                <div className="h-full bg-primary transition-[width] duration-100" style={{ width: `${pct}%` }} />
+   238→              </div>
+   239→            </div>
+   240→          );
+   241→        })}
+   242→      </div>
+   243→      <AnimatePresence>
+   244→        {done && (
+   245→          <motion.div
+   246→            initial={reduced ? false : { opacity: 0, y: 10 }}
+   247→            animate={{ opacity: 1, y: 0 }}
+   248→            exit={reduced ? undefined : { opacity: 0 }}
+   249→            transition={{ duration: 0.4, ease: EASE }}
+   250→            className="mt-3 flex items-center gap-2.5 border border-ibm-success/40 bg-ibm-success/[0.07] px-4 py-2.5"
+   251→            aria-live="polite"
+   252→          >
+   253→            <Trophy className="size-4 shrink-0 text-ibm-success" strokeWidth={1.75} aria-hidden="true" />
+   254→            <p className="text-xs text-ink">
+   255→              cypher_9 wins · all tests green · <span className="text-ibm-success">12% faster</span>
+   256→            </p>
+   257→          </motion.div>
+   258→        )}
+   259→      </AnimatePresence>
+   260→    </div>
+   261→  );
+   262→}
+   263→
+   264→/* ------------------------------------------------------------------ */
+   265→/* 3 — Restaurant360: live order kanban                                */
+   266→/* ------------------------------------------------------------------ */
+   267→
+   268→const ORDER_POOL = [
+   269→  { id: "R-241", table: "T4", items: 3, note: "2× spicy" },
+   270→  { id: "R-242", table: "T11", items: 5, note: "no nuts" },
+   271→  { id: "R-243", table: "QR-2", items: 2, note: "takeaway" },
+   272→  { id: "R-244", table: "T7", items: 4, note: "birthday" },
+   273→  { id: "R-245", table: "QR-5", items: 1, note: "extra raita" },
+   274→  { id: "R-246", table: "T2", items: 6, note: "family bowl" },
+   275→] as const;
+   276→
+   277→type Column = "New" | "Cooking" | "Served";
+   278→
+   279→function OrdersDemo({ reduced }: { reduced: boolean }) {
+   280→  /* Deterministic cycle: every 2.4s each order advances one column. */
+   281→  const [tick, setTick] = useState(0);
+   282→
+   283→  useEffect(() => {
+   284→    if (reduced) return;
+   285→    const t = window.setInterval(() => setTick((v) => v + 1), 2400);
+   286→    return () => window.clearInterval(t);
+   287→  }, [reduced]);
+   288→
+   289→  const columns = useMemo(() => {
+   290→    const cols: Record<Column, { id: string; table: string; items: number; note: string }[]> = {
+   291→      New: [],
+   292→      Cooking: [],
+   293→      Served: [],
+   294→    };
+   295→    const orders = ORDER_POOL.map((o, i) => ({ ...o, phase: (tick + i * 5) % 9 }));
+   296→    orders.forEach((o) => {
+   297→      const card = { id: o.id, table: o.table, items: o.items, note: o.note };
+   298→      if (o.phase <= 2) cols.New.push(card);
+   299→      else if (o.phase <= 5) cols.Cooking.push(card);
+   300→      else cols.Served.push(card);
+   301→    });
+   302→    cols.Served = cols.Served.slice(-3);
+   303→    return cols;
+   304→  }, [tick]);
+   305→
+   306→  const meta = [
+   307→    { col: "New" as Column, tone: "text-ibm-blue", bar: "bg-ibm-blue" },
+   308→    { col: "Cooking" as Column, tone: "text-ibm-warning", bar: "bg-ibm-warning" },
+   309→    { col: "Served" as Column, tone: "text-ibm-success", bar: "bg-ibm-success" },
+   310→  ];
+   311→
+   312→  return (
+   313→    <div>
+   314→      <div className="grid gap-3 sm:grid-cols-3">
+   315→        {meta.map(({ col, tone, bar }) => (
+   316→          <div key={col} className="border border-hairline">
+   317→            <p className={cn("flex items-center justify-between border-b border-hairline bg-ibm-layer px-3 py-1.5 text-xs font-medium", tone)}>
+   318→              {col}
+   319→              <span className="text-muted-foreground">{columns[col].length}</span>
+   320→            </p>
+   321→            <ul className="flex min-h-[150px] flex-col gap-2 p-2.5">
+   322→              <AnimatePresence mode="popLayout" initial={false}>
+   323→                {columns[col].map((o) => (
+   324→                  <motion.li
+   325→                    key={o.id}
+   326→                    layout
+   327→                    initial={reduced ? false : { opacity: 0, scale: 0.9 }}
+   328→                    animate={{ opacity: 1, scale: 1 }}
+   329→                    exit={reduced ? undefined : { opacity: 0, scale: 0.9 }}
+   330→                    transition={{ duration: 0.4, ease: EASE }}
+   331→                    className="border border-hairline bg-white px-2.5 py-2"
+   332→                  >
+   333→                    <div className="flex items-center justify-between">
+   334→                      <span className="text-xs tabular-nums text-ink">{o.id}</span>
+   335→                      <span className="border border-hairline px-1.5 py-0.5 text-[10px] tabular-nums text-ink-muted">{o.table}</span>
+   336→                    </div>
+   337→                    <p className="mt-1 text-[11px] text-muted-foreground">
+   338→                      {o.items} items · {o.note}
+   339→                    </p>
+   340→                    {col === "Cooking" && !reduced && (
+   341→                      <div className="mt-1.5 h-0.5 overflow-hidden bg-hairline" aria-hidden="true">
+   342→                        <motion.div
+   343→                          className={cn("h-full", bar)}
+   344→                          animate={{ width: ["8%", "96%"] }}
+   345→                          transition={{ duration: 4.8, repeat: Infinity, ease: "linear" }}
+   346→                        />
+   347→                      </div>
+   348→                    )}
+   349→                  </motion.li>
+   350→                ))}
+   351→              </AnimatePresence>
+   352→            </ul>
+   353→          </div>
+   354→        ))}
+   355→      </div>
+   356→      <p className="mt-3 flex items-center gap-2 text-xs tabular-nums text-ink-muted">
+   357→        <span className="size-1.5 rounded-full bg-ibm-success animate-pulse-dot" aria-hidden="true" />
+   358→        orders today {String(148 + tick).padStart(3, "0")} · avg ticket 14:32 · kitchen load {60 + (tick % 3) * 8}%
+   359→      </p>
+   360→    </div>
+   361→  );
+   362→}
+   363→
+   364→/* ------------------------------------------------------------------ */
+   365→/* 4 — StudySpark: adaptive quiz loop                                  */
+   366→/* ------------------------------------------------------------------ */
+   367→
+   368→const QUIZ = [
+   369→  { q: "Solve: 2x² − 8 = 0", options: ["x = ±2", "x = ±4", "x = 2 only", "x = ±√8"], correct: 0, skill: "Algebra · quadratics" },
+   370→  { q: "Derivative of sin(2x)?", options: ["2cos(2x)", "cos(2x)", "2sin(x)", "−2cos(2x)"], correct: 0, skill: "Calculus · chain rule" },
+   371→  { q: "SI unit of magnetic flux?", options: ["Tesla", "Weber", "Henry", "Gauss"], correct: 1, skill: "Physics · magnetism" },
+   372→] as const;
+   373→
+   374→function QuizDemo({ reduced }: { reduced: boolean }) {
+   375→  /* Phase machine, tick-driven: pick option → mark correct → flip → next. */
+   376→  const [step, setStep] = useState(0);
+   377→  useEffect(() => {
+   378→    if (reduced) return;
+   379→    const t = window.setInterval(() => setStep((s) => s + 1), 1400);
+   380→    return () => window.clearInterval(t);
+   381→  }, [reduced]);
+   382→
+   383→  const cycle = Math.floor(step / 4);
+   384→  const phase = reduced ? 2 : step % 4; // 0 pick, 1 correct, 2/3 flip
+   385→  const q = QUIZ[cycle % QUIZ.length];
+   386→  const picked = phase >= 0 ? q.correct : -1;
+   387→  const solved = phase >= 1;
+   388→  const difficulty = reduced ? 71 : Math.min(86, 42 + cycle * 14);
+   389→  const dots = reduced ? 6 : Math.min(6, 2 + cycle * 2);
+   390→
+   391→  return (
+   392→    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_200px]">
+   393→      {/* question card */}
+   394→      <div className="[perspective:900px]">
+   395→        <motion.div
+   396→          key={cycle}
+   397→          initial={reduced ? false : { rotateY: 90, opacity: 0 }}
+   398→          animate={{ rotateY: 0, opacity: 1 }}
+   399→          transition={{ duration: 0.5, ease: EASE }}
+   400→          className="border border-hairline-strong bg-white p-4 [transform-style:preserve-3d]"
+   401→        >
+   402→          <p className="text-xs text-ink-muted">
+   403→            {q.skill} · adaptive pick
+   404→          </p>
+   405→          <p className="mt-2 text-base font-medium text-foreground sm:text-lg">{q.q}</p>
+   406→          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+   407→            {q.options.map((opt, i) => {
+   408→              const isPicked = solved && i === picked;
+   409→              const isDim = solved && i !== picked;
+   410→              return (
+   411→                <motion.li
+   412→                  key={opt}
+   413→                  animate={
+   414→                    reduced
+   415→                      ? undefined
+   416→                      : isPicked
+   417→                        ? { scale: [1, 1.03, 1], borderColor: "rgba(36,161,72,0.6)" }
+   418→                        : isDim
+   419→                          ? { opacity: 0.45 }
+   420→                          : { opacity: 1 }
+   421→                  }
+   422→                  transition={{ duration: 0.4, delay: isPicked ? 0.15 : 0 }}
+   423→                  className={cn(
+   424→                    "flex items-center gap-2 border px-3 py-2 text-sm",
+   425→                    isPicked ? "border-ibm-success/60 bg-ibm-success/[0.07] text-foreground" : "border-hairline text-foreground/85"
+   426→                  )}
+   427→                >
+   428→                  {isPicked ? (
+   429→                    <Check className="size-4 shrink-0 text-ibm-success" strokeWidth={2} aria-hidden="true" />
+   430→                  ) : (
+   431→                    <span className="text-xs tabular-nums text-ink-muted">{String.fromCharCode(65 + i)}</span>
+   432→                  )}
+   433→                  {opt}
+   434→                </motion.li>
+   435→              );
+   436→            })}
+   437→          </ul>
+   438→          <AnimatePresence>
+   439→            {solved && (
+   440→              <motion.p
+   441→                initial={reduced ? false : { opacity: 0, y: 6 }}
+   442→                animate={{ opacity: 1, y: 0 }}
+   443→                exit={reduced ? undefined : { opacity: 0 }}
+   444→                className="mt-3 flex items-center gap-2 border border-hairline bg-ibm-layer px-3 py-2 text-xs text-ink-muted"
+   445→              >
+   446→                <Sparkles className="size-3.5 shrink-0 text-primary" strokeWidth={1.5} aria-hidden="true" />
+   447→                Path rebuilt: spacing +12% on {q.skill.split("·")[0].trim()}, micro-review queued
+   448→              </motion.p>
+   449→            )}
+   450→          </AnimatePresence>
+   451→        </motion.div>
+   452→      </div>
+   453→
+   454→      {/* adaptive rail */}
+   455→      <div className="flex flex-col gap-3">
+   456→        <div className="border border-hairline p-3">
+   457→          <p className="text-xs text-ink-muted">Difficulty</p>
+   458→          <p className="mt-1 text-2xl font-light tabular-nums text-ink">{difficulty}%</p>
+   459→          <div className="mt-2 h-1 bg-hairline" aria-hidden="true">
+   460→            <motion.div className="h-full bg-primary" animate={{ width: `${difficulty}%` }} transition={{ duration: 0.8, ease: EASE }} />
+   461→          </div>
+   462→        </div>
+   463→        <div className="border border-hairline p-3">
+   464→          <p className="text-xs text-ink-muted">Session path</p>
+   465→          <div className="mt-2 flex gap-1.5" aria-hidden="true">
+   466→            {Array.from({ length: 6 }).map((_, i) => (
+   467→              <span key={i} className={cn("h-1.5 flex-1", i < dots ? "bg-ibm-blue" : "bg-hairline")} />
+   468→            ))}
+   469→          </div>
+   470→          <p className="mt-2.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+   471→            <Flame className="size-3.5 text-ibm-warning" strokeWidth={1.5} aria-hidden="true" />
+   472→            streak ×{Math.max(3, 3 + cycle)} today
+   473→          </p>
+   474→        </div>
+   475→      </div>
+   476→    </div>
+   477→  );
+   478→}
+   479→
+   480→/* ------------------------------------------------------------------ */
+   481→/* 5 — KapiKitab: the living bookshelf                                 */
+   482→/* ------------------------------------------------------------------ */
+   483→
+   484→const SHELF_BOOKS = [
+   485→  { w: 26, h: 64, tone: "bg-ibm-blue" },
+   486→  { w: 20, h: 58, tone: "bg-ibm-cyan" },
+   487→  { w: 30, h: 68, tone: "bg-ink/80" },
+   488→  { w: 22, h: 56, tone: "bg-ibm-soft" },
+   489→  { w: 28, h: 62, tone: "bg-ibm-blue/70" },
+   490→  { w: 18, h: 52, tone: "bg-ibm-success/70" },
+   491→  { w: 24, h: 60, tone: "bg-ink/60" },
+   492→] as const;
+   493→
+   494→const SHELF_TAGS = ["#systems-design", "#behavioral-econ", "#ml-papers", "#product", "#history-of-ideas"] as const;
+   495→
+   496→function ShelfDemo({ reduced }: { reduced: boolean }) {
+   497→  const [step, setStep] = useState(0);
+   498→  useEffect(() => {
+   499→    if (reduced) return;
+   500→    const t = window.setInterval(() => setStep((s) => (s + 1) % 14), 850);
+   501→    return () => window.clearInterval(t);
+   502→  }, [reduced]);
+   503→
+   504→  const placed = reduced ? SHELF_BOOKS.length : Math.min(SHELF_BOOKS.length, step + 3);
+   505→  const opened = reduced || step >= 8;
+   506→  const summaryLines = reduced ? 3 : Math.max(0, step - 7);
+   507→  const tag = SHELF_TAGS[(reduced ? 0 : step) % SHELF_TAGS.length];
+   508→  const progress = reduced ? 68 : Math.min(92, 24 + step * 6);
+   509→
+   510→  return (
+   511→    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,280px)]">
+   512→      {/* shelf */}
+   513→      <div className="border border-hairline bg-ibm-layer p-4">
+   514→        <p className="text-xs text-ink-muted">Your shelf · 42 titles</p>
+   515→        <div className="mt-3 flex h-[86px] items-end gap-1.5 border-b-2 border-ink/70 pb-0" aria-hidden="true">
+   516→          {SHELF_BOOKS.map((b, i) => (
+   517→            <motion.div
+   518→              key={i}
+   519→              initial={reduced ? false : { y: 42, opacity: 0 }}
+   520→              animate={i < placed ? { y: 0, opacity: 1 } : { y: 42, opacity: 0 }}
+   521→              transition={{ duration: 0.55, ease: EASE, delay: i < placed ? i * 0.08 : 0 }}
+   522→              className={cn("origin-bottom", b.tone)}
+   523→              style={{ width: b.w, height: b.h }}
+   524→            />
+   525→          ))}
+   526→          {opened && (
+   527→            <motion.div
+   528→              initial={reduced ? false : { rotateY: -70, opacity: 0 }}
+   529→              animate={{ rotateY: 0, opacity: 1 }}
+   530→              transition={{ duration: 0.6, ease: EASE }}
+   531→              className="ml-2 flex h-[72px] w-[92px] origin-left flex-col overflow-hidden border border-hairline-strong bg-white px-2 py-1.5"
+   532→              style={{ transformPerspective: 600 }}
+   533→            >
+   534→              <BookOpen className="size-3 text-primary" strokeWidth={1.75} aria-hidden="true" />
+   535→              <span className="mt-1 block h-1 w-full bg-hairline" />
+   536→              <span className="mt-1 block h-1 w-4/5 bg-hairline" />
+   537→              <span className="mt-1 block h-1 w-3/5 bg-hairline" />
+   538→              <span className="mt-auto text-[10px] text-ink-muted">open</span>
+   539→            </motion.div>
+   540→          )}
+   541→        </div>
+   542→
+   543→        {/* AI summary card */}
+   544→        <div className="mt-4 border border-hairline bg-white p-3">
+   545→          <p className="text-xs font-medium text-ink">AI key ideas</p>
+   546→          <ul className="mt-2 space-y-1.5" aria-live="polite">
+   547→            {["Constraint loops beat willpower for habit design", "Rate of change matters more than averages"].map((line, i) => (
+   548→              <motion.li
+   549→                key={line}
+   550→                initial={reduced ? false : { opacity: 0, x: -8 }}
+   551→                animate={{ opacity: i < summaryLines ? 1 : 0.25, x: 0 }}
+   552→                transition={{ duration: 0.4, ease: EASE }}
+   553→                className="flex items-start gap-2 text-xs text-foreground/85"
+   554→              >
+   555→                <span className="mt-1.5 size-1 shrink-0 bg-primary" aria-hidden="true" />
+   556→                {line}
+   557→              </motion.li>
+   558→            ))}
+   559→          </ul>
+   560→        </div>
+   561→      </div>
+   562→
+   563→      {/* discovery rail */}
+   564→      <div className="flex flex-col gap-3">
+   565→        <div className="border border-hairline p-3">
+   566→          <p className="text-xs text-ink-muted">Taste graph</p>
+   567→          <AnimatePresence mode="wait" initial={false}>
+   568→            <motion.p
+   569→              key={tag}
+   570→              initial={reduced ? false : { opacity: 0, y: 8 }}
+   571→              animate={{ opacity: 1, y: 0 }}
+   572→              exit={reduced ? undefined : { opacity: 0, y: -8 }}
+   573→              transition={{ duration: 0.35 }}
+   574→              className="mt-2 border border-hairline bg-ibm-layer px-2 py-1 text-xs text-primary"
+   575→            >
+   576→              {tag}
+   577→            </motion.p>
+   578→          </AnimatePresence>
+   579→          <p className="mt-2 text-xs text-muted-foreground">Because you finished 3 systems titles this month.</p>
+   580→        </div>
+   581→        <div className="border border-hairline p-3">
+   582→          <p className="text-xs text-ink-muted">Now reading</p>
+   583→          <p className="mt-1 text-2xl font-light tabular-nums text-ink">{progress}%</p>
+   584→          <div className="mt-2 h-1 bg-hairline" aria-hidden="true">
+   585→            <motion.div className="h-full bg-primary" animate={{ width: `${progress}%` }} transition={{ duration: 0.7, ease: EASE }} />
+   586→          </div>
+   587→        </div>
+   588→      </div>
+   589→    </div>
+   590→  );
+   591→}
+   592→
+   593→/* ------------------------------------------------------------------ */
+   594→/* 6 — IntelliQR: assembling matrix + scan analytics                   */
+   595→/* ------------------------------------------------------------------ */
+   596→
+   597→/* deterministic 9x9 pseudo-QR matrix */
+   598→const QR_MATRIX: boolean[] = (() => {
+   599→  const size = 9;
+   600→  const cells: boolean[] = [];
+   601→  for (let i = 0; i < size * size; i++) {
+   602→    const x = i % size;
+   603→    const y = Math.floor(i / size);
+   604→    const finder =
+   605→      (x < 3 && y < 3) || (x > 5 && y < 3) || (x < 3 && y > 5)
+   606→        ? !((x === 1 && y === 1) || (x === 7 && y === 1) || (x === 1 && y === 7))
+   607→        : (x * 7 + y * 13 + ((x * y) % 5)) % 3 !== 0;
+   608→    cells.push(finder);
+   609→  }
+   610→  return cells;
+   611→})();
+   612→
+   613→const QR_CITIES = [
+   614→  { city: "Pune", pct: 42 },
+   615→  { city: "Mumbai", pct: 27 },
+   616→  { city: "Bengaluru", pct: 18 },
+   617→  { city: "Other", pct: 13 },
+   618→] as const;
+   619→
+   620→function QrDemo({ reduced }: { reduced: boolean }) {
+   621→  const [tick, setTick] = useState(0);
+   622→  useEffect(() => {
+   623→    if (reduced) return;
+   624→    const t = window.setInterval(() => setTick((v) => v + 1), 900);
+   625→    return () => window.clearInterval(t);
+   626→  }, [reduced]);
+   627→
+   628→  const scans = 18432 + (reduced ? 612 : tick * 37);
+   629→  const channels = [
+   630→    { label: "Poster", pct: 44 },
+   631→    { label: "Menu", pct: 33 },
+   632→    { label: "Packaging", pct: 23 },
+   633→  ];
+   634→  const activeChannel = reduced ? 0 : tick % 3;
+   635→
+   636→  return (
+   637→    <div className="grid gap-4 sm:grid-cols-[190px_minmax(0,1fr)]">
+   638→      {/* QR matrix */}
+   639→      <div className="relative flex items-center justify-center border border-hairline bg-ibm-layer p-4">
+   640→        <div className="relative">
+   641→          <div className="grid aspect-square w-[150px] grid-cols-9 gap-[2px]" role="img" aria-label="QR code assembling from modules with a scanning beam">
+   642→            {QR_MATRIX.map((on, i) => (
+   643→              <motion.span
+   644→                key={i}
+   645→                initial={reduced ? false : { scale: 0, opacity: 0 }}
+   646→                animate={{ scale: on ? 1 : 0.2, opacity: on ? 1 : 0.15 }}
+   647→                transition={{ duration: 0.35, delay: reduced ? 0 : ((i % 9) + Math.floor(i / 9)) * 0.045, ease: EASE }}
+   648→                className={cn("aspect-square", on ? "bg-ink" : "bg-hairline")}
+   649→              />
+   650→            ))}
+   651→          </div>
+   652→          {!reduced && (
+   653→            <motion.span
+   654→              className="pointer-events-none absolute inset-x-[-6px] h-0.5 bg-primary"
+   655→              animate={{ top: ["-2px", "calc(100% + 2px)"] }}
+   656→              transition={{ duration: 1.9, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.4 }}
+   657→              aria-hidden="true"
+   658→            />
+   659→          )}
+   660→        </div>
+   661→        <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 text-[10px] text-ink-muted">
+   662→          <QrCode className="size-3 text-primary" strokeWidth={1.5} aria-hidden="true" />
+   663→          dynamic
+   664→        </span>
+   665→      </div>
+   666→
+   667→      {/* analytics */}
+   668→      <div className="flex flex-col gap-3">
+   669→        <div className="flex items-stretch gap-3">
+   670→          <div className="flex-1 border border-hairline p-3">
+   671→            <p className="text-xs text-ink-muted">Scans today</p>
+   672→            <p className="mt-1 text-3xl font-light tabular-nums text-ink">{scans.toLocaleString("en-IN")}</p>
+   673→          </div>
+   674→          <div className="hidden w-[150px] flex-col justify-center gap-1.5 border border-hairline p-3 sm:flex">
+   675→            {channels.map((c, i) => (
+   676→              <div key={c.label} className="flex items-center gap-2">
+   677→                <ScanLine className={cn("size-3.5 shrink-0", i === activeChannel ? "text-primary" : "text-muted-foreground/50")} strokeWidth={1.5} aria-hidden="true" />
+   678→                <span className={cn("text-xs", i === activeChannel ? "text-ink" : "text-muted-foreground/60")}>
+   679→                  {c.label} {c.pct}%
+   680→                </span>
+   681→              </div>
+   682→            ))}
+   683→          </div>
+   684→        </div>
+   685→        <div className="flex-1 border border-hairline p-3">
+   686→          <p className="text-xs text-ink-muted">Live geo</p>
+   687→          <ul className="mt-2 space-y-2">
+   688→            {QR_CITIES.map((c, i) => (
+   689→              <li key={c.city} className="flex items-center gap-3">
+   690→                <span className="w-20 shrink-0 text-xs text-ink-muted">{c.city}</span>
+   691→                <span className="h-1.5 flex-1 bg-hairline" aria-hidden="true">
+   692→                  <motion.span
+   693→                    className="block h-full bg-primary"
+   694→                    animate={{ width: reduced ? `${c.pct}%` : [`0%`, `${c.pct + (i === tick % 4 ? 3 : 0)}%`] }}
+   695→                    transition={{ duration: 1.2, ease: EASE }}
+   696→                  />
+   697→                </span>
+   698→                <span className="w-9 shrink-0 text-right text-xs tabular-nums text-ink-muted">{c.pct}%</span>
+   699→              </li>
+   700→            ))}
+   701→          </ul>
+   702→        </div>
+   703→      </div>
+   704→    </div>
+   705→  );
+   706→}
+   707→
+   708→/* ------------------------------------------------------------------ */
+   709→/* Dispatcher                                                          */
+   710→/* ------------------------------------------------------------------ */
+   711→
+   712→const DEMO_META: Record<ProductDemoKind, { label: string; product: string; status: string }> = {
+   713→  radar: {
+   714→    label: "Live threat operations — radar sweep, blips and the AI-ranked incident feed",
+   715→    product: "CyberIntelligence360",
+   716→    status: "AI correlation active · alert noise filtered 99.4% · playbooks armed",
+   717→  },
+   718→  arena: {
+   719→    label: "Arena mode — two developers, one problem, live typing race",
+   720→    product: "TheCodeArena",
+   721→    status: "Room sync 480ms · tests run on every keystroke · ELO updated live",
+   722→  },
+   723→  orders: {
+   724→    label: "Service floor — live orders flowing from New to Cooking to Served",
+   725→    product: "Restaurant360",
+   726→    status: "POS + KDS synced in real time · food-cost engine watching every plate",
+   727→  },
+   728→  quiz: {
+   729→    label: "Adaptive session — the path rebuilds after every answer",
+   730→    product: "StudySpark",
+   731→    status: "Spaced repetition scheduler live · AI tutor watching every attempt",
+   732→  },
+   733→  shelf: {
+   734→    label: "The shelf — your library, annotated and alive",
+   735→    product: "KapiKitab",
+   736→    status: "Embeddings refreshed nightly · taste graph updating with every finish",
+   737→  },
+   738→  qr: {
+   739→    label: "Scan intelligence — the matrix, the sweep and the live counters",
+   740→    product: "IntelliQR",
+   741→    status: "Edge redirect 180ms · destination editable after print · uptime 99.99%",
+   742→  },
+   743→};
+   744→
+   745→export function ProductDemo({ kind }: { kind: ProductDemoKind }) {
+   746→  const reduced = useReducedMotion();
+   747→  const meta = DEMO_META[kind];
+   748→
+   749→  return (
+   750→    <DemoWindow label={meta.label} product={meta.product} status={meta.status}>
+   751→      {kind === "radar" && <RadarDemo reduced={!!reduced} />}
+   752→      {kind === "arena" && <ArenaDemo reduced={!!reduced} />}
+   753→      {kind === "orders" && <OrdersDemo reduced={!!reduced} />}
+   754→      {kind === "quiz" && <QuizDemo reduced={!!reduced} />}
+   755→      {kind === "shelf" && <ShelfDemo reduced={!!reduced} />}
+   756→      {kind === "qr" && <QrDemo reduced={!!reduced} />}
+   757→    </DemoWindow>
+   758→  );
+   759→}
+   760→
+   761→/* re-usable severity icon (keeps lucide imports honest) */
+   762→export const DemoIcons = { ShieldAlert, AlertTriangle };
+   763→

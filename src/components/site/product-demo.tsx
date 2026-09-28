@@ -5,19 +5,23 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   AlertTriangle,
   BookOpen,
+  Boxes,
   Check,
   Flame,
   QrCode,
+  Receipt,
   ScanLine,
   ShieldAlert,
   Sparkles,
+  TrendingUp,
   Trophy,
+  Users,
 } from "lucide-react";
 import type { ProductDemoKind } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
 /**
- * ProductDemo — six looping "product tour" animations, one per product.
+ * ProductDemo — looping "product tour" animations, one per product.
  * Pure DOM/SVG/framer-motion loops (transform/opacity/width only),
  * reduced-motion aware (static end state) and fully deterministic so
  * hydration stays clean.
@@ -706,6 +710,176 @@ function QrDemo({ reduced }: { reduced: boolean }) {
 }
 
 /* ------------------------------------------------------------------ */
+/* 7 — Business360: the operations board                               */
+/* ------------------------------------------------------------------ */
+
+const OPS_PIPELINE = [
+  {
+    stage: "Leads",
+    deals: [
+      { co: "Meru Logistics", amt: 420000 },
+      { co: "Sona Textiles", amt: 265000 },
+      { co: "Kettle and Co.", amt: 138000 },
+    ],
+  },
+  {
+    stage: "Proposals",
+    deals: [
+      { co: "Vayu Aerospace", amt: 760000 },
+      { co: "Nandi Foods", amt: 512000 },
+    ],
+  },
+  {
+    stage: "Closed",
+    deals: [
+      { co: "Aster Clinics", amt: 940000 },
+      { co: "Trailhead Retail", amt: 615000 },
+    ],
+  },
+] as const;
+
+const OPS_DECISIONS = [
+  { icon: Boxes, msg: "Restock approved — Pune warehouse", meta: "Inventory · just now" },
+  { icon: Receipt, msg: "Invoice #2331 settled", meta: "Billing · ₹4,12,500 received" },
+  { icon: Users, msg: "Offer signed — 12 seats", meta: "HRMS · Pune + remote" },
+  { icon: TrendingUp, msg: "Hiring plan greenlit — Q3", meta: "People · 38 roles planned" },
+] as const;
+
+const OPS_UTIL = [
+  { label: "CRM", pct: 82 },
+  { label: "HRMS", pct: 64 },
+  { label: "Billing", pct: 91 },
+  { label: "Inventory", pct: 47 },
+] as const;
+
+const OPS_CASH_BASE = 1284000;
+const OPS_CASH_SPAN = 396000;
+
+function OpsDemo({ reduced }: { reduced: boolean }) {
+  /* One 2s timer drives the whole board: highlight cycles + cash tick. */
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (reduced) return;
+    const t = window.setInterval(() => setTick((v) => v + 1), 2000);
+    return () => window.clearInterval(t);
+  }, [reduced]);
+
+  const activeRow = reduced ? 0 : tick % OPS_DECISIONS.length;
+  const cash = reduced ? OPS_CASH_BASE + 264000 : OPS_CASH_BASE + ((tick * 11000) % OPS_CASH_SPAN);
+  const cashPct = Math.round(((cash - OPS_CASH_BASE) / OPS_CASH_SPAN) * 100);
+  const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
+
+  return (
+    <div>
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,248px)]">
+        {/* pipeline — three-stage mini kanban */}
+        <div className="grid gap-3 sm:grid-cols-3">
+          {OPS_PIPELINE.map((col, ci) => {
+            const hot = reduced ? 0 : (tick + ci) % col.deals.length;
+            return (
+              <div key={col.stage} className="border border-hairline">
+                <p className="flex items-center justify-between border-b border-hairline bg-ibm-layer px-3 py-1.5 text-xs font-medium text-ink">
+                  {col.stage}
+                  <span className="tabular-nums text-ibm-subtle">{col.deals.length}</span>
+                </p>
+                <ul className="flex min-h-[128px] flex-col gap-2 p-2.5">
+                  {col.deals.map((d, di) => (
+                    <li
+                      key={d.co}
+                      className={cn(
+                        "border bg-white px-2.5 py-2 transition-colors duration-500",
+                        di === hot ? "border-primary bg-ibm-blue/[0.04]" : "border-hairline"
+                      )}
+                    >
+                      <p className="truncate text-xs text-ink">{d.co}</p>
+                      <p className={cn("mt-0.5 text-xs tabular-nums", di === hot ? "text-primary" : "text-ink-muted")}>
+                        {inr(d.amt)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* collections tile + decision feed */}
+        <div className="flex flex-col gap-3">
+          <div className="border border-hairline p-3">
+            <p className="text-xs text-ink-muted">Collections this month</p>
+            <p className="mt-1 text-3xl font-light tabular-nums text-ink">{inr(cash)}</p>
+            <div className="mt-2 flex items-center gap-2">
+              <div className="h-1 flex-1 bg-hairline" aria-hidden="true">
+                <motion.div
+                  className="h-full bg-primary"
+                  animate={{ width: `${cashPct}%` }}
+                  transition={{ duration: 0.8, ease: EASE }}
+                />
+              </div>
+              <span className="text-[10px] tabular-nums text-ibm-subtle">target ₹21L</span>
+            </div>
+          </div>
+          <div className="flex-1 border border-hairline">
+            <p className="border-b border-hairline bg-ibm-layer px-3 py-1.5 text-xs font-medium text-ink">
+              Decision feed
+            </p>
+            <ul aria-live="polite">
+              {OPS_DECISIONS.map((d, i) => {
+                const Icon = d.icon;
+                const active = i === activeRow;
+                return (
+                  <li
+                    key={d.msg}
+                    className={cn(
+                      "flex items-center gap-2.5 border-b border-hairline px-3 py-2 transition-colors duration-500 last:border-b-0",
+                      active && "bg-ibm-layer"
+                    )}
+                  >
+                    <Icon
+                      className={cn("size-3.5 shrink-0", active ? "text-primary" : "text-ibm-subtle")}
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    />
+                    <div className="min-w-0">
+                      <p className={cn("truncate text-xs", active ? "text-ink" : "text-muted-foreground")}>{d.msg}</p>
+                      <p className="truncate text-[10px] text-ibm-subtle">{d.meta}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* module utilization strip */}
+      <div className="mt-3 grid gap-3 border border-hairline p-3 sm:grid-cols-4">
+        {OPS_UTIL.map((u, i) => (
+          <div key={u.label}>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-ink-muted">{u.label}</span>
+              <span className="text-xs tabular-nums text-ink">{u.pct}%</span>
+            </div>
+            <div className="mt-1.5 h-1 bg-hairline" aria-hidden="true">
+              <motion.div
+                className="h-full bg-primary"
+                initial={reduced ? false : { width: 0 }}
+                animate={reduced ? { width: `${u.pct}%` } : { width: [`${u.pct - 6}%`, `${u.pct}%`] }}
+                transition={
+                  reduced
+                    ? { duration: 0.6, ease: EASE }
+                    : { duration: 2.2, ease: "easeInOut", repeat: Infinity, repeatType: "reverse", delay: i * 0.35 }
+                }
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Dispatcher                                                          */
 /* ------------------------------------------------------------------ */
 
@@ -740,6 +914,11 @@ const DEMO_META: Record<ProductDemoKind, { label: string; product: string; statu
     product: "IntelliQR",
     status: "Edge redirect 180ms · destination editable after print · uptime 99.99%",
   },
+  ops: {
+    label: "The operations board — pipeline, tickets and cash flowing live",
+    product: "Business360",
+    status: "CRM · HRMS · Billing · Inventory on one core · decision feed live",
+  },
 };
 
 export function ProductDemo({ kind }: { kind: ProductDemoKind }) {
@@ -754,6 +933,7 @@ export function ProductDemo({ kind }: { kind: ProductDemoKind }) {
       {kind === "quiz" && <QuizDemo reduced={!!reduced} />}
       {kind === "shelf" && <ShelfDemo reduced={!!reduced} />}
       {kind === "qr" && <QrDemo reduced={!!reduced} />}
+      {kind === "ops" && <OpsDemo reduced={!!reduced} />}
     </DemoWindow>
   );
 }

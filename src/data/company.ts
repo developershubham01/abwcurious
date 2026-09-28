@@ -33,10 +33,11 @@ export const SAMPLE_NOTE =
 export const COMPANY = {
   name: "ABWcurious",
   wordmark: "ABWCURIOUS",
-  tagline: "The people behind the products.",
+  /** Brand line — utility bar, footer (source: "ABWcurious Website.docx"). */
+  tagline: "Engineering a Better Future.",
   /** Short company description — hero + footer. */
   description:
-    "ABWcurious is a curious crew of engineers, designers and storytellers building AI software, websites and digital experiences — and celebrating every milestone together along the way.",
+    "ABWcurious is a technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
   /** Longer story paragraphs for the About section. */
   story: [
     "We started ABWcurious with a simple belief: great products come from curious people who enjoy building together. From the first whiteboard sketch to the latest launch, our journey has always been about the humans behind the work.",

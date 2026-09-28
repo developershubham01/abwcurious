@@ -21,9 +21,9 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://abwcurious.com"),
-  title: "ABWcurious — The People Behind the Products · Leadership, Events & Journey",
+  title: "ABWcurious — Engineering a Better Future · AI. Technology. Education. Innovation.",
   description:
-    "Meet the founders and team behind ABWcurious, explore our company events, milestones, gallery and social presence — a curious studio building AI software, websites and digital experiences.",
+    "ABWcurious is a technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions. We help organizations innovate, transform, operate, and grow.",
   keywords: [
     "ABWcurious",
     "about ABWcurious",
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
     apple: "/images/logo-abw-mark-512.png",
   },
   openGraph: {
-    title: "ABWcurious — Curious Minds. Intelligent Software.",
+    title: "ABWcurious — Engineering a Better Future.",
     description:
-      "AI software development, AI solutions, website development and design — engineered with curiosity.",
+      "AI. Technology. Education. Innovation. — intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
     siteName: "ABWcurious",
     type: "website",
     url: "https://abwcurious.com",
@@ -65,9 +65,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ABWcurious — Curious Minds. Intelligent Software.",
+    title: "ABWcurious — Engineering a Better Future.",
     description:
-      "AI software development, AI solutions, website development and design — engineered with curiosity.",
+      "AI. Technology. Education. Innovation. — intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
@@ -91,8 +91,8 @@ const jsonLd = {
   url: "https://abwcurious.com",
   logo: "https://abwcurious.com/images/logo-abw-mark-512.png",
   description:
-    "Technology studio building AI software, intelligent AI solutions, websites and digital design.",
-  slogan: "Curious minds. Intelligent software.",
+    "ABWcurious — technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
+  slogan: "Engineering a Better Future.",
   email: "hello@abwcurious.com",
   knowsAbout: [
     "AI software development",
@@ -118,7 +118,7 @@ const websiteJsonLd = {
   name: "ABWcurious",
   url: "https://abwcurious.com",
   description:
-    "Meet the people behind ABWcurious — leadership, company events, gallery and journey.",
+    "ABWcurious — engineering a better future with AI, digital engineering, cybersecurity, IT services, digital growth, talent, and future-ready education.",
   inLanguage: "en",
   publisher: { "@id": "https://abwcurious.com/#organization" },
 };

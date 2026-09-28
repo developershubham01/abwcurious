@@ -107,7 +107,7 @@ export function Contact() {
           {/* ---------------- left: info ---------------- */}
           <div>
             <Reveal>
-              <Eyebrow tone="muted">07 — Get in touch</Eyebrow>
+              <Eyebrow tone="muted">13 — Get in touch</Eyebrow>
             </Reveal>
             <h2 className="mt-6 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">
               <SplitText text="Say hello to" />{" "}

@@ -397,7 +397,8 @@ export function Footer() {
             className="select-none"
           />
           <p className="mt-4 text-center text-sm text-[#8d8d8d]">
-            People · Events · Journey — Pune, India
+            AI · Digital Engineering · Cybersecurity · IT · Education · Digital
+            Growth · Talent — Pune, India
           </p>
         </div>
       </div>

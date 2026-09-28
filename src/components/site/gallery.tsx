@@ -41,7 +41,7 @@ export function Gallery() {
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
             <Eyebrow tone="muted" className="justify-center">
-              05 — Gallery
+              11 — Gallery
             </Eyebrow>
           </Reveal>
           <h2 className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">

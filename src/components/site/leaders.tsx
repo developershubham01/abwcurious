@@ -243,7 +243,7 @@ export function Leaders() {
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
             <p className="justify-center text-sm text-ink-muted">
-              02 — Meet our leadership
+              08 — Meet our leadership
             </p>
           </Reveal>
           <h2 className="mt-5 text-balance text-4xl font-light leading-[1.08] tracking-tight text-ink sm:text-5xl">

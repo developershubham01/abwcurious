@@ -202,19 +202,19 @@ function ProductsIndexPage() {
               </span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Client work funds the lab — and the lab ships software we run
-              ourselves. Six platforms, one accountable team.
+              Innovation beyond services — ABWcurious creates and operates
+              technology products designed to address real-world challenges.
+              Five platforms, one accountable team.
             </p>
             <div className="mt-5 max-w-xl">
               <Typewriter
                 prefix="Now shipping: "
                 phrases={[
-                  "CyberIntelligence360 — security that thinks",
-                  "TheCodeArena — where developers sharpen each other",
+                  "Kapikitab.in — digital learning for a changing world",
+                  "TheCodeArena.com — learn, code, compete",
                   "Restaurant360 — the whole house, one system",
-                  "StudySpark — learning that adapts",
-                  "KapiKitab — your library, superintelligent",
-                  "IntelliQR — print once, retarget forever",
+                  "Business360 — connected business operations",
+                  "IntelliQR — intelligent QR for developers",
                 ]}
                 className="text-sm text-primary"
               />

@@ -57,7 +57,7 @@ export function JourneyTimeline() {
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
             <Eyebrow tone="muted" className="justify-center">
-              03 — Our journey
+              09 — Our journey
             </Eyebrow>
           </Reveal>
           <h2 className="mt-5 text-balance text-4xl font-light leading-[1.1] tracking-tight text-ink sm:text-5xl">

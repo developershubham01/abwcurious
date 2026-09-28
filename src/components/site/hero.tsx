@@ -6,16 +6,9 @@ import { MousePointer2 } from "lucide-react";
 import { LogoMarkImage } from "./logo";
 import { Magnetic, RollButton } from "./primitives";
 import { SplitText, Ticker } from "./text-anim";
-import { COMPANY } from "@/data/company";
+import { HERO } from "@/data/site-content";
 
-const TICKER_ITEMS = [
-  "People first",
-  "Curiosity by default",
-  "Craft in everything",
-  "Built in public",
-  "Celebrate the wins",
-  "Pune · worldwide",
-];
+const TICKER_ITEMS: string[] = [...HERO.ticker];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -65,15 +58,27 @@ export function Hero() {
           </a>
           <p className="mt-5 inline-flex items-center gap-2.5 border border-hairline bg-white px-4 py-1.5 text-sm text-ink-muted">
             <span className="size-1.5 rounded-full bg-ibm-blue animate-pulse-dot" aria-hidden="true" />
-            {COMPANY.name} · Technology &amp; design studio
+            {HERO.identity}
           </p>
         </motion.div>
 
+        {/* eyebrow — the document tagline, sentence-case kicker above the display line */}
+        <motion.p
+          {...entrance(0.2)}
+          className="mt-8 text-sm font-medium text-primary sm:text-base"
+        >
+          {HERO.eyebrow}
+        </motion.p>
+
         {/* headline — the brand line, IBM-style light display */}
-        <h1 className="mt-8 max-w-5xl text-balance text-5xl font-light leading-[1.1] tracking-tight text-ink sm:text-6xl lg:text-7xl">
-          <SplitText text="Curious minds." immediate delay={0.28} />
-          <br />
-          <SplitText text="Intelligent software." immediate delay={0.62} wordClassName="text-gradient" />
+        <h1 className="mt-4 max-w-5xl text-balance text-5xl font-light leading-[1.1] tracking-tight text-ink sm:text-6xl lg:text-7xl">
+          <SplitText text="Engineering a" immediate delay={0.28} />{" "}
+          <SplitText
+            text="Better Future."
+            immediate
+            delay={0.39}
+            wordClassName="text-gradient"
+          />
         </h1>
 
         {/* description */}
@@ -81,7 +86,17 @@ export function Hero() {
           {...entrance(0.9)}
           className="mt-7 max-w-2xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg"
         >
-          {COMPANY.description}
+          {HERO.description}
+        </motion.p>
+
+        {/* promise — the document's bolded commitment line */}
+        <motion.p
+          {...entrance(0.98)}
+          className="mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-ink-muted sm:text-base"
+        >
+          {HERO.promise.pre}
+          <strong className="font-medium text-ink">{HERO.promise.strong}</strong>
+          {HERO.promise.post}
         </motion.p>
 
         {/* CTAs — Carbon button-primary / button-tertiary */}
@@ -90,13 +105,13 @@ export function Hero() {
           className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
         >
           <Magnetic>
-            <RollButton href="#about" variant="primary" arrow>
-              Explore Our Company
+            <RollButton href={HERO.ctas[0].href} variant="primary" arrow>
+              {HERO.ctas[0].label}
             </RollButton>
           </Magnetic>
           <Magnetic>
-            <RollButton href="#leadership" variant="outline">
-              Meet Our Team
+            <RollButton href={HERO.ctas[1].href} variant="outline">
+              {HERO.ctas[1].label}
             </RollButton>
           </Magnetic>
         </motion.div>

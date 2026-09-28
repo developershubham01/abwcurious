@@ -4,8 +4,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Reveal, RollButton } from "./primitives";
 import { SplitText } from "./text-anim";
 import { SocialButton, PLATFORM_ICONS } from "./social-row";
-import { SOCIALS, isPlaceholder, SAMPLE_NOTE } from "@/data/company";
-import { COMPANY } from "@/data/company";
+import { SOCIALS, isPlaceholder, SAMPLE_NOTE, COMPANY } from "@/data/company";
+import { FINAL_CTA } from "@/data/site-content";
 
 /* Carbon cta-banner signature: the one full-bleed IBM Blue surface on the page. */
 export function JourneySocial() {
@@ -14,7 +14,7 @@ export function JourneySocial() {
   return (
     <section
       id="follow"
-      aria-label="Follow our journey on social media"
+      aria-label="Let's build what's next — connect with ABWcurious"
       className="relative scroll-mt-24 overflow-hidden bg-primary text-white"
     >
       <div className="mx-auto max-w-7xl px-6 py-24 text-center sm:py-28">
@@ -22,24 +22,29 @@ export function JourneySocial() {
           <Reveal>
             <p className="inline-flex items-center gap-2.5 text-sm text-white/80">
               <span className="h-px w-6 bg-current" aria-hidden="true" />
-              06 — Social
+              {FINAL_CTA.eyebrow}
             </p>
           </Reveal>
           <h2 className="mx-auto mt-5 max-w-2xl text-balance text-4xl font-light leading-[1.1] tracking-tight sm:text-5xl">
-            <SplitText text="Follow our journey" />
+            <SplitText text={FINAL_CTA.title} />
           </h2>
           <Reveal delay={0.15}>
-            <p className="mx-auto mt-5 max-w-xl text-pretty text-base leading-relaxed text-white/80">
-              Launches, workshop recaps, team moments and behind-the-scenes stories — the whole
-              journey lives on our socials. Come say hi.
+            <p className="mx-auto mt-5 max-w-2xl text-pretty text-lg font-light leading-relaxed text-white sm:text-xl">
+              {FINAL_CTA.sub}
+            </p>
+            <p className="mx-auto mt-4 max-w-2xl text-pretty text-base leading-relaxed text-white/80">
+              {FINAL_CTA.body}
             </p>
           </Reveal>
 
-          {/* CTA — Carbon button (white on blue) */}
+          {/* CTA row — Carbon button (white / outline-light on blue) */}
           <Reveal delay={0.2}>
-            <div className="mt-9 flex justify-center">
-              <RollButton href="#contact" variant="light" arrow>
-                Get in touch
+            <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row">
+              <RollButton href={FINAL_CTA.ctas[0].href} variant="light" arrow>
+                {FINAL_CTA.ctas[0].label}
+              </RollButton>
+              <RollButton href={FINAL_CTA.ctas[1].href} variant="outline-light">
+                {FINAL_CTA.ctas[1].label}
               </RollButton>
             </div>
           </Reveal>
