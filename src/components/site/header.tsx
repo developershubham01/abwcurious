@@ -33,14 +33,22 @@ const SPY_IDS = ["contact"];
  *  - 48px white bar, 1px bottom hairline, 14px links
  *  - About · Services ▾ · Products ▾ · Contact us · [apps ▾]
  *  - active state = 2px IBM Blue underline
+ *
+ * Round-22: on virtual pages (variant="view" + onClose) the navbar gains
+ * a square × close button after the CTA (desktop) and beside the
+ * hamburger (mobile) — the takeover stays closable from anywhere now
+ * that the breadcrumb strip scrolls away with the hero.
  */
 export function Header({
   /* Kept for API compatibility with the view-shell chrome. */
   variant = "site",
   activeNav = null,
+  onClose,
 }: {
   variant?: "site" | "view";
   activeNav?: string | null;
+  /** When provided the header renders a page-close × (view pages only). */
+  onClose?: () => void;
 } = {}) {
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState<MenuKey | null>(null);
@@ -273,34 +281,63 @@ export function Header({
                 >
                   Start a project
                 </a>
+
+                {/* Page close — square Carbon ×, takeover chrome (lg+) */}
+                {onClose && (
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    data-view-close
+                    aria-label="Close page (Escape)"
+                    className="focus-carbon ml-2 inline-flex size-9 shrink-0 items-center justify-center self-center border border-hairline text-ink-muted transition-colors duration-150 hover:border-ink hover:bg-ibm-layer-hover hover:text-ink"
+                  >
+                    <X className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                  </button>
+                )}
               </div>
 
-              {/* Mobile hamburger — square 48px touch target */}
-              <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                aria-expanded={open}
-                aria-controls="mobile-menu"
-                aria-label={open ? "Close menu" : "Open menu"}
-                className="focus-carbon inline-flex size-12 items-center justify-center text-ink transition-colors hover:bg-ibm-layer lg:hidden"
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={open ? "x" : "menu"}
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.18 }}
-                    className="inline-flex"
+              {/* Page close (mobile) + hamburger — square 48px touch targets */}
+              <div className="flex items-center lg:hidden">
+                {onClose && !open && (
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    data-view-close
+                    aria-label="Close page (Escape)"
+                    className="focus-carbon inline-flex size-12 items-center justify-center border-l border-hairline text-ink-muted transition-colors hover:bg-ibm-layer hover:text-ink"
                   >
-                    {open ? (
-                      <X className="size-5" strokeWidth={1.75} aria-hidden="true" />
-                    ) : (
-                      <Menu className="size-5" strokeWidth={1.75} aria-hidden="true" />
-                    )}
-                  </motion.span>
-                </AnimatePresence>
-              </button>
+                    <X className="size-5" strokeWidth={1.75} aria-hidden="true" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setOpen((v) => !v)}
+                  aria-expanded={open}
+                  aria-controls="mobile-menu"
+                  aria-label={open ? "Close menu" : "Open menu"}
+                  className={cn(
+                    "focus-carbon inline-flex size-12 items-center justify-center text-ink transition-colors hover:bg-ibm-layer",
+                    onClose && "border-l border-hairline"
+                  )}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={open ? "x" : "menu"}
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.18 }}
+                      className="inline-flex"
+                    >
+                      {open ? (
+                        <X className="size-5" strokeWidth={1.75} aria-hidden="true" />
+                      ) : (
+                        <Menu className="size-5" strokeWidth={1.75} aria-hidden="true" />
+                      )}
+                    </motion.span>
+                  </AnimatePresence>
+                </button>
+              </div>
             </div>
           </div>
         </header>

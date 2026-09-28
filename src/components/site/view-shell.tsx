@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Header } from "./header";
@@ -17,6 +17,12 @@ import { Footer } from "./footer";
  * footer band are gone: "every page has navbar + footer" now literally
  * means the same navbar and footer as the landing page.
  *
+ * Round-22: the header is the only fixed chrome — the breadcrumb strip
+ * now lives ONLY in the page's hero section (it scrolls away with the
+ * content instead of sticking under the navbar, where it used to be
+ * clipped). A square × in the navbar itself keeps the takeover closable
+ * from anywhere (desktop + mobile), so the strip no longer has to stick.
+ *
  * While a takeover is mounted, a capture-phase interceptor turns plain
  * `#section` anchors (footer CTAs, "About", "Start a Project", dropdown
  * rail links…) into close-then-glide navigations, so every link keeps
@@ -29,17 +35,13 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /* Breadcrumb strip — sits under the navbar inside the takeover        */
 /* ------------------------------------------------------------------ */
 
-function ViewBreadcrumb({ crumb, onClose }: { crumb: string; onClose: () => void }) {
-  const closeRef = useRef<HTMLButtonElement | null>(null);
-
-  /* Move focus into the page (dialog behaviour) — the close control is
-     the primary escape hatch, so it gets first focus. */
-  useEffect(() => {
-    closeRef.current?.focus({ preventScroll: true });
-  }, []);
-
+function ViewBreadcrumb({ crumb }: { crumb: string }) {
   return (
-    <div className="sticky top-16 z-10 border-b border-hairline bg-background">
+    /* In-flow: sits right below the fixed navbar (h-12 / lg:h-20 spacer
+       via mt) and scrolls away with the hero — never sticks, never gets
+       clipped underneath the 81px-tall fixed header. The × close lives
+       in the navbar itself (persistent), so the strip doesn't need one. */
+    <div className="mt-12 border-b border-hairline bg-background lg:mt-20">
       <div className="mx-auto flex h-10 max-w-7xl items-center gap-3 px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="min-w-0">
           <ol className="flex min-w-0 items-center gap-2 text-sm text-ink-muted">
@@ -56,15 +58,6 @@ function ViewBreadcrumb({ crumb, onClose }: { crumb: string; onClose: () => void
           </kbd>
           to close
         </span>
-        <button
-          ref={closeRef}
-          type="button"
-          onClick={onClose}
-          aria-label="Close page (Escape)"
-          className="inline-flex size-8 shrink-0 items-center justify-center border border-hairline text-ink-muted transition-colors hover:border-ink hover:bg-ibm-layer-hover hover:text-ink focus-carbon"
-        >
-          <X className="size-4" strokeWidth={1.5} aria-hidden="true" />
-        </button>
       </div>
     </div>
   );
@@ -123,6 +116,16 @@ export function ViewShell({
 }) {
   useViewAnchorInterceptor(onClose);
 
+  /* Move focus into the page (dialog behaviour) — the navbar × is the
+     primary escape hatch now, so it gets first focus. Picks the first
+     VISIBLE close button (desktop × on lg+, mobile × below lg). */
+  useEffect(() => {
+    const btn = Array.from(
+      document.querySelectorAll<HTMLButtonElement>("[data-view-close]")
+    ).find((b) => b.offsetParent !== null);
+    btn?.focus({ preventScroll: true });
+  }, []);
+
   return (
     <motion.div
       role="dialog"
@@ -134,8 +137,8 @@ export function ViewShell({
       exit={{ opacity: 0, y: 20, transition: { duration: 0.28, ease: "easeIn" } }}
       transition={{ duration: 0.45, ease: EASE }}
     >
-      <Header variant="view" activeNav={activeNav} />
-      <ViewBreadcrumb crumb={crumb} onClose={onClose} />
+      <Header variant="view" activeNav={activeNav} onClose={onClose} />
+      <ViewBreadcrumb crumb={crumb} />
       {children}
       <Footer />
     </motion.div>

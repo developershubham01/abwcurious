@@ -652,3 +652,19 @@ Stage Summary:
 - ✅ Round 21 shipped: "ABWcurious Website.docx" 内容 100% 落地 — landing 重组为 Infosys 式 14 段结构（全部文档章节 + 保留公司档案章节），产品线统一为文档 5 平台（下拉/详情页/首页/页脚/sitemap 全联动），品牌 tagline/metadata/footer 全部切换为 "Engineering a Better Future."；新增 Business360 产品（详情页 + ops demo + AI 配图）。
 - 关键决策：① 文档 capabilities（7）与 catalog 服务分类（6）双层并存 — 首页营销视角 Explore 链接映射到既有服务页；② 5 产品线全站统一替换（数据驱动零散修）；③ Emph 三元组在数据层保真文档加粗；④ 21 段落 eyebrow 01–13 重编号。
 - 风险/下一步：prod-business360.jpg 为 AI 生成（若再出文字伪影可换纯矢量封面）；careers 职位/SOCIALS 链接仍为样例占位；候选：capabilities 行内联图标、industries 独立页、per-capability 案例映射、文档 "What we do/Who we are/Insights/Careers/Newsroom" footer 链接组微调。
+
+---
+Task ID: 22
+Agent: Z.ai Code (main)
+Task: Round 22 — "make the header on every page and add the [breadcrumb] only on hero section"（附参考截图：Events 页 header + breadcrumb + Esc to close）。截图揭示真实缺陷：sticky 面包屑条卡在 top-16 (64px)，被 81px 固定 header 永久裁切 17px（用户截图中面包屑文字被切半即此 bug）。
+
+Work Log:
+- 浏览器测量确诊：header fixed 高 81px（utility 32+1 + nav 48+1），ViewBreadcrumb sticky top-16 → 条带永远停在 64-105px，顶部 17px 藏在 header 后 → 面包屑文字全站所有虚拟页被裁切。
+- view-shell.tsx：① ViewBreadcrumb 去除 sticky top-16 z-10 → 改为 in-flow `mt-12 lg:mt-20`（恰好落在固定 header 下沿），面包屑随 hero 滚走（"only on hero section"）；② 移除条带内 × 关闭钮（与 header 新 × 重复 30px 内双 × 观感差），条带只留面包屑 + "Esc to close" 提示；③ 焦点管理升级：ViewShell useEffect 用 [data-view-close] + offsetParent 可见性过滤，把焦点移到 header 的 ×（替代原条带 × ref）。
+- header.tsx：新增可选 onClose prop（variant="view" 时由 ViewShell 传入 closeView）；桌面 lg+ 在 "Start a project" 后渲染 36px 方形 hairline × 关闭钮；移动端在汉堡左侧渲染 48px 触控 ×（border-l 分隔），且移动菜单打开时隐藏页面关闭 ×（避免双 ×，open 态只留菜单 ×）；landing（onClose 未传）零变化。
+- QA（agent-browser，全部通过）：stripTop=80/headerH=81 于 #/events、#/careers、#/social、#/about、#/products/kapikitab、#/blogs、#/sitemap、#/services/ai-automation 八类页面一致；滚动 600px 后 stripTop=-520（面包屑随 hero 滚走，header 常驻）；header × 点击关闭 takeover 并回 landing；in-page 导航挂载后 activeElement=Close ×（dialog 焦点管理 ✓）；移动 390px：scrollWidth=390 无溢出、条带 top=48 恰贴 48px header、移动菜单正常开合；landing 无 × 按钮零回归；lint exit 0；console 仅 Fast Refresh 日志零错误。
+
+Stage Summary:
+- ✅ Round 22 shipped：全站"每页同款 header"巩固（8 类页面逐一实测）+ 面包屑只在 hero 区（去 sticky 修复被 header 裁切的真 bug）+ header 内常驻方形 × 关闭钮（桌面 36px/移动 48px）。
+- 关键决策：① 面包屑非 sticky 而非修 sticky 偏移 — 用户明说 "only on hero section"，且 header 已有常驻 × 保证 dialog 可关性；② 条带 × 移除避免双 ×；③ 焦点目标从条带 × 改为 header ×（可见性过滤选 lg/移动正确实例）。
+- 风险/下一步：无阻塞。候选：面包屑层级点击（ABWcurious 段回首页已可用）、product detail 长页滚动时 header 阴影反馈、categories/services 页面包屑加 "Services" 中间层级链接。
