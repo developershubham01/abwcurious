@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { LogoMarkImage } from "./logo";
 import { Magnetic } from "./primitives";
 import { SplitText, Ticker } from "./text-anim";
 import { HERO } from "@/data/site-content";
@@ -96,17 +95,9 @@ export function Hero() {
         style={{ opacity: fade }}
         className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 pb-24 pt-32 text-center sm:pt-36 lg:pt-40"
       >
-        {/* Brand Medallion */}
+        {/* Identity Badge */}
         <motion.div {...entrance(0.05)} className="flex flex-col items-center">
-          <a
-            href="#top"
-            aria-label="ABWcurious home"
-            className="group relative flex items-center justify-center transition-transform duration-300 hover:scale-105"
-          >
-            <div className="absolute -inset-4 rounded-full bg-cyan-400/20 blur-xl transition-all duration-300 group-hover:bg-cyan-400/30" />
-            <LogoMarkImage onDark className="relative h-16 drop-shadow-[0_0_24px_rgba(121,220,232,0.45)] sm:h-20" />
-          </a>
-          <p className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm text-cyan-200 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+          <p className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm text-cyan-200 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
             <span className="size-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#5fd0e1] animate-pulse" aria-hidden="true" />
             {HERO.identity}
           </p>
@@ -123,9 +114,13 @@ export function Hero() {
         {/* Headline */}
         <h1 className="mt-4 max-w-5xl text-balance text-5xl font-light leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
           <SplitText text="Engineering a" immediate delay={0.28} />{" "}
-          <span className="bg-gradient-to-r from-white via-cyan-100 to-[#79dce8] bg-clip-text font-normal text-transparent drop-shadow-[0_0_35px_rgba(121,220,232,0.4)]">
-            <SplitText text="Better Future." immediate delay={0.39} />
-          </span>
+          <SplitText
+            text="Better Future."
+            immediate
+            delay={0.39}
+            className="font-normal text-[#79dce8]"
+            wordClassName="text-[#79dce8] drop-shadow-[0_0_24px_rgba(121,220,232,0.45)]"
+          />
         </h1>
 
         {/* Cyan accent rule */}
