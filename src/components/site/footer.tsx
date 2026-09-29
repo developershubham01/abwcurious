@@ -409,20 +409,18 @@ export function Footer() {
           <p>© {new Date().getFullYear()} {COMPANY.name}™. All rights reserved.</p>
 
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            <button
-              type="button"
-              onClick={() => setLegal("privacy")}
+            <a
+              href="/privacy"
               className="focus-carbon transition-colors hover:text-white hover:underline"
             >
               Privacy Policy
-            </button>
-            <button
-              type="button"
-              onClick={() => setLegal("terms")}
+            </a>
+            <a
+              href="/terms"
               className="focus-carbon transition-colors hover:text-white hover:underline"
             >
               Terms &amp; Conditions
-            </button>
+            </a>
             <a
               href="#top"
               className="focus-carbon group inline-flex items-center gap-1.5 transition-colors hover:text-white hover:underline"

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { X } from "lucide-react";
 import { Header } from "./header";
 import { Footer } from "./footer";
 
@@ -114,17 +114,30 @@ export function ViewShell({
   onClose: () => void;
   children: ReactNode;
 }) {
+  const pathname = usePathname();
+  const isStandalone = Boolean(pathname && pathname !== "/");
+
   useViewAnchorInterceptor(onClose);
 
   /* Move focus into the page (dialog behaviour) — the navbar × is the
      primary escape hatch now, so it gets first focus. Picks the first
      VISIBLE close button (desktop × on lg+, mobile × below lg). */
   useEffect(() => {
+    if (isStandalone) return;
     const btn = Array.from(
       document.querySelectorAll<HTMLButtonElement>("[data-view-close]")
     ).find((b) => b.offsetParent !== null);
     btn?.focus({ preventScroll: true });
-  }, []);
+  }, [isStandalone]);
+
+  if (isStandalone) {
+    return (
+      <div className="flex-1 flex flex-col pt-12 lg:pt-20">
+        <ViewBreadcrumb crumb={crumb} />
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div
