@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { MousePointer2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LogoMarkImage } from "./logo";
 import { Magnetic } from "./primitives";
 import { SplitText, Ticker } from "./text-anim";
@@ -94,7 +94,7 @@ export function Hero() {
       {/* ---------- Content ---------- */}
       <motion.div
         style={{ opacity: fade }}
-        className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 pb-20 pt-32 text-center sm:pt-36 lg:pt-40"
+        className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 pb-24 pt-32 text-center sm:pt-36 lg:pt-40"
       >
         {/* Brand Medallion */}
         <motion.div {...entrance(0.05)} className="flex flex-col items-center">
@@ -151,25 +151,26 @@ export function Hero() {
           {HERO.promise.post}
         </motion.p>
 
-        {/* CTAs */}
+        {/* CTAs matching exact user reference */}
         <motion.div
           {...entrance(0.68)}
-          className="mt-9 flex flex-col items-center gap-4 sm:flex-row"
+          className="mt-9 flex flex-wrap items-center justify-center gap-4"
         >
           <Magnetic>
             <a
-              href={HERO.ctas[0].href}
-              className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-b from-white via-[#d6e8f8] to-white px-8 text-sm font-semibold tracking-wide text-[#071227] shadow-[0_0_28px_rgba(121,220,232,0.45),inset_0_0_0_1.5px_rgba(255,255,255,0.9)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_36px_rgba(121,220,232,0.65)] active:scale-95"
+              href="#/contact"
+              className="group inline-flex h-12 min-w-[155px] items-center justify-center gap-2.5 border border-white bg-white px-7 text-sm font-medium text-[#0f62fe] transition-all duration-200 hover:bg-slate-100 hover:shadow-lg active:scale-[0.98] sm:text-base"
             >
-              {HERO.ctas[0].label}
+              <span>Talk to Us</span>
+              <ArrowRight className="size-4.5 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={2} />
             </a>
           </Magnetic>
           <Magnetic>
             <a
-              href={HERO.ctas[1].href}
-              className="inline-flex h-12 items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 text-sm font-medium text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:border-white/50 hover:scale-105 active:scale-95"
+              href="#capabilities"
+              className="inline-flex h-12 min-w-[175px] items-center justify-center border border-white bg-transparent px-7 text-sm font-medium text-white transition-all duration-200 hover:bg-white/15 hover:shadow-lg active:scale-[0.98] sm:text-base"
             >
-              {HERO.ctas[1].label}
+              <span>Explore Capabilities</span>
             </a>
           </Magnetic>
         </motion.div>
@@ -181,13 +182,28 @@ export function Hero() {
         aria-label="Scroll to the About section"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="focus-carbon group absolute bottom-24 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex"
+        transition={{ delay: 1.1, duration: 0.8 }}
+        className="focus-carbon group absolute bottom-20 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 transition-transform duration-300 hover:scale-105"
       >
-        <span className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-[#09152a]/80 text-cyan-200 backdrop-blur-md shadow-lg transition-all duration-300 group-hover:border-cyan-400 group-hover:scale-110 group-hover:text-white group-hover:shadow-[0_0_20px_rgba(121,220,232,0.5)]">
-          <MousePointer2 className="size-4" strokeWidth={1.75} aria-hidden="true" />
+        <span className="flex size-10 items-center justify-center rounded-full border border-white/25 bg-[#09152a]/85 text-cyan-200 backdrop-blur-md shadow-lg transition-all duration-300 group-hover:border-cyan-300 group-hover:bg-[#09152a] group-hover:text-white group-hover:shadow-[0_0_20px_rgba(121,220,232,0.5)]">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            className="size-4.5 animate-bounce"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 4v16m0 0l-6-6m6 6l6-6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </span>
-        <span className="text-[11px] font-medium uppercase tracking-wider text-cyan-200/80">Scroll</span>
+        <span className="text-[11px] font-medium uppercase tracking-widest text-cyan-200/80 group-hover:text-white">
+          Scroll
+        </span>
       </motion.a>
 
       {/* ---------- Values Ticker ---------- */}
@@ -202,4 +218,5 @@ export function Hero() {
     </section>
   );
 }
+
 
