@@ -281,44 +281,17 @@ export function Header({
                 >
                   Start a project
                 </a>
-
-                {/* Page close — square Carbon ×, takeover chrome (lg+) */}
-                {onClose && (
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    data-view-close
-                    aria-label="Close page (Escape)"
-                    className="focus-carbon ml-2 inline-flex size-9 shrink-0 items-center justify-center self-center border border-hairline text-ink-muted transition-colors duration-150 hover:border-ink hover:bg-ibm-layer-hover hover:text-ink"
-                  >
-                    <X className="size-4" strokeWidth={1.5} aria-hidden="true" />
-                  </button>
-                )}
               </div>
 
-              {/* Page close (mobile) + hamburger — square 48px touch targets */}
+              {/* Hamburger — square 48px touch targets */}
               <div className="flex items-center lg:hidden">
-                {onClose && !open && (
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    data-view-close
-                    aria-label="Close page (Escape)"
-                    className="focus-carbon inline-flex size-12 items-center justify-center border-l border-hairline text-ink-muted transition-colors hover:bg-ibm-layer hover:text-ink"
-                  >
-                    <X className="size-5" strokeWidth={1.75} aria-hidden="true" />
-                  </button>
-                )}
                 <button
                   type="button"
                   onClick={() => setOpen((v) => !v)}
                   aria-expanded={open}
                   aria-controls="mobile-menu"
                   aria-label={open ? "Close menu" : "Open menu"}
-                  className={cn(
-                    "focus-carbon inline-flex size-12 items-center justify-center text-ink transition-colors hover:bg-ibm-layer",
-                    onClose && "border-l border-hairline"
-                  )}
+                  className="focus-carbon inline-flex size-12 items-center justify-center text-ink transition-colors hover:bg-ibm-layer"
                 >
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.span
