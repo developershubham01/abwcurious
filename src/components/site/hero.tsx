@@ -1,91 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { MousePointer2 } from "lucide-react";
 import { LogoMarkImage } from "./logo";
 import { Magnetic } from "./primitives";
 import { SplitText, Ticker } from "./text-anim";
 import { HERO } from "@/data/site-content";
-import { cn } from "@/lib/utils";
 
 const TICKER_ITEMS: string[] = [...HERO.ticker];
 
-type PlanetKey = "earth" | "venus" | "mars";
-
-interface PlanetAsset {
-  key: PlanetKey;
-  name: string;
-  clip: string;
-  poster: string;
-  cutout: string;
-  tagline: string;
-}
-
-const PLANETS: Record<PlanetKey, PlanetAsset> = {
-  earth: {
-    key: "earth",
-    name: "Earth",
-    clip: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202422_3ffb4889-c520-432d-8458-038009eb40df.mp4",
-    poster: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_508c64b8-a31e-4290-bdfc-1187df70e0a6.png",
-    cutout: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202005_3346cc4d-ec3b-44ab-825c-b18e49f5021a.png",
-    tagline: "Our Home World",
-  },
-  venus: {
-    key: "venus",
-    name: "Venus",
-    clip: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202422_b211cd74-013b-4dd3-bfd0-64491d8696fa.mp4",
-    poster: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_cf55d1d8-7b59-4a64-80da-d72052ae974e.png",
-    cutout: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202012_640b239a-d08a-4200-adb2-741bbe129ac8.png",
-    tagline: "Atmospheric Energy",
-  },
-  mars: {
-    key: "mars",
-    name: "Mars",
-    clip: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202422_51eae59a-2459-4c84-907c-cc5edfe5fea7.mp4",
-    poster: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_0ba6de7c-285d-43dc-b7ab-8c54c73707cb.png",
-    cutout: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202018_3d559490-f613-4ed7-a3bb-3b7e9fc90fb8.png",
-    tagline: "The Next Frontier",
-  },
-};
+const EARTH_CLIP =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202422_3ffb4889-c520-432d-8458-038009eb40df.mp4";
+const EARTH_POSTER =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_508c64b8-a31e-4290-bdfc-1187df70e0a6.png";
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const videoRefs = useRef<Record<PlanetKey, HTMLVideoElement | null>>({
-    earth: null,
-    venus: null,
-    mars: null,
-  });
-  const [activePlanet, setActivePlanet] = useState<PlanetKey>("earth");
+  const videoRef = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : 120]);
   const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
-  const switchPlanet = (key: PlanetKey) => {
-    if (key === activePlanet) return;
-    setActivePlanet(key);
-    const targetVideo = videoRefs.current[key];
-    if (targetVideo) {
-      if (!targetVideo.src && targetVideo.dataset.src) {
-        targetVideo.src = targetVideo.dataset.src;
-      }
-      targetVideo.play().catch(() => {});
-    }
-    // Pause other videos
-    (["earth", "venus", "mars"] as const).forEach((p) => {
-      if (p !== key && videoRefs.current[p]) {
-        videoRefs.current[p]?.pause();
-      }
-    });
-  };
-
-  // Preload and play active video on mount
   useEffect(() => {
-    const vid = videoRefs.current.earth;
-    if (vid) {
-      vid.play().catch(() => {});
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
     }
   }, []);
 
@@ -95,8 +36,6 @@ export function Hero() {
     transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
   });
 
-  const activeData = PLANETS[activePlanet];
-
   return (
     <section
       ref={ref}
@@ -104,47 +43,32 @@ export function Hero() {
       aria-label="ABWcurious — introduction"
       className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-[#04101f] text-white"
     >
-      {/* ---------- Cinematic Space Planet Video Backdrop ---------- */}
+      {/* ---------- Cinematic Space Earth Video Backdrop ---------- */}
       <motion.div
         style={{ y: bgY }}
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
         aria-hidden="true"
       >
-        {/* Fallback image (active poster) */}
+        {/* Fallback image (Earth poster) */}
         <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-          style={{ backgroundImage: `url(${activeData.poster})` }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${EARTH_POSTER})` }}
         />
 
-        {/* Looping Planet Videos */}
+        {/* Looping Earth Video */}
         {!reduced && (
-          <>
-            {(["earth", "venus", "mars"] as const).map((key) => {
-              const p = PLANETS[key];
-              const isActive = activePlanet === key;
-              return (
-                <video
-                  key={key}
-                  ref={(el) => {
-                    videoRefs.current[key] = el;
-                  }}
-                  src={key === "earth" ? p.clip : undefined}
-                  data-src={p.clip}
-                  poster={p.poster}
-                  autoPlay={key === "earth"}
-                  muted
-                  loop
-                  playsInline
-                  preload={key === "earth" ? "auto" : "none"}
-                  aria-hidden="true"
-                  className={cn(
-                    "absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-in-out",
-                    isActive ? "opacity-100" : "opacity-0"
-                  )}
-                />
-              );
-            })}
-          </>
+          <video
+            ref={videoRef}
+            src={EARTH_CLIP}
+            poster={EARTH_POSTER}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         )}
 
         {/* Blueprint grid matrix overlay */}
@@ -248,45 +172,6 @@ export function Hero() {
               {HERO.ctas[1].label}
             </a>
           </Magnetic>
-        </motion.div>
-
-        {/* Interactive Planet View Switcher */}
-        <motion.div
-          {...entrance(0.78)}
-          className="mt-8 flex items-center justify-center gap-2 rounded-full border border-white/15 bg-[#09152a]/75 p-1.5 backdrop-blur-md shadow-2xl"
-          role="tablist"
-          aria-label="Planet background switcher"
-        >
-          <span className="hidden pl-3 text-xs font-medium uppercase tracking-wider text-cyan-200/70 sm:inline-block">
-            Orbit View:
-          </span>
-          {(["earth", "venus", "mars"] as const).map((key) => {
-            const p = PLANETS[key];
-            const isSelected = activePlanet === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                role="tab"
-                aria-selected={isSelected}
-                onClick={() => switchPlanet(key)}
-                className={cn(
-                  "group flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-300",
-                  isSelected
-                    ? "bg-white text-[#071227] shadow-[0_0_18px_rgba(121,220,232,0.5)] scale-105"
-                    : "text-slate-300 hover:bg-white/10 hover:text-white"
-                )}
-              >
-                <img
-                  src={p.cutout}
-                  alt=""
-                  aria-hidden="true"
-                  className="size-4 rounded-full object-contain transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125"
-                />
-                <span>{p.name}</span>
-              </button>
-            );
-          })}
         </motion.div>
       </motion.div>
 
