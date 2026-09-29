@@ -615,7 +615,7 @@ const QR_MATRIX: boolean[] = (() => {
 })();
 
 const QR_CITIES = [
-  { city: "Pune", pct: 42 },
+  { city: "Navi Mumbai", pct: 42 },
   { city: "Mumbai", pct: 27 },
   { city: "Bengaluru", pct: 18 },
   { city: "Other", pct: 13 },
@@ -739,9 +739,9 @@ const OPS_PIPELINE = [
 ] as const;
 
 const OPS_DECISIONS = [
-  { icon: Boxes, msg: "Restock approved — Pune warehouse", meta: "Inventory · just now" },
+  { icon: Boxes, msg: "Restock approved — Navi Mumbai warehouse", meta: "Inventory · just now" },
   { icon: Receipt, msg: "Invoice #2331 settled", meta: "Billing · ₹4,12,500 received" },
-  { icon: Users, msg: "Offer signed — 12 seats", meta: "HRMS · Pune + remote" },
+  { icon: Users, msg: "Offer signed — 12 seats", meta: "HRMS · Nerul + remote" },
   { icon: TrendingUp, msg: "Hiring plan greenlit — Q3", meta: "People · 38 roles planned" },
 ] as const;
 

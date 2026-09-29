@@ -40,7 +40,7 @@ export default function NotFound() {
             Back to home
           </a>
           <a
-            href="/#contact"
+            href="/contact"
             className="focus-carbon inline-flex h-11 items-center gap-2 border border-hairline-strong px-5 font-mono text-sm text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright"
           >
             <Compass className="size-4" strokeWidth={1.5} aria-hidden="true" />

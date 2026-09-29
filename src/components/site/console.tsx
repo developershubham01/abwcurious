@@ -231,7 +231,7 @@ export function StudioConsole() {
           new Date(parsed.expiresAt).getTime() > Date.now() + 5000;
         if (live) {
           keyRef.current = parsed.token as string;
-          setKey(parsed.token);
+          setKey(parsed.token ?? null);
           setNeedKey(false);
           restored = true;
           loadAll();

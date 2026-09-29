@@ -34,7 +34,7 @@ export const HERO = {
   } as Emph,
   ctas: [
     { label: "Explore Capabilities", href: "#capabilities" },
-    { label: "Talk to Us", href: "#contact" },
+    { label: "Talk to Us", href: "#/contact" },
   ] as const,
   /** Marquee refrain from the document's closing line of the intro. */
   ticker: [
@@ -271,7 +271,7 @@ export const INDUSTRIES_SECTION = {
   eyebrow: "06 — Industries",
   title: "Technology Built Around Your Business.",
   lede: "Our capabilities can support organizations across industries, including:",
-  cta: { label: "Explore Industries", href: "#contact" },
+  cta: { label: "Explore Industries", href: "#/contact" },
 } as const;
 
 export const INDUSTRIES: string[] = [
@@ -311,7 +311,7 @@ export const FINAL_CTA = {
   sub: "Ready to transform your next idea into impact?",
   body: "Whether you're exploring AI, modernizing your technology environment, building a digital product, strengthening cybersecurity, developing talent, or preparing your workforce for the future — ABWcurious is ready to work with you.",
   ctas: [
-    { label: "Talk to Us", href: "#contact" },
+    { label: "Talk to Us", href: "#/contact" },
     { label: "Explore Capabilities", href: "#capabilities" },
   ] as const,
 } as const;

@@ -370,3 +370,25 @@ export function categoryServiceCount(c: Category): number {
 export function categoryHash(slug: string): string {
   return `#/services/${slug}`;
 }
+
+export function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/&/g, "-and-") // Replace & with 'and'
+    .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+    .replace(/\-\-+/g, "-"); // Replace multiple - with single -
+}
+
+export function getServiceItemBySlug(category: Category, itemSlug: string): ServiceItem | undefined {
+  for (const group of category.groups) {
+    for (const item of group.items) {
+      if (slugify(item.name) === itemSlug) {
+        return item;
+      }
+    }
+  }
+  return undefined;
+}

@@ -45,13 +45,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page("/#events", 0.9),
     page("/#gallery", 0.8),
     page("/#follow", 0.6),
-    page("/#contact", 0.9),
+
+    // standalone pages
+    page("/contact", 0.95),
+    page("/about", 0.9),
+    page("/careers", 0.85),
+    page("/events", 0.85),
+    page("/social", 0.8),
+    page("/gallery", 0.85),
+    page("/leadership", 0.85),
+    page("/achievements", 0.85),
+    page("/blogs", 0.8),
+    page("/sitemap", 0.7),
+    page("/terms", 0.6),
+    page("/privacy", 0.6),
 
     // hash-route pages — company
     page("/#/about", 0.8),
     page("/#/careers", 0.7),
     page("/#/events", 0.7),
     page("/#/social", 0.6),
+    page("/#/contact", 0.9),
 
     // hash-route pages — products
     page("/#/products", 0.9),

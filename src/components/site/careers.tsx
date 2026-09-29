@@ -25,7 +25,7 @@ const ROLES: Role[] = [
   {
     title: "Senior AI Engineer",
     type: "Full-time",
-    location: "Pune · Hybrid",
+    location: "Nerul, Navi Mumbai · Hybrid",
     blurb:
       "Own LLM features end-to-end — from eval design and retrieval pipelines to the guardrails that keep them honest in production.",
     duties: [
@@ -78,7 +78,7 @@ const ROLES: Role[] = [
 const PERKS = [
   {
     title: "Remote-friendly studio",
-    desc: "Pune anchor office, IST ±3 welcome. We measure outcomes, not chairs.",
+    desc: "Nerul, Navi Mumbai anchor office, IST ±3 welcome. We measure outcomes, not chairs.",
   },
   {
     title: "Learning budget",

@@ -259,9 +259,11 @@
     gap: 0.5rem;
   }
   .btn-roll .btn-roll__viewport {
-    display: block;
-    height: 1.5em;
+    display: inline-block;
+    height: 1.5rem;
     overflow: hidden;
+    line-height: 1.5rem;
+    vertical-align: middle;
   }
   .btn-roll .btn-roll__track {
     display: flex;
@@ -277,9 +279,11 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    height: 1.5em;
-    line-height: 1.5em;
+    height: 1.5rem;
+    line-height: 1.5rem;
     white-space: nowrap;
+    overflow: hidden;
+    flex-shrink: 0;
   }
 }
 

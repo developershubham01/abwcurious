@@ -12,7 +12,7 @@
    slice of one shared image (backgroundSize/Position derived from each
    word's offsetLeft), so the slices recombine into a single picture. */
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 import "./MaskedHeading.css";
@@ -29,6 +29,10 @@ export interface MaskedHeadingProps
   mediaType?: "image" | "video";
   /** Image or video URL. */
   src?: string;
+  /** Multiple image URLs to cycle through automatically. */
+  images?: string[];
+  /** Duration in milliseconds before switching to the next image (default 5000). */
+  interval?: number;
   /** Poster frame used while a video loads. */
   poster?: string;
   /** How far the media is zoomed past the heading (background overscan). */
@@ -66,6 +70,8 @@ const MaskedHeading = ({
   tag = "h2",
   mediaType = "image",
   src = "",
+  images,
+  interval = 5000,
   poster = "",
   fillScale = 1.25,
   parallax = 26,
@@ -90,12 +96,61 @@ const MaskedHeading = ({
   const rootRef = useRef<HTMLElement | null>(null);
   const measureRef = useRef<HTMLSpanElement | null>(null);
   const layerRef = useRef<HTMLSpanElement | null>(null);
-  const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const wordRefsA = useRef<(HTMLSpanElement | null)[]>([]);
+  const wordRefsB = useRef<(HTMLSpanElement | null)[]>([]);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
   const rafRef = useRef(0);
   const offset = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const clock = useRef(0);
   const natural = useRef({ w: 0, h: 0 });
+
+  const imageList = useMemo(() => {
+    if (images && images.length > 0) return images;
+    if (src) return [src];
+    return [];
+  }, [images, src]);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const [currentLayer, setCurrentLayer] = useState<"A" | "B">("A");
+  const [srcA, setSrcA] = useState<string>(() => imageList[0] || src);
+  const [srcB, setSrcB] = useState<string>(() => (imageList.length > 1 ? imageList[1] : imageList[0] || src));
+  const activeIndexRef = useRef(0);
+
+  /* Preload all images in the list */
+  useEffect(() => {
+    if (!imageList || imageList.length <= 1) return;
+    imageList.forEach((url) => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, [imageList]);
+
+  /* Auto-cycle images every interval (default 5000ms = 5 sec) */
+  useEffect(() => {
+    if (imageList.length <= 1) return;
+
+    const timer = setInterval(() => {
+      const nextIndex = (activeIndexRef.current + 1) % imageList.length;
+      activeIndexRef.current = nextIndex;
+      const nextSrc = imageList[nextIndex];
+
+      setCurrentLayer((prev) => {
+        if (prev === "A") {
+          setSrcB(nextSrc);
+          return "B";
+        } else {
+          setSrcA(nextSrc);
+          return "A";
+        }
+      });
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [imageList, interval]);
 
   const words = useMemo(
     () => String(text).split(/\s+/).filter(Boolean),
@@ -155,15 +210,23 @@ const MaskedHeading = ({
     const bx = (W - bw) / 2 - off.x;
     const by = -(bh - H) * (Number(s.focalY) || 0.5) - off.y;
 
-    for (let i = 0; i < wordRefs.current.length; i += 1) {
-      const el = wordRefs.current[i];
-      if (!el) continue;
-      el.style.backgroundImage = mediaType === "video" ? "none" : `url(${src})`;
-      el.style.backgroundSize = `${bw.toFixed(1)}px ${bh.toFixed(1)}px`;
-      el.style.backgroundPosition = `${(bx - el.offsetLeft).toFixed(1)}px ${(by - el.offsetTop).toFixed(1)}px`;
-      el.style.filter = filter;
+    for (let i = 0; i < words.length; i += 1) {
+      const elA = wordRefsA.current[i];
+      if (elA) {
+        elA.style.backgroundImage = mediaType === "video" ? "none" : `url(${srcA})`;
+        elA.style.backgroundSize = `${bw.toFixed(1)}px ${bh.toFixed(1)}px`;
+        elA.style.backgroundPosition = `${(bx - elA.offsetLeft).toFixed(1)}px ${(by - elA.offsetTop).toFixed(1)}px`;
+        elA.style.filter = filter;
+      }
+      const elB = wordRefsB.current[i];
+      if (elB) {
+        elB.style.backgroundImage = mediaType === "video" ? "none" : `url(${srcB})`;
+        elB.style.backgroundSize = `${bw.toFixed(1)}px ${bh.toFixed(1)}px`;
+        elB.style.backgroundPosition = `${(bx - elB.offsetLeft).toFixed(1)}px ${(by - elB.offsetTop).toFixed(1)}px`;
+        elB.style.filter = filter;
+      }
     }
-  }, [mediaType, src]);
+  }, [mediaType, srcA, srcB, words.length]);
 
   const sync = useCallback(() => {
     const root = rootRef.current;
@@ -235,7 +298,8 @@ const MaskedHeading = ({
 
   /* Load the media's natural size so the cover math is exact. */
   useEffect(() => {
-    if (mediaType !== "image" || !src) return;
+    const activeSrc = currentLayer === "A" ? srcA : srcB;
+    if (mediaType !== "image" || !activeSrc) return;
     let cancelled = false;
     const img = new Image();
     img.onload = () => {
@@ -243,18 +307,18 @@ const MaskedHeading = ({
       natural.current = { w: img.naturalWidth || 0, h: img.naturalHeight || 0 };
       paintWords();
     };
-    img.src = src;
+    img.src = activeSrc;
     return () => {
       cancelled = true;
     };
-  }, [src, mediaType, paintWords]);
+  }, [srcA, srcB, currentLayer, mediaType, paintWords]);
 
   /* Entrance animation — GSAP on the word spans (rise/wipe/fade). */
   useEffect(() => {
     const root = rootRef.current;
     const layer = layerRef.current;
     if (!root || !layer) return;
-    const targets = wordRefs.current.filter(Boolean) as HTMLSpanElement[];
+    const targets = [...wordRefsA.current, ...wordRefsB.current].filter(Boolean) as HTMLSpanElement[];
     if (!targets.length) return;
 
     const riseDistance = () =>
@@ -358,7 +422,8 @@ const MaskedHeading = ({
 
   return (
     <Tag
-      ref={rootRef as React.Ref<HTMLElement>}
+      ref={rootRef as any}
+      suppressHydrationWarning
       className={`masked-heading ${mediaType === "video" ? "masked-heading--video" : ""} ${className}`.trim()}
       style={{
         textAlign: align,
@@ -394,12 +459,17 @@ const MaskedHeading = ({
                 playsInline
               />
             ) : null}
-            <span className="masked-heading__ghost">
+            <span
+              className="masked-heading__ghost transition-opacity duration-1000 ease-in-out"
+              style={{
+                opacity: currentLayer === "A" ? 1 : 0,
+              }}
+            >
               {words.map((word, i) => (
                 <span
-                  key={`${word}-${i}`}
+                  key={`a-${word}-${i}`}
                   ref={(el) => {
-                    wordRefs.current[i] = el;
+                    wordRefsA.current[i] = el;
                   }}
                   className="masked-heading__fill"
                 >
@@ -407,6 +477,27 @@ const MaskedHeading = ({
                 </span>
               ))}
             </span>
+
+            {mounted && imageList.length > 1 && (
+              <span
+                className="masked-heading__ghost transition-opacity duration-1000 ease-in-out"
+                style={{
+                  opacity: currentLayer === "B" ? 1 : 0,
+                }}
+              >
+                {words.map((word, i) => (
+                  <span
+                    key={`b-${word}-${i}`}
+                    ref={(el) => {
+                      wordRefsB.current[i] = el;
+                    }}
+                    className="masked-heading__fill"
+                  >
+                    {word}{" "}
+                  </span>
+                ))}
+              </span>
+            )}
           </span>
         </span>
       </span>

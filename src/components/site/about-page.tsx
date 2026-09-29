@@ -44,7 +44,7 @@ export function AboutPage() {
               Our story
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-              Established {COMPANY.established} · Pune, Maharashtra — India
+              Established {COMPANY.established} · Nerul, Navi Mumbai, Maharashtra — India
             </p>
           </Reveal>
           <div className="space-y-6 lg:col-span-8">

@@ -30,7 +30,8 @@ export type ViewRoute =
   | { kind: "about" }
   | { kind: "events" }
   | { kind: "social" }
-  | { kind: "careers" };
+  | { kind: "careers" }
+  | { kind: "contact" };
 
 interface ViewState {
   route: ViewRoute;
@@ -56,6 +57,7 @@ function routeFromLocation(): ViewRoute {
   if (/^#\/events\/?/.test(hash)) return { kind: "events" };
   if (/^#\/social\/?/.test(hash)) return { kind: "social" };
   if (/^#\/careers\/?/.test(hash)) return { kind: "careers" };
+  if (/^#\/contact\/?/.test(hash)) return { kind: "contact" };
   return { kind: "none" };
 }
 
@@ -91,6 +93,10 @@ export function openCareers() {
   window.location.hash = "#/careers";
 }
 
+export function openContact() {
+  window.location.hash = "#/contact";
+}
+
 /** Close is always history-linear: strip the hash in place (never back()),
  *  so closing lands on the clean site even after hopping between pages. */
 export function closeView() {
@@ -98,8 +104,12 @@ export function closeView() {
   useViewRoute.getState()._set({ kind: "none" });
 }
 
-/** Close the takeover, then glide to a landing-page section anchor. */
+/** Close the takeover, then glide to a landing-page section anchor, or route to contact page. */
 export function gotoSectionFromView(hash: string) {
+  if (hash === "#contact" || hash === "#/contact") {
+    openContact();
+    return;
+  }
   closeView();
   const id = hash.replace(/^#/, "");
   window.setTimeout(() => {

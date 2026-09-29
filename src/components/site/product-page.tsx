@@ -179,7 +179,7 @@ function ProductIndexCard({ product, index }: { product: Product; index: number 
   );
 }
 
-function ProductsIndexPage() {
+export function ProductsIndexPage() {
   const totals = productStatusTotals();
 
   return (
@@ -284,7 +284,7 @@ function ProductsIndexPage() {
 /* Product detail page (#/products/<slug>)                             */
 /* ------------------------------------------------------------------ */
 
-function ProductDetailPage({ product }: { product: Product }) {
+export function ProductDetailPage({ product }: { product: Product }) {
   const index = PRODUCTS.findIndex((p) => p.slug === product.slug);
   const prev = PRODUCTS[(index - 1 + PRODUCTS.length) % PRODUCTS.length];
   const next = PRODUCTS[(index + 1) % PRODUCTS.length];

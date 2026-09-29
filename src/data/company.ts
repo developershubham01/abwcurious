@@ -43,10 +43,12 @@ export const COMPANY = {
     "We started ABWcurious with a simple belief: great products come from curious people who enjoy building together. From the first whiteboard sketch to the latest launch, our journey has always been about the humans behind the work.",
     "Today we design and engineer AI-powered software, websites and platforms for ambitious teams — and we document every step: the workshops, the offsites, the launches and the quiet wins in between.",
   ],
-  email: "hello@abwcurious.com",
-  phone: "+91 99999 99999", // PLACEHOLDER number — replace with the real one
-  phoneHref: "tel:+919999999999",
-  address: "Pune, Maharashtra — India",
+  email: "info@abwcurious.com",
+  phone: "+91 99303 38504", // PLACEHOLDER number — replace with the real one
+  phoneHref: "tel:+919930338504",
+  legalName: "ABWcurious (OPC) Private Limited",
+  address: "S07-05, Haware's Centurion, Sector 19A, Nerul (East), Navi Mumbai, Maharashtra 400706",
+  fullAddress: "S07-05, Haware's Centurion, Sector 19A, Nerul (East), Darave, Navi Mumbai, Thane, Maharashtra 400706, India",
   hours: "Mon–Sat · 9:00–19:00 IST",
   established: "2019", // SAMPLE year — replace with the real founding year
   /**
@@ -56,13 +58,12 @@ export const COMPANY = {
    * becomes real.
    */
   map: {
-    lat: 18.5204,
-    lng: 73.8567,
+    lat: 19.0247909,
+    lng: 73.0221279,
     /** Zoom span for the OSM embed bbox (degrees). */
-    span: 0.075,
+    span: 0.015,
     directionsUrl:
-      "https://www.google.com/maps/search/?api=1&query=" +
-      encodeURIComponent("Pune, Maharashtra, India"),
+      "https://www.google.com/maps/place/ABWcurious+OPC+Pvt.Ltd/@19.0247909,73.0221279,17z/data=!3m1!4b1!4m6!3m5!1s0x3be7c3d076147f7b:0xe421751ae4517f6d!8m2!3d19.0247909!4d73.0221279!16s%2Fg%2F11zchgx3cf?entry=ttu",
   },
 } as const;
 
@@ -127,7 +128,7 @@ export const FOUNDERS: Leader[] = [
     highlights: [
       { label: "Journey", value: "Since day one" },
       { label: "Focus", value: "Vision & growth" },
-      { label: "Based in", value: "Pune, India" },
+      { label: "Based in", value: "Nerul, Navi Mumbai" },
     ],
     socials: {
       linkedin: "[LINKEDIN_URL]",
@@ -150,7 +151,7 @@ export const CO_FOUNDERS: Leader[] = [
     highlights: [
       { label: "Leads", value: "Engineering" },
       { label: "Shipped", value: "6 platforms" },
-      { label: "Based in", value: "Pune, India" },
+      { label: "Based in", value: "Nerul, Navi Mumbai" },
     ],
     socials: {
       linkedin: "[LINKEDIN_URL]",
@@ -168,7 +169,7 @@ export const CO_FOUNDERS: Leader[] = [
     highlights: [
       { label: "Leads", value: "Design" },
       { label: "Craft", value: "UX · UI · Brand" },
-      { label: "Based in", value: "Pune, India" },
+      { label: "Based in", value: "Nerul, Navi Mumbai" },
     ],
     socials: {
       linkedin: "[LINKEDIN_URL]",
@@ -280,7 +281,7 @@ export const EVENTS: CompanyEvent[] = [
     id: "annual-summit-2026",
     name: "ABWcurious Annual Summit",
     date: "Dec 12, 2026",
-    location: "Pune, India",
+    location: "Nerul, Navi Mumbai, India",
     description:
       "Sample event — our flagship internal summit: a full day of demos, roadmaps and hack-night finales with the whole studio under one roof. Replace with your real upcoming event.",
     category: "Product Events",
@@ -294,7 +295,7 @@ export const EVENTS: CompanyEvent[] = [
     id: "ai-workshop-series",
     name: "Applied AI Workshop Series",
     date: "Oct 04, 2026",
-    location: "ABWcurious Studio, Pune",
+    location: "ABWcurious Studio, Nerul, Navi Mumbai",
     description:
       "Sample event — a hands-on workshop series where engineers and designers pair up to prototype LLM-powered features in 48 hours.",
     category: "Workshops",
@@ -307,7 +308,7 @@ export const EVENTS: CompanyEvent[] = [
     id: "leadership-roundtable",
     name: "Leadership Roundtable with Partners",
     date: "Sep 18, 2026",
-    location: "Glass House, Pune",
+    location: "Glass House, Navi Mumbai",
     description:
       "Sample event — an evening roundtable with clients and partners on responsible AI, product strategy and what the next year of collaboration looks like.",
     category: "Corporate Events",
@@ -345,9 +346,9 @@ export const EVENTS: CompanyEvent[] = [
   },
   {
     id: "devcon-keynote",
-    name: "Keynote — DevCon Pune",
+    name: "Keynote — DevCon Mumbai",
     date: "Feb 14, 2026",
-    location: "DevCon, Pune",
+    location: "DevCon, Mumbai",
     description:
       "Sample event — our founders take the DevCon stage to talk about shipping AI products with small, curious teams.",
     category: "Conferences",
@@ -360,7 +361,7 @@ export const EVENTS: CompanyEvent[] = [
     id: "founders-day-2026",
     name: "Founders' Day — 7 Years of Curious",
     date: "Jan 09, 2026",
-    location: "ABWcurious Studio, Pune",
+    location: "ABWcurious Studio, Nerul, Navi Mumbai",
     description:
       "Sample event — cake, confetti and a wall of memories: the studio celebrates seven years of building (and the people who made it happen).",
     category: "Celebrations",

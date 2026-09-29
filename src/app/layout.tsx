@@ -6,6 +6,7 @@ import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ScrollProgress, BackToTop } from "@/components/site/chrome";
 import { ViewPortals } from "@/components/site/view-portals";
+import { ChatAssistant } from "@/components/site/chat-assistant";
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     "company gallery",
     "leadership",
     "AI software studio",
-    "Pune technology company",
+    "Nerul Navi Mumbai IT company",
   ],
   authors: [{ name: "ABWcurious" }],
   icons: {
@@ -102,7 +103,7 @@ const jsonLd = {
   ],
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Pune",
+    addressLocality: "Nerul, Navi Mumbai",
     addressRegion: "Maharashtra",
     addressCountry: "IN",
   },
@@ -148,7 +149,10 @@ export default function RootLayout({
             in the root layout so error/404 boundaries render with full site
             navigation. page.tsx contributes only <main id="main">. */}
         <div id="top" className="flex min-h-screen flex-col bg-background text-foreground">
-          <a href="#main" className="skip-link">
+          <a
+            href="#main"
+            className="skip-link sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:outline-none"
+          >
             Skip to main content
           </a>
           <ScrollProgress />
@@ -160,6 +164,8 @@ export default function RootLayout({
               service categories, sitemap) — fixed overlays that open above
               the landing page, each with the full navbar + footer. */}
           <ViewPortals />
+          {/* RAG AI floating chat assistant — persists across all pages */}
+          <ChatAssistant />
         </div>
         <Toaster />
       </body>

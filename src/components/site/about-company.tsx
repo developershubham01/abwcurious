@@ -104,7 +104,7 @@ export function AboutCompany() {
                 </span>
                 <div className="leading-tight">
                   <p className="text-sm font-semibold tabular-nums text-ink">24+ curious humans</p>
-                  <p className="text-xs text-ibm-subtle">1 studio · Pune</p>
+                  <p className="text-xs text-ibm-subtle">1 studio · Nerul, Navi Mumbai</p>
                 </div>
               </div>
             </div>

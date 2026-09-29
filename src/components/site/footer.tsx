@@ -398,7 +398,7 @@ export function Footer() {
           />
           <p className="mt-4 text-center text-sm text-[#8d8d8d]">
             AI · Digital Engineering · Cybersecurity · IT · Education · Digital
-            Growth · Talent — Pune, India
+            Growth · Talent — Nerul, Navi Mumbai, India
           </p>
         </div>
       </div>

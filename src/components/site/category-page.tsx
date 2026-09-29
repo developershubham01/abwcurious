@@ -57,7 +57,7 @@ export function CategoryPortal() {
   );
 }
 
-function CategoryPage({ category }: { category: Category }) {
+export function CategoryPage({ category }: { category: Category }) {
   const index = CATEGORIES.findIndex((c) => c.slug === category.slug);
   const prev = CATEGORIES[(index - 1 + CATEGORIES.length) % CATEGORIES.length];
   const next = CATEGORIES[(index + 1) % CATEGORIES.length];

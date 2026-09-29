@@ -72,7 +72,7 @@ function useViewAnchorInterceptor(onClose: () => void) {
     const onCapture = (e: MouseEvent) => {
       if (e.defaultPrevented) return;
       if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const anchor = (e.target as HTMLElement | null)?.closest?.("a[href]");
+      const anchor = (e.target as HTMLElement | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
       if (!anchor) return;
       const href = anchor.getAttribute("href");
       if (!href || !href.startsWith("#") || href.startsWith("#/")) return;

@@ -330,7 +330,7 @@ function SitemapRowButton({
   );
 }
 
-function SitemapPage() {
+export function SitemapPage() {
   const [query, setQuery] = useState("");
   const groups = useMemo(() => buildGroups(), []);
   const total = groups.reduce((acc, g) => acc + g.rows.length, 0);
