@@ -1,14 +1,21 @@
 import type { SVGProps } from "react";
 
+export interface XIconProps extends SVGProps<SVGSVGElement> {
+  strokeWidth?: number | string;
+  size?: number | string;
+}
+
 /**
  * Modern X (formerly Twitter) brand icon.
  * Uses the official monochrome vector path with fill="currentColor".
  */
-export function XIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
+export function XIcon({ className, strokeWidth: _sw, size, ...props }: XIconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="currentColor"
+      width={size}
+      height={size}
       aria-hidden="true"
       className={className}
       {...props}
@@ -17,3 +24,4 @@ export function XIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+

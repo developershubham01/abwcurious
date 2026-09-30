@@ -1,10 +1,22 @@
 "use client";
 
-import { ExternalLink, Lock, Share2, MessageSquare, Sparkles, Rss, Mail, ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import Image from "next/image";
+import { ExternalLink, Lock, Share2, MessageSquare, Sparkles, Rss, Mail, ShieldCheck, Linkedin, Github, Instagram, Youtube, MessageCircle, Copy, Check } from "lucide-react";
 import { Eyebrow, Reveal, RollButton } from "./primitives";
+import { SplitText } from "./text-anim";
 import { SOCIALS, COMPANY, isPlaceholder } from "@/data/company";
 import { XIcon } from "./x-icon";
 import { cn } from "@/lib/utils";
+
+const CHANNEL_ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number; size?: number | string; [key: string]: any }>> = {
+  linkedin: Linkedin,
+  github: Github,
+  twitter: XIcon,
+  instagram: Instagram,
+  youtube: Youtube,
+  discord: MessageCircle,
+};
 
 const EXTENDED_CHANNELS = [
   {
@@ -88,7 +100,7 @@ export function SocialMediaPage() {
 
           <Reveal delay={0.08}>
             <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-              Follow the journey,{" "}
+              <SplitText text="Follow the journey," immediate />{" "}
               <span className="bg-gradient-to-r from-[#79dce8] via-[#a6e5ff] to-white bg-clip-text text-transparent font-normal">
                 wherever you build.
               </span>
@@ -130,12 +142,19 @@ export function SocialMediaPage() {
           </div>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {EXTENDED_CHANNELS.map((item, i) => (
+            {EXTENDED_CHANNELS.map((item, i) => {
+              const ChannelIcon = CHANNEL_ICONS[item.platform];
+              return (
               <Reveal key={item.platform} delay={0.06 * i} className="h-full">
                 <div className="group flex h-full flex-col justify-between border border-hairline bg-white p-6 sm:p-8 transition-all hover:border-primary hover:shadow-lg">
                   <div>
                     <div className="flex items-center justify-between border-b border-hairline pb-4">
                       <div className="flex items-center gap-2.5">
+                        {ChannelIcon && (
+                          <span className="flex size-7 items-center justify-center border border-hairline bg-ibm-layer text-primary group-hover:border-primary transition-colors">
+                            <ChannelIcon className="size-3.5" />
+                          </span>
+                        )}
                         <span className="text-lg font-medium text-ink">{item.label}</span>
                       </div>
                       <span className="border border-hairline bg-ibm-layer px-2 py-0.5 text-[11px] font-mono text-ink-muted">
@@ -163,7 +182,7 @@ export function SocialMediaPage() {
                   </div>
                 </div>
               </Reveal>
-            ))}
+            ); })}
 
             {/* Direct Email Card */}
             <Reveal delay={0.36} className="h-full">
@@ -194,8 +213,97 @@ export function SocialMediaPage() {
         </div>
       </section>
 
-      {/* ================= Media & Brand Inquiries ================= */}
+      {/* ================= Live Dispatches & Community Moments ================= */}
       <section className="border-t border-hairline bg-ibm-layer py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-hairline pb-8">
+            <div className="max-w-2xl">
+              <Eyebrow tone="muted">Social Dispatches In The Wild</Eyebrow>
+              <h2 className="mt-3 text-3xl font-light tracking-tight text-ink sm:text-4xl">
+                What we share with the ecosystem.
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-ink-muted">
+                From live product releases on X to deep architecture teardowns on YouTube, explore our public engineering footprint.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-mono text-ink-muted border border-hairline bg-white px-3.5 py-2">
+              <Sparkles className="size-4 text-primary" />
+              <span>Public Build Logs & Releases</span>
+            </div>
+          </div>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-3">
+            <div className="group overflow-hidden border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-ibm-layer">
+                <Image
+                  src="/images/ev-launch.jpg"
+                  alt="Live streaming product launch event"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                  Launch Demo Days
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="text-base font-medium text-ink">Build-in-Public Demos</h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                  We stream product debuts and host open AMAs covering technical architecture, benchmarks, and roadmaps.
+                </p>
+              </div>
+            </div>
+
+            <div className="group overflow-hidden border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-ibm-layer">
+                <Image
+                  src="/images/ev-summit.jpg"
+                  alt="Annual tech summit stage presentation"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                  Conference Keynotes
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="text-base font-medium text-ink">Tech Talks & Keynotes</h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                  Dispatches and slidedecks from DevCon Mumbai, AI summits, and open source conferences worldwide.
+                </p>
+              </div>
+            </div>
+
+            <div className="group overflow-hidden border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-ibm-layer">
+                <Image
+                  src="/images/gl-team.jpg"
+                  alt="Studio team celebrating release"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                  Studio Culture
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="text-base font-medium text-ink">Behind the Scenes</h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                  Candid studio snapshots, whiteboard brainstorms, and moments from our engineering hub in Nerul, Navi Mumbai.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= Media & Brand Inquiries ================= */}
+      <section className="border-t border-hairline py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="border border-hairline bg-white p-8 sm:p-12 lg:flex lg:items-center lg:justify-between">
             <div className="max-w-2xl">

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EventsPage } from "@/components/site/company-pages";
+import { EventsPage } from "@/components/site/events-page";
 
 export const metadata: Metadata = {
   title: "Events — ABWcurious | Engineering a Better Future",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main id="main" tabIndex={-1} className="flex-1 outline-none pt-12 sm:pt-20">
+    <main id="main" tabIndex={-1} className="flex-1 outline-none">
       <EventsPage />
     </main>
   );

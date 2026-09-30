@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight,
@@ -31,7 +32,7 @@ import { ViewShell } from "./view-shell";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-type RowKind = "anchor" | "view" | "category" | "external";
+type RowKind = "anchor" | "view" | "category" | "external" | "link";
 
 interface SitemapRow {
   num: string;
@@ -39,7 +40,7 @@ interface SitemapRow {
   desc: string;
   target: string;
   kind: RowKind;
-  /** anchor → href; view/category → hash route opener; external → url */
+  /** anchor → href; view/category → hash route opener; external → url; link → route path */
   arg: string;
 }
 
@@ -81,40 +82,80 @@ function buildGroups(): SitemapGroup[] {
     },
     {
       id: "company",
-      label: "Company pages",
-      desc: "Full pages — profile, careers, events and social",
+      label: "Company pages & profiles",
+      desc: "Full dedicated pages — profile, careers, events, blog, gallery, leadership & milestones",
       rows: [
         {
           num: nextNum(),
           label: "About — company profile",
           desc: "Story, values, stats and studio facts",
-          target: "#/about",
-          kind: "view",
-          arg: "about",
+          target: "/about",
+          kind: "link",
+          arg: "/about",
         },
         {
           num: nextNum(),
           label: "Careers",
-          desc: "Open roles and how we hire",
-          target: "#/careers",
-          kind: "view",
-          arg: "careers",
+          desc: "Open roles at the studio",
+          target: "/careers",
+          kind: "link",
+          arg: "/careers",
         },
         {
           num: nextNum(),
           label: "Events",
-          desc: "Every summit, workshop and meetup",
-          target: "#/events",
-          kind: "view",
-          arg: "events",
+          desc: "Summits, workshops, meetups",
+          target: "/events",
+          kind: "link",
+          arg: "/events",
         },
         {
           num: nextNum(),
           label: "Social media",
-          desc: "All channels, one directory",
-          target: "#/social",
-          kind: "view",
-          arg: "social",
+          desc: "Follow the journey",
+          target: "/social",
+          kind: "link",
+          arg: "/social",
+        },
+        {
+          num: nextNum(),
+          label: "Blog",
+          desc: "Field notes from the bench",
+          target: "/blogs",
+          kind: "link",
+          arg: "/blogs",
+        },
+        {
+          num: nextNum(),
+          label: "Gallery",
+          desc: "Life at the studio",
+          target: "/gallery",
+          kind: "link",
+          arg: "/gallery",
+        },
+        {
+          num: nextNum(),
+          label: "Leadership",
+          desc: "The people behind the products",
+          target: "/leadership",
+          kind: "link",
+          arg: "/leadership",
+        },
+        {
+          num: nextNum(),
+          label: "Achievements",
+          desc: "Milestones on the timeline",
+          target: "/achievements",
+          kind: "link",
+          arg: "/achievements",
+        },
+        {
+          num: nextNum(),
+          label: "Sitemap",
+          desc: "Every page, one map",
+          target: "/sitemap",
+          kind: "link",
+          arg: "/sitemap",
         },
       ],
     },
@@ -286,7 +327,11 @@ function SitemapRowButton({
       aria-setsize={total}
       aria-posinset={index + 1}
     >
-      {row.kind === "anchor" ? (
+      {row.kind === "link" ? (
+        <Link href={row.arg} className={cls}>
+          {inner}
+        </Link>
+      ) : row.kind === "anchor" ? (
         <a href={row.arg} className={cls}>
           {inner}
         </a>

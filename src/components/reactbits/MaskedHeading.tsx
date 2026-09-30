@@ -71,7 +71,7 @@ const MaskedHeading = ({
   mediaType = "image",
   src = "",
   images,
-  interval = 5000,
+  interval = 3000,
   poster = "",
   fillScale = 1.25,
   parallax = 26,
@@ -115,6 +115,7 @@ const MaskedHeading = ({
     setMounted(true);
   }, []);
 
+  const currentLayerRef = useRef<"A" | "B">("A");
   const [currentLayer, setCurrentLayer] = useState<"A" | "B">("A");
   const [srcA, setSrcA] = useState<string>(() => imageList[0] || src);
   const [srcB, setSrcB] = useState<string>(() => (imageList.length > 1 ? imageList[1] : imageList[0] || src));
@@ -129,7 +130,7 @@ const MaskedHeading = ({
     });
   }, [imageList]);
 
-  /* Auto-cycle images every interval (default 5000ms = 5 sec) */
+  /* Auto-cycle images every interval (default 3000ms = 3 sec) */
   useEffect(() => {
     if (imageList.length <= 1) return;
 
@@ -138,15 +139,15 @@ const MaskedHeading = ({
       activeIndexRef.current = nextIndex;
       const nextSrc = imageList[nextIndex];
 
-      setCurrentLayer((prev) => {
-        if (prev === "A") {
-          setSrcB(nextSrc);
-          return "B";
-        } else {
-          setSrcA(nextSrc);
-          return "A";
-        }
-      });
+      if (currentLayerRef.current === "A") {
+        setSrcB(nextSrc);
+        currentLayerRef.current = "B";
+        setCurrentLayer("B");
+      } else {
+        setSrcA(nextSrc);
+        currentLayerRef.current = "A";
+        setCurrentLayer("A");
+      }
     }, interval);
 
     return () => clearInterval(timer);

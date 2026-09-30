@@ -195,15 +195,15 @@ const SITEMAP_GROUPS: {
     label: "Company",
     icon: Compass,
     links: [
-      { label: "Home", href: "#top" },
-      { label: "About — company profile", href: "#/about" },
-      { label: "Careers", href: "#/careers" },
-      { label: "Events", href: "#/events" },
-      { label: "Social media", href: "#/social" },
-      { label: "Leadership", href: "#leadership" },
-      { label: "Achievements", href: "#achievements" },
-      { label: "Gallery", href: "#gallery" },
-      { label: "Contact", href: "#contact" },
+      { label: "Home", href: "/" },
+      { label: "About — company profile", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Events", href: "/events" },
+      { label: "Social media", href: "/social" },
+      { label: "Leadership", href: "/leadership" },
+      { label: "Achievements", href: "/achievements" },
+      { label: "Gallery", href: "/gallery" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
@@ -211,28 +211,39 @@ const SITEMAP_GROUPS: {
     label: "Products",
     icon: Package,
     links: [
-      { label: "All products", href: "#/products" },
-      ...PRODUCTS.map((p) => ({ label: p.name, href: `#/products/${p.slug}` })),
+      { label: "All products", href: "/products" },
+      ...PRODUCTS.map((p) => ({ label: p.name, href: `/products/${p.slug}` })),
     ],
   },
   {
     id: "services",
     label: "Services",
     icon: Layers,
-    links: CATEGORIES.map((c) => ({ label: c.name, href: `#/services/${c.slug}` })),
+    links: CATEGORIES.map((c) => ({ label: c.name, href: `/services/${c.slug}` })),
   },
   {
     id: "resources",
     label: "Resources",
     icon: Newspaper,
     links: [
-      { label: "Blog — field notes", href: "#/blogs" },
-      { label: "Full sitemap", href: "#/sitemap" },
+      { label: "Blog — field notes", href: "/blogs" },
+      { label: "Full sitemap", href: "/sitemap" },
       { label: "vCard — contact card", href: "/api/vcard", external: true },
       { label: "RSS feed", href: "/api/rss", external: true },
       { label: "Sitemap XML", href: "/sitemap.xml", external: true },
     ],
   },
+];
+
+const FOOTER_MASKED_IMAGES = [
+  "/images/footer-abw.jpg",
+  "/images/nature-1.jpg",
+  "/images/innovation-quantum.jpg",
+  "/images/nature-2.jpg",
+  "/images/hero-neural.jpg",
+  "/images/nature-3.jpg",
+  "/images/innovation-smart-city.jpg",
+  "/images/nature-4.jpg",
 ];
 
 export function Footer() {
@@ -246,7 +257,7 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-12">
           {/* brand */}
           <div className="lg:col-span-4">
-            <Logo onDark />
+            <Logo onDark size="xl" />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#c6c6c6]">
               {COMPANY.description}
             </p>
@@ -381,7 +392,9 @@ export function Footer() {
           <MaskedHeading
             text={COMPANY.wordmark}
             tag="div"
-            src="/images/footer-abw.jpg"
+            src={FOOTER_MASKED_IMAGES[0]}
+            images={FOOTER_MASKED_IMAGES}
+            interval={3000}
             align="center"
             weight={700}
             tracking={-0.02}

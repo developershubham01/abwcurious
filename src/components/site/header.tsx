@@ -1,26 +1,29 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, LayoutGrid, Menu, X, ArrowUpRight } from "lucide-react";
+import { ChevronDown, LayoutGrid, Menu, X, ArrowUpRight, ArrowRight } from "lucide-react";
 import { Logo } from "./logo";
 import { SocialRow } from "./social-row";
 import { COMPANY } from "@/data/company";
 import { CATEGORIES } from "@/lib/catalog";
 import { PRODUCTS } from "@/lib/products";
+import { closeCategory } from "@/lib/catalog-route";
+import { closeView } from "@/lib/view-route";
 import { cn } from "@/lib/utils";
 
 /* ------------------------- nav model ------------------------- */
 
 const MORE_LINKS = [
-  { label: "Careers", href: "#/careers", desc: "Open roles at the studio" },
-  { label: "Events", href: "#/events", desc: "Summits, workshops, meetups" },
-  { label: "Social media", href: "#/social", desc: "Follow the journey" },
-  { label: "Blog", href: "#/blogs", desc: "Field notes from the bench" },
-  { label: "Gallery", href: "#gallery", desc: "Life at the studio" },
-  { label: "Leadership", href: "#leadership", desc: "The people behind the products" },
-  { label: "Achievements", href: "#achievements", desc: "Milestones on the timeline" },
-  { label: "Sitemap", href: "#/sitemap", desc: "Every page, one map" },
+  { label: "Careers", href: "/careers", desc: "Open roles at the studio" },
+  { label: "Events", href: "/events", desc: "Summits, workshops, meetups" },
+  { label: "Social media", href: "/social", desc: "Follow the journey" },
+  { label: "Blog", href: "/blogs", desc: "Field notes from the bench" },
+  { label: "Gallery", href: "/gallery", desc: "Life at the studio" },
+  { label: "Leadership", href: "/leadership", desc: "The people behind the products" },
+  { label: "Achievements", href: "/achievements", desc: "Milestones on the timeline" },
+  { label: "Sitemap", href: "/sitemap", desc: "Every page, one map" },
 ] as const;
 
 type MenuKey = "services" | "products" | "more";
@@ -54,6 +57,32 @@ export function Header({
   const [menu, setMenu] = useState<MenuKey | null>(null);
   const [active, setActive] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    setOpen(false);
+    setMenu(null);
+
+    // If an overlay/takeover is active, close it
+    onClose?.();
+    closeCategory();
+    closeView();
+
+    if (pathname === "/") {
+      if (window.location.hash) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      router.push("/");
+      window.setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 50);
+    }
+  };
 
   /* Scroll-spy — only Contact remains a landing anchor in the main nav */
   useEffect(() => {
@@ -98,7 +127,7 @@ export function Header({
   const toggle = (key: MenuKey) => setMenu((m) => (m === key ? null : key));
 
   /* Shared classes for the three dropdown triggers */
-  const triggerCls = (key: MenuKey, label: string, icon?: React.ReactNode) => {
+  const triggerCls = (key: MenuKey, label: string) => {
     const isActive = highlighted === `#${key}` || (key === "more" && highlighted === "#more");
     const isOpen = menu === key;
     return (
@@ -109,14 +138,13 @@ export function Header({
         aria-haspopup="true"
         aria-controls={`nav-menu-${key}`}
         className={cn(
-          "focus-carbon relative inline-flex h-12 items-center gap-1.5 border-b-2 px-4 text-sm transition-colors duration-150",
+          "focus-carbon relative inline-flex h-16 items-center gap-1 border-b-2 px-3.5 xl:px-4 text-[13px] xl:text-sm font-medium transition-colors duration-150",
           isActive || isOpen
-            ? "border-primary font-medium text-ink"
-            : "border-transparent text-ink-muted hover:border-ink/40 hover:text-ink"
+            ? "border-primary font-semibold text-primary"
+            : "border-transparent text-ink-muted hover:border-primary/40 hover:text-ink"
         )}
       >
-        {icon}
-        {label}
+        <span>{label}</span>
         <ChevronDown
           className={cn("size-3.5 transition-transform duration-200", isOpen && "rotate-180")}
           strokeWidth={1.75}
@@ -127,7 +155,7 @@ export function Header({
   };
 
   const panelCls =
-    "absolute left-0 top-full z-50 min-w-[288px] border border-hairline bg-white py-2";
+    "absolute left-0 top-full z-50 min-w-[288px] border border-hairline bg-white py-2 shadow-lg";
 
   const itemCls =
     "focus-carbon block px-4 py-2.5 text-sm text-ink-muted transition-colors hover:bg-ibm-layer hover:text-ink";
@@ -138,7 +166,7 @@ export function Header({
     <>
       <div className="fixed inset-x-0 top-0 z-50">
         {/* Carbon utility bar (32px, hides below lg per DESIGN.md) */}
-        <div className="hidden h-8 items-center border-b border-hairline bg-ibm-layer text-xs text-ink-muted lg:flex">
+        <div className="hidden h-8 items-center border-b border-hairline bg-ibm-layer text-xs text-ink-muted lg:flex py-1 leading-normal">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6">
             <p className="truncate">{COMPANY.tagline}</p>
             <div className="flex items-center gap-4">
@@ -154,31 +182,32 @@ export function Header({
           </div>
         </div>
 
-        {/* Carbon top-nav (48px, solid white, 1px bottom hairline) */}
-        <header data-site-header className="border-b border-hairline bg-white">
+        {/* Top-nav (spacious, crisp, solid white, 1px bottom hairline) */}
+        <header data-site-header className="border-b border-hairline bg-white/95 backdrop-blur-md">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="flex h-12 items-center justify-between">
+            <div className="flex h-16 items-center justify-between">
               <a
-                href="#top"
-                aria-label="ABWcurious — back to top"
-                className="focus-carbon -m-1 p-1"
+                href="/"
+                onClick={handleLogoClick}
+                aria-label="ABWcurious — home and top of page"
+                className="focus-carbon flex items-center py-1 -m-1 p-1"
               >
-                <Logo compact />
+                <Logo size="lg" />
               </a>
 
-              {/* Desktop navigation — About / Services ▾ / Products ▾ / Contact us / [apps ▾] */}
-              <div ref={navRef} className="hidden items-stretch lg:flex">
-                <nav aria-label="Primary" className="flex items-stretch">
-                  <ul className="flex items-stretch">
+              {/* Desktop navigation — About / Services ▾ / Products ▾ / Company ▾ / Contact us / CTA */}
+              <div ref={navRef} className="hidden items-center lg:flex">
+                <nav aria-label="Primary" className="flex items-center">
+                  <ul className="flex items-center">
                     <li>
                       <a
-                        href="#/about"
-                        aria-current={highlighted === "#/about" ? "true" : undefined}
+                        href="/about"
+                        aria-current={highlighted === "/about" || highlighted === "#/about" ? "true" : undefined}
                         className={cn(
-                          "focus-carbon relative inline-flex h-12 items-center border-b-2 px-4 text-sm transition-colors duration-150",
-                          highlighted === "#/about"
-                            ? "border-primary font-medium text-ink"
-                            : "border-transparent text-ink-muted hover:border-ink/40 hover:text-ink"
+                          "focus-carbon relative inline-flex h-16 items-center border-b-2 px-3.5 xl:px-4 text-[13px] xl:text-sm font-medium transition-colors duration-150",
+                          highlighted === "/about" || highlighted === "#/about"
+                            ? "border-primary font-semibold text-primary"
+                            : "border-transparent text-ink-muted hover:border-primary/40 hover:text-ink"
                         )}
                       >
                         About
@@ -190,6 +219,15 @@ export function Header({
                         <div id="nav-menu-services" className={panelCls} role="group" aria-label="Services menu">
                           <p className={groupLabelCls}>What we do — six playbooks</p>
                           <ul>
+                            <li>
+                              <a
+                                href="/services"
+                                onClick={() => setMenu(null)}
+                                className={cn(itemCls, "font-medium text-ink border-b border-hairline/60")}
+                              >
+                                All services — full directory (70)
+                              </a>
+                            </li>
                             {CATEGORIES.map((c) => (
                               <li key={c.slug}>
                                 <a
@@ -231,22 +269,8 @@ export function Header({
                         </div>
                       )}
                     </li>
-                    <li>
-                      <a
-                        href="#contact"
-                        aria-current={highlighted === "contact" ? "true" : undefined}
-                        className={cn(
-                          "focus-carbon relative inline-flex h-12 items-center border-b-2 px-4 text-sm transition-colors duration-150",
-                          highlighted === "contact"
-                            ? "border-primary font-medium text-ink"
-                            : "border-transparent text-ink-muted hover:border-ink/40 hover:text-ink"
-                        )}
-                      >
-                        Contact us
-                      </a>
-                    </li>
                     <li className="relative">
-                      {triggerCls("more", "More", <LayoutGrid className="size-4" strokeWidth={1.75} aria-hidden="true" />)}
+                      {triggerCls("more", "Company")}
                       {menu === "more" && (
                         <div
                           id="nav-menu-more"
@@ -263,7 +287,7 @@ export function Header({
                                   onClick={() => setMenu(null)}
                                   className={cn(itemCls, "flex items-baseline justify-between gap-4")}
                                 >
-                                  <span className={cn(highlighted === "#more" && "text-ink")}>{l.label}</span>
+                                  <span className={cn(highlighted === l.href && "text-ink font-medium")}>{l.label}</span>
                                   <span className="text-xs text-ibm-subtle">{l.desc}</span>
                                 </a>
                               </li>
@@ -272,14 +296,29 @@ export function Header({
                         </div>
                       )}
                     </li>
+                    <li>
+                      <a
+                        href="/contact"
+                        aria-current={highlighted === "contact" || highlighted === "/contact" ? "true" : undefined}
+                        className={cn(
+                          "focus-carbon relative inline-flex h-16 items-center border-b-2 px-3.5 xl:px-4 text-[13px] xl:text-sm font-medium transition-colors duration-150",
+                          highlighted === "contact" || highlighted === "/contact"
+                            ? "border-primary font-semibold text-primary"
+                            : "border-transparent text-ink-muted hover:border-primary/40 hover:text-ink"
+                        )}
+                      >
+                        Contact us
+                      </a>
+                    </li>
                   </ul>
                 </nav>
 
                 <a
-                  href="#contact"
-                  className="focus-carbon ml-3 inline-flex h-9 items-center self-center bg-primary px-4 text-sm text-white transition-colors duration-150 hover:bg-ibm-blue-hover active:bg-ibm-blue-active"
+                  href="/contact"
+                  className="focus-carbon group ml-4 inline-flex h-10 items-center justify-center gap-2 bg-primary px-5 text-xs xl:text-sm font-medium text-white shadow-sm transition-all duration-150 hover:bg-ibm-blue-hover hover:shadow active:scale-[0.98]"
                 >
-                  Start a project
+                  <span>Start a project</span>
+                  <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2} />
                 </a>
               </div>
 
@@ -363,6 +402,15 @@ export function Header({
               <div className="mt-8">
                 <p className="text-xs text-ibm-subtle">Services</p>
                 <ul className="mt-2 divide-y divide-hairline border-y border-hairline">
+                  <li>
+                    <a
+                      href="/services"
+                      onClick={() => setOpen(false)}
+                      className="focus-carbon block px-2 py-3 text-sm font-medium text-primary transition-colors hover:bg-ibm-layer"
+                    >
+                      All services — full directory (70) →
+                    </a>
+                  </li>
                   {CATEGORIES.map((c) => (
                     <li key={c.slug}>
                       <a

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { XIcon } from "./x-icon";
 import { Eyebrow, Reveal, RollButton, SectionFrame } from "./primitives";
+import { SplitText } from "./text-anim";
 import { FOUNDERS, CO_FOUNDERS, Leader, COMPANY } from "@/data/company";
 import { LeaderSocial } from "./leaders";
 import { cn } from "@/lib/utils";
@@ -74,7 +75,7 @@ export function LeadershipPage() {
 
           <Reveal delay={0.08}>
             <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-              The people behind the{" "}
+              <SplitText text="The people behind the" immediate />{" "}
               <span className="bg-gradient-to-r from-[#79dce8] via-[#a6e5ff] to-white bg-clip-text text-transparent font-normal">
                 mission & platforms.
               </span>
@@ -213,8 +214,75 @@ export function LeadershipPage() {
         </div>
       </section>
 
+      {/* ================= Leadership in Action Photography ================= */}
+      <section className="border-t border-hairline bg-ibm-layer py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-hairline pb-8">
+            <div className="max-w-2xl">
+              <Eyebrow tone="muted">Studio Culture & Stewardship</Eyebrow>
+              <h2 className="mt-3 text-3xl font-light tracking-tight text-ink sm:text-4xl">
+                Practicing what we preach every day.
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-ink-muted">
+                Our founders don't sit in ivory towers. They write code, design component tokens, conduct architecture reviews, and mentor engineers on the bench.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-mono text-ink-muted border border-hairline bg-white px-3.5 py-2">
+              <Sparkles className="size-4 text-primary" />
+              <span>Lead by example · Hands on keyboard</span>
+            </div>
+          </div>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            <div className="group relative overflow-hidden border border-hairline bg-white">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-ibm-layer">
+                <Image
+                  src="/images/gl-team.jpg"
+                  alt="ABWcurious leadership and engineering team in studio discussion"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                  Sprint Planning & Architecture Review
+                </span>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-ink">Flat Structure, Rapid Decisions</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                  Technical decisions are vetted by technical rigor, not hierarchy. Anyone on the team can challenge an architectural choice with benchmarks.
+                </p>
+              </div>
+            </div>
+
+            <div className="group relative overflow-hidden border border-hairline bg-white">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-ibm-layer">
+                <Image
+                  src="/images/gl-office.jpg"
+                  alt="Nerul studio engineering floor"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                  Studio Headquarters · Nerul, Navi Mumbai
+                </span>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-ink">Long-Term Architectural Thinking</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                  We build for longevity. Our systems are crafted to be maintainable by teams long after initial deployment, with comprehensive documentation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ================= Leadership Principles ================= */}
-      <section className="border-t border-hairline bg-ibm-layer py-16 sm:py-24">
+      <section className="border-t border-hairline py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="max-w-2xl">
             <Eyebrow tone="muted">Our Philosophy</Eyebrow>

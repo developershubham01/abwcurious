@@ -8,6 +8,7 @@ import { Events } from "./events";
 import { Careers } from "./careers";
 import { SOCIALS, COMPANY, isPlaceholder, SAMPLE_NOTE } from "@/data/company";
 import { Reveal } from "./primitives";
+import { PLATFORM_ICONS } from "./social-row";
 
 /* ------------------------------------------------------------------ */
 /*  #/events — full events listing (reuses the landing Events section  */
@@ -60,6 +61,7 @@ export function SocialPage() {
         <ul className="mt-12 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-3">
           {SOCIALS.map((s, i) => {
             const dead = isPlaceholder(s.href);
+            const Icon = PLATFORM_ICONS[s.platform];
             return (
               <li key={s.platform}>
                 <Reveal delay={0.05 * i} className="h-full">
@@ -70,7 +72,10 @@ export function SocialPage() {
                       aria-disabled="true"
                     >
                       <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-normal text-ink">{s.label}</h2>
+                        <div className="flex items-center gap-2.5">
+                          {Icon && <Icon className="size-4 text-ink-muted" strokeWidth={1.75} aria-hidden="true" />}
+                          <h2 className="text-lg font-normal text-ink">{s.label}</h2>
+                        </div>
                         <Lock className="size-4 text-ibm-subtle" strokeWidth={1.75} aria-hidden="true" />
                       </div>
                       <p className="mt-2 text-sm text-ink-muted">{s.handle}</p>
@@ -86,7 +91,10 @@ export function SocialPage() {
                       className="group flex h-full flex-col bg-white p-6 transition-colors hover:bg-ibm-layer"
                     >
                       <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-normal text-ink">{s.label}</h2>
+                        <div className="flex items-center gap-2.5">
+                          {Icon && <Icon className="size-4 text-ink-muted transition-colors group-hover:text-primary" strokeWidth={1.75} aria-hidden="true" />}
+                          <h2 className="text-lg font-normal text-ink">{s.label}</h2>
+                        </div>
                         <ExternalLink
                           className="size-4 text-ibm-subtle transition-colors group-hover:text-primary"
                           strokeWidth={1.75}

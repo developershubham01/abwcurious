@@ -155,7 +155,7 @@ export function Ticker({
 }) {
   const row = [...items, ...items];
   return (
-    <div className={cn("relative overflow-hidden mask-fade-x", className)} aria-hidden="true">
+    <div className={cn("relative overflow-hidden mask-fade-x text-ink-muted", className)} aria-hidden="true">
       <div
         className={cn(
           "flex w-max items-center gap-10 whitespace-nowrap",
@@ -165,10 +165,10 @@ export function Ticker({
         {row.map((item, i) => (
           <span
             key={`${item}-${i}`}
-            className="flex items-center gap-10 text-sm text-ink-muted"
+            className="flex items-center gap-10 text-sm"
           >
             {item}
-            <span className="size-1.5 bg-ibm-subtle" aria-hidden="true" />
+            <span className="size-1.5 bg-current/40" aria-hidden="true" />
           </span>
         ))}
       </div>

@@ -16,13 +16,27 @@ export const LOGO_RATIO = 471 / 231;
 
 export function Logo({
   className,
+  imageClassName,
   compact = false,
   onDark = false,
+  size,
 }: {
   className?: string;
+  imageClassName?: string;
   compact?: boolean;
   onDark?: boolean;
+  size?: "sm" | "md" | "lg" | "xl";
 }) {
+  const sizeClass = compact
+    ? "h-9"
+    : size === "sm"
+      ? "h-8"
+      : size === "md"
+        ? "h-10"
+        : size === "xl"
+          ? "h-14 sm:h-16"
+          : "h-11 sm:h-12"; // "lg" default (44px-48px) — perfectly proportioned for 64px navbar
+
   return (
     <span
       className={cn(
@@ -39,11 +53,12 @@ export function Logo({
         unoptimized
         draggable={false}
         className={cn(
-          "h-auto w-auto transition-[filter] duration-300",
-          compact ? "h-9" : "h-10 sm:h-11",
+          "w-auto max-h-none object-contain transition-[filter] duration-300 drop-shadow-sm",
+          sizeClass,
+          imageClassName,
           onDark
-            ? "group-hover:drop-shadow-[0_0_14px_rgba(120,169,255,0.45)]"
-            : "group-hover:drop-shadow-[0_4px_14px_rgba(15,98,254,0.35)]"
+            ? "group-hover:drop-shadow-[0_0_16px_rgba(120,169,255,0.55)]"
+            : "group-hover:drop-shadow-[0_4px_16px_rgba(15,98,254,0.4)]"
         )}
       />
     </span>

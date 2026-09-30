@@ -5,13 +5,13 @@ import { motion } from "framer-motion";
 import {
   Linkedin,
   Instagram,
-  Twitter,
   Globe,
   Camera,
   ChevronDown,
   BadgeCheck,
   type LucideIcon,
 } from "lucide-react";
+import { XIcon } from "./x-icon";
 import { Reveal, TiltCard } from "./primitives";
 import { SplitText } from "./text-anim";
 import {
@@ -23,10 +23,10 @@ import {
 } from "@/data/company";
 import { cn } from "@/lib/utils";
 
-const SOCIAL_ICONS: Record<string, LucideIcon> = {
+const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number; size?: number | string; [key: string]: any }>> = {
   linkedin: Linkedin,
   instagram: Instagram,
-  twitter: Twitter,
+  twitter: XIcon,
   website: Globe,
   youtube: Globe,
   github: Globe,

@@ -39,26 +39,6 @@ export function TrainingDetailPage({ track }: { track: TrainingTrack }) {
 
   return (
     <article className="min-h-screen bg-ibm-layer text-ink selection:bg-ibm-blue selection:text-white">
-      {/* ─── Breadcrumb & Top Bar ─────────────────────────────────────────── */}
-      <div className="border-b border-hairline bg-white/80 backdrop-blur-md sticky top-0 z-30">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          <nav className="flex items-center gap-2 text-xs text-ink-muted">
-            <Link href="/" className="hover:text-ibm-blue transition">Home</Link>
-            <span>/</span>
-            <Link href="/training" className="hover:text-ibm-blue transition">Training</Link>
-            <span>/</span>
-            <span className="text-ink font-medium">{track.title}</span>
-          </nav>
-          <Link
-            href="/training"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-ibm-blue hover:underline"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>All Pathways</span>
-          </Link>
-        </div>
-      </div>
-
       {/* ─── Hero Section ─────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-white border-b border-hairline py-12 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

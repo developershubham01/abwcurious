@@ -108,12 +108,20 @@ export function Services() {
           })}
         </div>
 
-        {/* full-catalog ticker — all 65 sub-services */}
+        {/* full-catalog ticker — all 70 sub-services */}
         <Reveal>
           <div className="mt-10 border border-hairline bg-ibm-blue/[0.02] py-4">
-            <p className="px-6 pb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-              Full catalog — {ALL_SUB_SERVICES.length} sub-services
-            </p>
+            <div className="flex items-center justify-between px-6 pb-3">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                Full catalog — {ALL_SUB_SERVICES.length} sub-services
+              </p>
+              <a
+                href="/services#all-services"
+                className="font-mono text-xs text-primary hover:underline"
+              >
+                Browse all {ALL_SUB_SERVICES.length} services →
+              </a>
+            </div>
             <Ticker items={ALL_SUB_SERVICES} slow />
           </div>
         </Reveal>

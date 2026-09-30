@@ -1,14 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, CalendarDays, Clock, Minus, Plus, Rss } from "lucide-react";
-import { NOTES, type Block } from "@/lib/content-notes";
+import { ArrowUpRight, CalendarDays, Clock, Minus, Plus, Rss, Search, Sparkles, XCircle } from "lucide-react";
+import { NOTES, type Block, type Note } from "@/lib/content-notes";
 import { closeView, gotoSectionFromView } from "@/lib/view-route";
 import { Eyebrow, RollButton } from "./primitives";
 import { SplitText, Typewriter } from "./text-anim";
 import { ViewShell } from "./view-shell";
 import { cn } from "@/lib/utils";
+
+const NOTE_COVERS: Record<string, string> = {
+  "llm-in-production": "/images/hero-neural.jpg",
+  "rag-retrieval-details": "/images/cat-ai.jpg",
+  "design-systems-still-matter": "/images/cat-webdev.jpg",
+};
 
 /**
  * Blog page (#/blogs) — the studio's engineering journal. Same content as
@@ -64,6 +71,7 @@ function ArticleBlocks({ blocks }: { blocks: Block[] }) {
 }
 
 function BlogRow({ note, open, onToggle }: { note: (typeof NOTES)[number]; open: boolean; onToggle: () => void }) {
+  const cover = NOTE_COVERS[note.slug];
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -82,6 +90,11 @@ function BlogRow({ note, open, onToggle }: { note: (typeof NOTES)[number]; open:
         <span className="mt-1 hidden text-sm text-ibm-subtle tabular-nums sm:block" aria-hidden="true">
           {note.index}
         </span>
+        {cover && (
+          <div className="relative hidden sm:block size-20 shrink-0 overflow-hidden border border-hairline bg-ibm-layer">
+            <Image src={cover} alt="" fill className="object-cover" />
+          </div>
+        )}
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-2.5">
             <span className="border border-hairline bg-ibm-layer px-2 py-0.5 text-xs text-ink-muted">
@@ -123,7 +136,7 @@ function BlogRow({ note, open, onToggle }: { note: (typeof NOTES)[number]; open:
             transition={{ duration: 0.5, ease: EASE }}
             className="overflow-hidden"
           >
-            <div className="px-2 pb-8 sm:px-4 sm:pl-[4.5rem]">
+            <div className="px-2 pb-8 sm:px-4 sm:pl-[6rem]">
               <ArticleBlocks blocks={note.blocks} />
             </div>
           </motion.div>
@@ -135,6 +148,14 @@ function BlogRow({ note, open, onToggle }: { note: (typeof NOTES)[number]; open:
 
 export function BlogsPage() {
   const [openSlug, setOpenSlug] = useState<string | null>(NOTES[0]?.slug ?? null);
+  const [filterTag, setFilterTag] = useState<string>("All");
+
+  const tags = useMemo(() => ["All", ...Array.from(new Set(NOTES.map((n) => n.tag)))], []);
+
+  const filteredNotes = useMemo(
+    () => (filterTag === "All" ? NOTES : NOTES.filter((n) => n.tag === filterTag)),
+    [filterTag]
+  );
 
   return (
     <ViewShell
@@ -149,9 +170,9 @@ export function BlogsPage() {
           <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20">
             <Eyebrow className="justify-start">Blog — the engineering journal</Eyebrow>
             <h1 className="mt-7 max-w-4xl text-4xl font-light leading-[1.05] tracking-tight text-ink sm:text-6xl">
-              <SplitText text="Notes from" immediate />
+              <SplitText text="Field notes from" immediate />
               <br />
-              <SplitText text="the build floor" immediate delay={0.2} />
+              <SplitText text="the build floor." immediate delay={0.2} />
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted">
               What we learn shipping AI products, SaaS platforms and stubborn
@@ -179,11 +200,102 @@ export function BlogsPage() {
           </div>
         </section>
 
-        {/* articles */}
+        {/* Featured Visual Cards */}
+        <section aria-label="Featured dispatches" className="border-b border-hairline bg-ibm-layer py-12 sm:py-16">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-6">
+              <div>
+                <Eyebrow tone="muted">Featured Dispatches</Eyebrow>
+                <h2 className="mt-2 text-2xl font-light text-ink tracking-tight sm:text-3xl">
+                  Deep dives from our technical bench.
+                </h2>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {tags.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setFilterTag(t)}
+                    className={cn(
+                      "focus-carbon px-3 py-1 text-xs font-medium border transition-colors",
+                      filterTag === t
+                        ? "border-primary bg-primary text-white"
+                        : "border-hairline bg-white text-ink-muted hover:border-hairline-strong hover:text-ink"
+                    )}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredNotes.map((note) => {
+                const cover = NOTE_COVERS[note.slug];
+                return (
+                  <article
+                    key={note.slug}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setOpenSlug(note.slug)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setOpenSlug(note.slug);
+                      }
+                    }}
+                    className="group flex flex-col overflow-hidden border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg focus-carbon cursor-pointer"
+                  >
+                    {cover && (
+                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-ibm-layer">
+                        <Image
+                          src={cover}
+                          alt={note.title}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                        <span className="absolute bottom-3 left-3 border border-white/20 bg-black/60 backdrop-blur-md px-2 py-0.5 text-[11px] font-mono text-white">
+                          {note.tag}
+                        </span>
+                      </div>
+                    )}
+                    <div className="p-6 flex flex-1 flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-3 text-xs text-ink-muted">
+                          <span className="font-mono text-primary">{fmtDate.format(new Date(note.date))}</span>
+                          <span>·</span>
+                          <span>{note.readTime}</span>
+                        </div>
+                        <h3 className="mt-3 text-lg font-medium text-ink transition-colors group-hover:text-primary">
+                          {note.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-relaxed text-ink-muted line-clamp-3">
+                          {note.excerpt}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 pt-4 border-t border-hairline flex items-center justify-between text-xs text-primary font-medium">
+                        <span>Read full article</span>
+                        <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* articles expandable list */}
         <section aria-label="Articles" className="border-b border-hairline">
           <div className="mx-auto max-w-7xl px-6 py-12">
+            <h3 className="text-sm font-mono uppercase tracking-wider text-ink-muted mb-6">
+              Full Article Reader & Code Excerpts
+            </h3>
             <div className="border-t border-hairline">
-              {NOTES.map((note) => (
+              {filteredNotes.map((note) => (
                 <BlogRow
                   key={note.slug}
                   note={note}

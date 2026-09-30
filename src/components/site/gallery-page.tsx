@@ -21,6 +21,7 @@ import {
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Eyebrow, Reveal, RollButton } from "./primitives";
+import { SplitText } from "./text-anim";
 import { GALLERY, COMPANY } from "@/data/company";
 import { cn } from "@/lib/utils";
 
@@ -87,7 +88,7 @@ export function GalleryPage() {
 
             <Reveal delay={0.08}>
               <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-                Behind the builds.{" "}
+                <SplitText text="Behind the builds." immediate />{" "}
                 <span className="bg-gradient-to-r from-[#79dce8] via-[#a6e5ff] to-white bg-clip-text text-transparent font-normal">
                   Life at the studio.
                 </span>

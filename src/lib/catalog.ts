@@ -376,6 +376,7 @@ export function slugify(text: string): string {
     .toString()
     .toLowerCase()
     .trim()
+    .replace(/[\/\\]+/g, "-") // Replace / or \ with - (e.g. UI/UX -> ui-ux)
     .replace(/\s+/g, "-") // Replace spaces with -
     .replace(/&/g, "-and-") // Replace & with 'and'
     .replace(/[^\w\-]+/g, "") // Remove all non-word chars
@@ -383,12 +384,76 @@ export function slugify(text: string): string {
 }
 
 export function getServiceItemBySlug(category: Category, itemSlug: string): ServiceItem | undefined {
+  const normalizedTarget = itemSlug.toLowerCase().trim();
   for (const group of category.groups) {
     for (const item of group.items) {
-      if (slugify(item.name) === itemSlug) {
+      const itemS = slugify(item.name);
+      if (
+        itemS === normalizedTarget ||
+        itemS.replace(/-/g, "") === normalizedTarget.replace(/-/g, "")
+      ) {
         return item;
       }
     }
   }
   return undefined;
 }
+
+export interface FlattenedService {
+  category: Category;
+  groupLabel: string;
+  item: ServiceItem;
+  slug: string;
+}
+
+export function getAllServices(): FlattenedService[] {
+  const result: FlattenedService[] = [];
+  for (const category of CATEGORIES) {
+    for (const group of category.groups) {
+      for (const item of group.items) {
+        result.push({
+          category,
+          groupLabel: group.label,
+          item,
+          slug: slugify(item.name),
+        });
+      }
+    }
+  }
+  return result;
+}
+
+export function getSiblingServices(category: Category, itemSlug: string) {
+  const items = category.groups.flatMap((g) =>
+    g.items.map((it) => ({
+      ...it,
+      slug: slugify(it.name),
+    }))
+  );
+  const index = items.findIndex((it) => it.slug === itemSlug);
+  const safeIndex = index >= 0 ? index : 0;
+  const prev = items[(safeIndex - 1 + items.length) % items.length];
+  const next = items[(safeIndex + 1) % items.length];
+  const related = items.filter((it) => it.slug !== itemSlug).slice(0, 3);
+  return { prev, next, related };
+}
+
+export function getPracticeTechStack(slug: string): string[] {
+  switch (slug) {
+    case "software-web-development":
+      return ["Next.js", "React 19", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL", "Docker", "GraphQL", "REST APIs", "Redis"];
+    case "mobile-app-development":
+      return ["Kotlin", "Swift", "Flutter", "React Native", "Jetpack Compose", "SwiftUI", "Firebase", "Room DB", "Fastlane", "App Store Connect"];
+    case "ai-automation":
+      return ["OpenAI / GPT-4o", "Anthropic Claude", "LangChain", "LlamaIndex", "Python", "PyTorch", "Pinecone Vector DB", "HuggingFace", "FastAPI", "n8n"];
+    case "digital-marketing":
+      return ["Google Ads & P-Max", "Meta Ads Manager", "Google Analytics 4", "Semrush", "Ahrefs", "Google Search Console", "HubSpot", "Mailchimp", "Klaviyo"];
+    case "recruitment-hr-solutions":
+      return ["LinkedIn Recruiter", "Greenhouse ATS", "Lever", "HackerEarth", "Workday", "Structured Scorecards", "Background Verification", "Compliance Engine"];
+    case "cloud-it-business-solutions":
+      return ["Amazon Web Services (AWS)", "Google Cloud Platform", "Microsoft Azure", "Cloudflare CDN & WAF", "Terraform IaC", "Kubernetes & Docker", "GitHub Actions CI/CD", "Datadog / Prometheus"];
+    default:
+      return ["Modern Enterprise Stack", "Automated CI/CD", "Cloud Architecture", "REST & GraphQL", "Strict SLA Monitoring"];
+  }
+}
+

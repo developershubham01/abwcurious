@@ -48,16 +48,6 @@ export function PrivacyPage() {
 
   return (
     <div className="bg-background text-foreground">
-      {/* ----------------- Breadcrumb strip ----------------- */}
-      <div className="border-b border-hairline bg-ibm-layer">
-        <div className="mx-auto flex h-10 max-w-7xl items-center px-4 sm:px-6 text-xs text-ink-muted">
-          <a href="/" className="hover:text-ink transition-colors">Home</a>
-          <ChevronRight className="mx-2 size-3 text-ibm-subtle" />
-          <span>Legal</span>
-          <ChevronRight className="mx-2 size-3 text-ibm-subtle" />
-          <span className="text-ink font-medium">Privacy Policy</span>
-        </div>
-      </div>
 
       {/* ----------------- Hero header ----------------- */}
       <header className="border-b border-hairline bg-white py-12 lg:py-16">

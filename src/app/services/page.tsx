@@ -1,16 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, Layers } from "lucide-react";
-import { CATEGORIES } from "@/lib/catalog";
+import { ArrowDown, ArrowUpRight, CheckCircle2, Layers } from "lucide-react";
+import { CATEGORIES, getAllServices } from "@/lib/catalog";
 import { Eyebrow, RollButton } from "@/components/site/primitives";
+import { AllServicesCatalog } from "@/components/site/all-services-catalog";
 
 export const metadata: Metadata = {
   title: "Services & Practices — ABWcurious | Engineering a Better Future",
   description:
-    "Six specialized engineering practices: Software Development, Mobile Apps, AI & Automation, Digital Marketing, Recruitment & Staffing, and Cloud IT Solutions.",
+    "Explore our six specialized engineering practices and complete directory of 70 itemised services: Software Development, Mobile Apps, AI & Automation, Digital Marketing, Recruitment, and Cloud Solutions.",
 };
 
 export default function ServicesPage() {
+  const flattenedServices = getAllServices().map((s) => ({
+    categorySlug: s.category.slug,
+    categoryName: s.category.name,
+    categoryShort: s.category.short,
+    categoryNum: s.category.num,
+    groupLabel: s.groupLabel,
+    name: s.item.name,
+    blurb: s.item.blurb,
+    itemSlug: s.slug,
+  }));
+
   return (
     <main id="main" tabIndex={-1} className="flex-1 outline-none pt-12 sm:pt-20">
       {/* Hero */}
@@ -25,26 +37,50 @@ export default function ServicesPage() {
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             From architecture discovery to production rollouts, our six core engineering practices operate with dedicated squads, modern stacks, and guaranteed SLAs.
           </p>
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <RollButton href="#all-services" variant="primary" arrow>
+              Browse all {flattenedServices.length} services
+            </RollButton>
+            <Link
+              href="#practices"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground hover:text-ink transition-colors"
+            >
+              <span>View 6 practices</span>
+              <ArrowDown className="size-3.5" />
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Grid of Practices */}
-      <section className="border-b border-hairline bg-ibm-layer py-16 sm:py-24">
+      <section id="practices" className="border-b border-hairline bg-ibm-layer py-16 sm:py-24 scroll-mt-14">
         <div className="mx-auto max-w-7xl px-6">
+          <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <Eyebrow className="justify-start">01 / Practices</Eyebrow>
+              <h2 className="mt-3 text-3xl font-light tracking-tight text-ink sm:text-4xl">
+                Six specialized engineering studios.
+              </h2>
+            </div>
+            <p className="max-w-md text-sm text-muted-foreground">
+              Each practice is led by a principal engineer with dedicated squads and tailored delivery processes.
+            </p>
+          </div>
+
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {CATEGORIES.map((cat, i) => (
+            {CATEGORIES.map((cat) => (
               <div
                 key={cat.slug}
                 className="group flex flex-col justify-between border border-hairline bg-white p-8 transition-all hover:border-primary hover:shadow-lg"
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-ibm-bright">{cat.num} / Practice</span>
-                    <span className="text-xs text-muted-foreground">{cat.short}</span>
+                    <span className="font-mono text-xs text-ibm-bright font-medium">{cat.num} / Practice</span>
+                    <span className="text-xs text-muted-foreground font-mono">{cat.short}</span>
                   </div>
-                  <h2 className="mt-4 text-2xl font-light text-ink group-hover:text-primary">
+                  <h3 className="mt-4 text-2xl font-light text-ink group-hover:text-primary transition-colors">
                     {cat.name}
-                  </h2>
+                  </h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                     {cat.description}
                   </p>
@@ -68,7 +104,7 @@ export default function ServicesPage() {
                   </Link>
                   <Link
                     href="/contact"
-                    className="font-mono text-xs text-muted-foreground hover:text-ink"
+                    className="font-mono text-xs text-muted-foreground hover:text-ink transition-colors"
                   >
                     Start Project →
                   </Link>
@@ -79,8 +115,15 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* All 70 Services Catalog Section with Live Search & Filter */}
+      <section className="border-b border-hairline bg-background py-16 sm:py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <AllServicesCatalog services={flattenedServices} />
+        </div>
+      </section>
+
       {/* Bottom CTA */}
-      <section className="bg-primary py-16 text-white sm:py-20">
+      <section className="bg-ibm-blue py-16 text-white sm:py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-start gap-8 px-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="max-w-xl text-3xl font-light tracking-tight sm:text-4xl">

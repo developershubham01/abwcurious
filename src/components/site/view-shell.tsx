@@ -106,11 +106,11 @@ export function ViewShell({
       exit={{ opacity: 0, y: 20, transition: { duration: 0.28, ease: "easeIn" } }}
       transition={{ duration: 0.45, ease: EASE }}
     >
-      <Header variant="view" activeNav={activeNav} />
+      <Header variant="view" activeNav={activeNav} onClose={onClose} />
       <div className="flex-1 flex flex-col pt-12 lg:pt-20">
         {children}
+        <Footer />
       </div>
-      <Footer />
     </motion.div>
   );
 }

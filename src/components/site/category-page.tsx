@@ -2,9 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import { CATEGORIES, CATEGORY_BY_SLUG, categoryServiceCount, type Category } from "@/lib/catalog";
+import { CATEGORIES, CATEGORY_BY_SLUG, categoryServiceCount, slugify, type Category } from "@/lib/catalog";
 import { closeCategory, openCategory, useCatalogRoute, useCatalogRouter } from "@/lib/catalog-route";
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { useInquiryStore } from "@/lib/store";
@@ -244,27 +245,47 @@ export function CategoryPage({ category }: { category: Category }) {
                   </span>
                 </div>
                 <div className="mt-4 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 xl:grid-cols-3">
-                  {group.items.map((item, ii) => (
-                    <motion.article
-                      key={item.name}
-                      className="group relative bg-white p-5 transition-colors duration-300 hover:bg-ibm-layer"
-                      initial={{ opacity: 0, y: 14 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-32px" }}
-                      transition={{ duration: 0.45, delay: Math.min(ii * 0.05, 0.25), ease: EASE }}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <h4 className="text-[15px] leading-snug">{item.name}</h4>
-                        <ArrowUpRight
-                          className="mt-0.5 size-4 shrink-0 text-muted-foreground/40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
-                          strokeWidth={1.5}
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.blurb}</p>
-                      <span className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-ibm-blue transition-transform duration-500 group-hover:scale-x-100" aria-hidden="true" />
-                    </motion.article>
-                  ))}
+                  {group.items.map((item, ii) => {
+                    const itemSlug = slugify(item.name);
+                    const href = `/services/${category.slug}/${itemSlug}`;
+                    return (
+                      <motion.div
+                        key={item.name}
+                        className="h-full"
+                        initial={{ opacity: 0, y: 14 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-32px" }}
+                        transition={{ duration: 0.45, delay: Math.min(ii * 0.05, 0.25), ease: EASE }}
+                      >
+                        <Link
+                          href={href}
+                          onClick={() => {
+                            closeCategory();
+                          }}
+                          className="group relative flex h-full flex-col justify-between bg-white p-5 transition-colors duration-300 hover:bg-ibm-layer"
+                        >
+                          <div>
+                            <div className="flex items-start justify-between gap-3">
+                              <h4 className="text-[15px] font-medium leading-snug text-ink transition-colors group-hover:text-primary">
+                                {item.name}
+                              </h4>
+                              <ArrowUpRight
+                                className="mt-0.5 size-4 shrink-0 text-muted-foreground/40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+                                strokeWidth={1.5}
+                                aria-hidden="true"
+                              />
+                            </div>
+                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.blurb}</p>
+                          </div>
+                          <div className="mt-4 flex items-center gap-1.5 font-mono text-[11px] font-medium text-primary opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                            <span>Explore service</span>
+                            <span aria-hidden="true">→</span>
+                          </div>
+                          <span className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-ibm-blue transition-transform duration-500 group-hover:scale-x-100" aria-hidden="true" />
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
                   {/* invisible fillers AFTER the items keep the hairline gap
                       pattern clean when a group doesn't fill its last row */}
                   {Array.from({ length: (3 - (group.items.length % 3)) % 3 }).map((_, f) => (

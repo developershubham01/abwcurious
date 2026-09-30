@@ -21,33 +21,40 @@ import { Eyebrow, Reveal, RollButton } from "./primitives";
 import { TIMELINE, MilestoneKind, COMPANY } from "@/data/company";
 import { cn } from "@/lib/utils";
 
+import Image from "next/image";
+import { SplitText } from "./text-anim";
+
 const KIND_META: Record<
   MilestoneKind,
-  { icon: LucideIcon; label: string; badge: string; color: string }
+  { icon: LucideIcon; label: string; badge: string; color: string; image?: string }
 > = {
   founding: {
     icon: Rocket,
     label: "Founding",
     badge: "border-primary/40 bg-primary/10 text-primary",
     color: "border-primary",
+    image: "/images/gl-office.jpg",
   },
   milestone: {
     icon: Flag,
     label: "Milestone",
     badge: "border-[#1192e8]/40 bg-[#1192e8]/10 text-[#1192e8]",
     color: "border-[#1192e8]",
+    image: "/images/ev-launch.jpg",
   },
   achievement: {
     icon: Trophy,
     label: "Achievement",
     badge: "border-[#002d9c]/40 bg-[#002d9c]/10 text-[#002d9c]",
     color: "border-[#002d9c]",
+    image: "/images/gl-award.jpg",
   },
   expansion: {
     icon: Globe2,
     label: "Expansion",
     badge: "border-[#24a148]/40 bg-[#24a148]/10 text-[#24a148]",
     color: "border-[#24a148]",
+    image: "/images/ev-anniversary.jpg",
   },
 };
 
@@ -57,24 +64,28 @@ const AWARDS = [
     title: "AI Product Architecture Excellence",
     issuer: "Enterprise Tech Innovation Forum",
     desc: "Recognized for production LLM guardrail architectures, low-latency CRDT synchronization, and scalable inference infrastructure.",
+    image: "/images/gl-award.jpg",
   },
   {
     year: "2025",
     title: "Top Emerging Digital Engineering Studio",
     issuer: "India Tech Leaders Summit",
     desc: "Awarded for exceptional velocity in shipping multi-tenant enterprise SaaS systems and high-converting modern web platforms.",
+    image: "/images/ev-summit.jpg",
   },
   {
     year: "2024",
     title: "Carbon Design System Implementation Award",
     issuer: "Open Design Collective",
     desc: "Honored for pristine adherence to accessibility guidelines (WCAG 2.1 AA), design tokens, and modular UX component libraries.",
+    image: "/images/ev-launch.jpg",
   },
   {
     year: "2023",
     title: "Cloud Migration & Resiliency Benchmark",
     issuer: "DevOps & Cloud Consortium",
     desc: "Achieved 99.99% uptime benchmark across distributed client deployments and automated CI/CD security pipelines.",
+    image: "/images/ev-offsite.jpg",
   },
 ];
 
@@ -117,9 +128,9 @@ export function AchievementsPage() {
 
           <Reveal delay={0.08}>
             <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-              Milestones that{" "}
+              <SplitText text="Milestones that define our" immediate />{" "}
               <span className="bg-gradient-to-r from-[#79dce8] via-[#a6e5ff] to-white bg-clip-text text-transparent font-normal">
-                define our momentum.
+                momentum.
               </span>
             </h1>
           </Reveal>
@@ -212,30 +223,54 @@ export function AchievementsPage() {
                       </span>
 
                       {/* Card Content */}
-                      <div className="border border-hairline bg-white p-6 sm:p-8 transition-all hover:border-hairline-strong hover:shadow-md">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <div className="flex items-center gap-3">
-                            <span className="text-xl sm:text-2xl font-light text-primary font-mono">
-                              {item.year}
-                            </span>
-                            <span
-                              className={cn(
-                                "border px-2.5 py-0.5 text-xs font-mono font-medium",
-                                meta.badge
-                              )}
-                            >
-                              {meta.label}
-                            </span>
+                      <div className="border border-hairline bg-white transition-all hover:border-hairline-strong hover:shadow-md overflow-hidden">
+                        <div className="grid sm:grid-cols-[1fr_200px] md:grid-cols-[1fr_240px]">
+                          <div className="p-6 sm:p-8 flex flex-col justify-between">
+                            <div>
+                              <div className="flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-xl sm:text-2xl font-light text-primary font-mono">
+                                    {item.year}
+                                  </span>
+                                  <span
+                                    className={cn(
+                                      "border px-2.5 py-0.5 text-xs font-mono font-medium",
+                                      meta.badge
+                                    )}
+                                  >
+                                    {meta.label}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <h3 className="mt-4 text-xl sm:text-2xl font-light text-ink">
+                                {item.title}
+                              </h3>
+
+                              <p className="mt-3 text-base leading-relaxed text-ink-muted">
+                                {item.description}
+                              </p>
+                            </div>
+
+                            <div className="mt-6 flex items-center gap-2 text-xs font-mono text-ibm-subtle">
+                              <CheckCircle className="size-3.5 text-primary" />
+                              Recorded milestone on studio roadmap
+                            </div>
                           </div>
+
+                          {meta.image && (
+                            <div className="relative min-h-[160px] sm:min-h-full border-t sm:border-t-0 sm:border-l border-hairline bg-ibm-layer overflow-hidden">
+                              <Image
+                                src={meta.image}
+                                alt={`${item.title} — event photograph`}
+                                fill
+                                sizes="(max-width: 640px) 100vw, 240px"
+                                className="object-cover transition-transform duration-500 hover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                            </div>
+                          )}
                         </div>
-
-                        <h3 className="mt-4 text-xl sm:text-2xl font-light text-ink">
-                          {item.title}
-                        </h3>
-
-                        <p className="mt-3 text-base leading-relaxed text-ink-muted max-w-3xl">
-                          {item.description}
-                        </p>
                       </div>
                     </div>
                   </Reveal>
@@ -249,41 +284,63 @@ export function AchievementsPage() {
       {/* ================= Honors & Awards Showcase ================= */}
       <section className="border-t border-hairline bg-ibm-layer py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="max-w-2xl">
-            <Eyebrow tone="muted">Recognition</Eyebrow>
-            <h2 className="mt-4 text-3xl font-light tracking-tight text-ink sm:text-4xl">
-              Industry recognition & standards.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-ink-muted">
-              Peer and industry validation of our engineering craftsmanship, design ethics, and delivery standards.
-            </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-hairline pb-8">
+            <div className="max-w-2xl">
+              <Eyebrow tone="muted">Recognition & Industry Awards</Eyebrow>
+              <h2 className="mt-4 text-3xl font-light tracking-tight text-ink sm:text-4xl">
+                Industry recognition & standards.
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-ink-muted">
+                Peer and industry validation of our engineering craftsmanship, design ethics, and delivery standards.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 border border-hairline bg-white px-3.5 py-2 text-xs font-mono text-ink-muted">
+              <Trophy className="size-4 text-primary" />
+              <span>4 Verified Citations</span>
+            </div>
           </div>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2">
             {AWARDS.map((aw, i) => (
               <Reveal key={aw.title} delay={0.08 * i}>
-                <div className="flex h-full flex-col justify-between border border-hairline bg-white p-6 sm:p-8 transition-all hover:border-primary">
-                  <div>
-                    <div className="flex items-center justify-between gap-2 border-b border-hairline pb-4">
-                      <span className="flex items-center gap-2 text-sm font-medium text-primary">
-                        <Award className="size-4" />
-                        {aw.issuer}
-                      </span>
-                      <span className="font-mono text-xs text-ink-muted">{aw.year}</span>
-                    </div>
-
-                    <h3 className="mt-4 text-lg font-medium text-ink sm:text-xl">
-                      {aw.title}
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                      {aw.desc}
-                    </p>
+                <div className="group flex h-full flex-col justify-between border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg overflow-hidden">
+                  <div className="relative aspect-[16/9] w-full bg-ibm-layer overflow-hidden border-b border-hairline">
+                    <Image
+                      src={aw.image}
+                      alt={`${aw.title} recognition`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
+                    <span className="absolute top-3 left-3 border border-white/20 bg-black/60 backdrop-blur-md px-2.5 py-1 text-xs font-mono text-white">
+                      {aw.year} Award
+                    </span>
                   </div>
 
-                  <div className="mt-6 flex items-center gap-2 text-xs font-mono text-[#24a148]">
-                    <CheckCircle className="size-3.5" />
-                    Verified Citation
+                  <div className="p-6 sm:p-8 flex flex-col justify-between flex-1">
+                    <div>
+                      <div className="flex items-center justify-between gap-2 border-b border-hairline pb-4">
+                        <span className="flex items-center gap-2 text-sm font-medium text-primary">
+                          <Award className="size-4" />
+                          {aw.issuer}
+                        </span>
+                      </div>
+
+                      <h3 className="mt-4 text-lg font-medium text-ink sm:text-xl">
+                        {aw.title}
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                        {aw.desc}
+                      </p>
+                    </div>
+
+                    <div className="mt-6 flex items-center gap-2 text-xs font-mono text-[#24a148]">
+                      <CheckCircle className="size-3.5" />
+                      Verified Citation
+                    </div>
                   </div>
                 </div>
               </Reveal>

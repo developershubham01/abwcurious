@@ -1,13 +1,14 @@
 "use client";
 
-import { Linkedin, Instagram, Twitter, Youtube, Facebook } from "lucide-react";
+import { Linkedin, Instagram, Youtube, Facebook } from "lucide-react";
+import { XIcon } from "./x-icon";
 import { SOCIALS, isPlaceholder, type SocialPlatform, type SocialLink } from "@/data/company";
 import { cn } from "@/lib/utils";
 
-export const PLATFORM_ICONS: Record<SocialPlatform, typeof Linkedin> = {
+export const PLATFORM_ICONS: Record<SocialPlatform, React.ComponentType<{ className?: string; strokeWidth?: number; size?: number | string; [key: string]: any }>> = {
   linkedin: Linkedin,
   instagram: Instagram,
-  twitter: Twitter,
+  twitter: XIcon,
   youtube: Youtube,
   facebook: Facebook,
 };

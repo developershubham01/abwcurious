@@ -208,7 +208,7 @@ export function Hero() {
         transition={{ delay: 0.95, duration: 0.9 }}
         className="relative z-10 border-t border-white/10 bg-[#04101f]/85 py-4 backdrop-blur-md"
       >
-        <Ticker items={TICKER_ITEMS} slow className="text-white/80" />
+        <Ticker items={TICKER_ITEMS} slow className="text-white font-medium" />
       </motion.div>
     </section>
   );

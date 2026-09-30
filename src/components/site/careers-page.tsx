@@ -25,7 +25,9 @@ import {
   Layers,
   Send,
 } from "lucide-react";
+import Image from "next/image";
 import { Eyebrow, Reveal, RollButton } from "./primitives";
+import { SplitText } from "./text-anim";
 import { useInquiryStore } from "@/lib/store";
 import { openContact } from "@/lib/view-route";
 import { COMPANY } from "@/data/company";
@@ -299,7 +301,7 @@ export function CareersPage() {
 
           <Reveal delay={0.08}>
             <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-              Build the future with{" "}
+              <SplitText text="Build the future with" immediate />{" "}
               <span className="bg-gradient-to-r from-[#79dce8] via-[#a6e5ff] to-white bg-clip-text text-transparent font-normal">
                 curious minds.
               </span>
@@ -333,6 +335,101 @@ export function CareersPage() {
               </div>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* ================= Studio Culture & Life Photography ================= */}
+      <section className="border-b border-hairline bg-ibm-layer py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-hairline pb-8">
+            <div className="max-w-2xl">
+              <Eyebrow tone="muted">Life At The Studio</Eyebrow>
+              <h2 className="mt-3 text-3xl font-light tracking-tight text-ink sm:text-4xl">
+                Where deep craft meets team momentum.
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-ink-muted">
+                Our Nerul studio is built for concentration, spontaneous pairing, and zero-distraction focus. No open-plan chaos, no endless meetings.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-mono text-ink-muted border border-hairline bg-white px-3.5 py-2">
+              <Sparkles className="size-4 text-primary" />
+              <span>Studio HQ · Nerul, Navi Mumbai</span>
+            </div>
+          </div>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-3">
+            <Reveal delay={0.06} className="h-full">
+              <div className="group relative flex h-full flex-col overflow-hidden border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-ibm-layer">
+                  <Image
+                    src="/images/gl-team.jpg"
+                    alt="ABWcurious engineering team collaborating at the studio"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                  <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                    The Engineering Core
+                  </span>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-base font-medium text-ink">Autonomous Squads</h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                    Engineers work in tight 3-5 person pods with direct client exposure and zero middle-management bureaucracy.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.12} className="h-full">
+              <div className="group relative flex h-full flex-col overflow-hidden border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-ibm-layer">
+                  <Image
+                    src="/images/gl-office.jpg"
+                    alt="Modern ergonomic workstations with multi-monitor setups"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                  <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                    Workstation Precision
+                  </span>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-base font-medium text-ink">Built for Deep Work</h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                    Apple Silicon MacBook Pros, dual 4K colour-calibrated displays, Herman Miller chairs, and uninterrupted flow time.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.18} className="h-full">
+              <div className="group relative flex h-full flex-col overflow-hidden border border-hairline bg-white transition-all hover:border-primary hover:shadow-lg">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-ibm-layer">
+                  <Image
+                    src="/images/ev-offsite.jpg"
+                    alt="Studio offsite retreat in Western Ghats"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                  <span className="absolute bottom-3 left-3 text-xs font-mono text-white/90">
+                    Offsites & Celebrations
+                  </span>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-base font-medium text-ink">Hackathons & Retreats</h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                    Quarterly studio retreats, open hackathons, and celebrations for every major product milestone we ship.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
 

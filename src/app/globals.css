@@ -248,43 +248,40 @@
   outline-offset: -4px;
 }
 
-/* Dual-layer roll-up button label (WriteMate signature) */
-/* NOTE: inside @layer components so Tailwind utilities (e.g. `hidden`) can override display */
-@layer components {
-  .btn-roll {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  .btn-roll .btn-roll__viewport {
-    display: inline-block;
-    height: 1.5rem;
-    overflow: hidden;
-    line-height: 1.5rem;
-    vertical-align: middle;
-  }
-  .btn-roll .btn-roll__track {
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .btn-roll:hover .btn-roll__track,
-  .btn-roll:focus-visible .btn-roll__track {
-    transform: translateY(-50%);
-  }
-  .btn-roll .btn-roll__span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    height: 1.5rem;
-    line-height: 1.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
+/* Dual-layer roll-up button label */
+.btn-roll {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-roll .btn-roll__viewport {
+  display: inline-block;
+  height: 1.5rem;
+  overflow: hidden;
+  line-height: 1.5rem;
+  vertical-align: middle;
+}
+.btn-roll .btn-roll__track {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-roll:hover .btn-roll__track,
+.btn-roll:focus-visible .btn-roll__track {
+  transform: translateY(-50%);
+}
+.btn-roll .btn-roll__span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 /* Logo swoosh draw-in */

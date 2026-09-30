@@ -39,7 +39,7 @@ export function JourneySocial() {
 
           {/* CTA row — Carbon button (white / outline-light on blue) */}
           <Reveal delay={0.2}>
-            <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row">
+            <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <RollButton href={FINAL_CTA.ctas[0].href} variant="light" arrow>
                 {FINAL_CTA.ctas[0].label}
               </RollButton>

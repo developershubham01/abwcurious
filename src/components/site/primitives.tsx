@@ -86,7 +86,7 @@ export function RollButton({
       {arrow && (
         <ArrowRight
           className={cn(
-            "size-4 transition-transform duration-300 group-hover:translate-x-0.5"
+            "size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
           )}
           strokeWidth={1.75}
         />
@@ -94,7 +94,7 @@ export function RollButton({
     </>
   );
   const styles = cn(
-    "btn-roll group focus-carbon text-sm px-4 h-12 select-none",
+    "btn-roll group relative inline-flex items-center justify-center gap-2 focus-carbon text-sm px-5 h-12 select-none overflow-hidden",
     /* Carbon button-primary: blue solid, hover blue-hover, pressed blue-80 */
     variant === "primary" &&
       "bg-primary text-primary-foreground hover:bg-ibm-blue-hover active:bg-ibm-blue-active",
@@ -114,10 +114,14 @@ export function RollButton({
     className
   );
   const track = (
-    <span className="btn-roll__viewport">
-      <span className="btn-roll__track">
-        <span className="btn-roll__span">{inner()}</span>
-        <span className="btn-roll__span">{inner()}</span>
+    <span className="btn-roll__viewport relative inline-block h-6 overflow-hidden leading-6 align-middle">
+      <span className="btn-roll__track flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1/2 group-focus-visible:-translate-y-1/2">
+        <span className="btn-roll__span flex h-6 shrink-0 items-center justify-center gap-2 overflow-hidden whitespace-nowrap leading-6">
+          {inner()}
+        </span>
+        <span className="btn-roll__span flex h-6 shrink-0 items-center justify-center gap-2 overflow-hidden whitespace-nowrap leading-6" aria-hidden="true">
+          {inner()}
+        </span>
       </span>
     </span>
   );
