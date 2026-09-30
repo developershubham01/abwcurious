@@ -45,11 +45,31 @@ function useViewAnchorInterceptor(onClose: () => void) {
       const href = anchor.getAttribute("href");
       if (!href || !href.startsWith("#") || href.startsWith("#/")) return;
       if (anchor.target === "_blank") return;
+
+      const isStandalone = typeof window !== "undefined" && window.location.pathname !== "/";
+      const id = href.replace(/^#/, "");
+
+      if (isStandalone) {
+        if (id === "top") {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+        const localTarget = document.getElementById(id);
+        if (localTarget) {
+          e.preventDefault();
+          localTarget.scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+        e.preventDefault();
+        window.location.href = `/${href}`;
+        return;
+      }
+
       /* In-takeover anchors leave the page: close, then glide to the
          section on the landing document (mirrors gotoSectionFromView). */
       e.preventDefault();
       onClose();
-      const id = href.replace(/^#/, "");
       window.setTimeout(() => {
         if (id === "top") {
           window.scrollTo({ top: 0, behavior: "smooth" });

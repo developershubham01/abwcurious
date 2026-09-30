@@ -1,8 +1,10 @@
 "use client";
 
-import { ArrowRight, Building2, Clock3, Mail, MapPin } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Building2, Clock3, Mail, MapPin } from "lucide-react";
 import { Reveal, RollButton } from "./primitives";
 import { COMPANY, SAMPLE_NOTE, STATS, VALUES } from "@/data/company";
+import { CATEGORIES } from "@/lib/catalog";
 
 /**
  * About page (#/about) — the company profile, IBM-Carbon style:
@@ -140,6 +142,55 @@ export function AboutPage() {
         </div>
       </section>
 
+      {/* Engineering Capabilities — direct navigation to all 6 service practices */}
+      <section className="border-b border-hairline bg-ibm-layer py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+            <div>
+              <p className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-primary">
+                Engineering Capabilities
+              </p>
+              <h2 className="mt-3 text-3xl font-light tracking-tight text-ink sm:text-4xl">
+                Explore our six practices.
+              </h2>
+            </div>
+            <Link
+              href="/services"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-primary hover:underline"
+            >
+              <span>View all 70 services directory</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-3">
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/services/${cat.slug}`}
+                className="group relative flex flex-col justify-between bg-white p-6 transition-all hover:bg-ibm-layer"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs font-mono text-primary">
+                    <span>{cat.num} / Practice</span>
+                    <ArrowUpRight className="size-4 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
+                  </div>
+                  <h3 className="mt-3 text-lg font-medium text-ink group-hover:text-primary transition-colors">
+                    {cat.name}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {cat.tagline}
+                  </p>
+                </div>
+                <div className="mt-6 font-mono text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                  Open practice playbook →
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* cta-banner — the one full-bleed blue surface */}
       <section className="bg-primary py-16 text-white sm:py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-start gap-8 px-6 sm:flex-row sm:items-center sm:justify-between">
@@ -152,9 +203,14 @@ export function AboutPage() {
               prototypes and the people.
             </p>
           </div>
-          <RollButton href="#contact" variant="light" arrow className="shrink-0">
-            Contact us
-          </RollButton>
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+            <RollButton href="/contact" variant="light" arrow className="shrink-0">
+              Contact us
+            </RollButton>
+            <RollButton href="/services" variant="outline-light" className="shrink-0">
+              Explore services
+            </RollButton>
+          </div>
         </div>
       </section>
     </div>

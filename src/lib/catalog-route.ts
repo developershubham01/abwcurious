@@ -30,12 +30,20 @@ function slugFromLocation(): string | null {
 }
 
 export function openCategory(slug: string) {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = `/services/${slug}`;
+    return;
+  }
   window.location.hash = `#/services/${slug}`;
 }
 
 /** Close is always history-linear: strip the hash in place (never back()),
  *  so closing lands on the clean site even after prev/next hopping. */
 export function closeCategory() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/services";
+    return;
+  }
   window.history.replaceState(null, "", window.location.pathname + window.location.search);
   useCatalogRoute.getState()._setSlug(null);
 }

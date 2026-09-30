@@ -77,6 +77,10 @@ export function CategoryPage({ category }: { category: Category }) {
   /* Close the takeover, then glide to the contact form with the category pre-filled */
   const startProject = () => {
     setPresetService(category.name);
+    if (typeof window !== "undefined" && window.location.pathname !== "/") {
+      window.location.href = `/contact?service=${encodeURIComponent(category.name)}`;
+      return;
+    }
     closeCategory();
     window.setTimeout(() => {
       document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
@@ -349,8 +353,8 @@ export function CategoryPage({ category }: { category: Category }) {
               <RollButton variant="light" arrow onClick={startProject}>
                 Start a project
               </RollButton>
-              <RollButton variant="outline-light" onClick={closeCategory}>
-                Back to site
+              <RollButton variant="outline-light" href="/services">
+                All services
               </RollButton>
             </div>
           </div>
@@ -360,28 +364,26 @@ export function CategoryPage({ category }: { category: Category }) {
       {/* ================= prev / next ================= */}
       <nav aria-label="Category pagination" className="border-b border-hairline">
         <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-hairline">
-          <button
-            type="button"
-            onClick={() => openCategory(prev.slug)}
+          <a
+            href={`/services/${prev.slug}`}
             className="group flex flex-col items-start gap-1.5 px-4 py-6 text-left transition-colors hover:bg-ibm-layer focus-carbon sm:px-6"
           >
             <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
               <ArrowLeft className="size-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" strokeWidth={1.5} aria-hidden="true" />
               Previous · {prev.num}
             </span>
-            <span className="text-sm sm:text-base">{prev.name}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => openCategory(next.slug)}
+            <span className="text-sm font-medium text-ink group-hover:text-primary transition-colors sm:text-base">{prev.name}</span>
+          </a>
+          <a
+            href={`/services/${next.slug}`}
             className="group flex flex-col items-end gap-1.5 px-4 py-6 text-right transition-colors hover:bg-ibm-layer focus-carbon sm:px-6"
           >
             <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
               Next · {next.num}
               <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={1.5} aria-hidden="true" />
             </span>
-            <span className="text-sm sm:text-base">{next.name}</span>
-          </button>
+            <span className="text-sm font-medium text-ink group-hover:text-primary transition-colors sm:text-base">{next.name}</span>
+          </a>
         </div>
       </nav>
     </ViewShell>

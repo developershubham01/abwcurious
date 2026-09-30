@@ -62,44 +62,84 @@ function routeFromLocation(): ViewRoute {
 }
 
 export function openProducts() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/products";
+    return;
+  }
   window.location.hash = "#/products";
 }
 
 export function openProduct(slug: string) {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = `/products/${slug}`;
+    return;
+  }
   window.location.hash = `#/products/${slug}`;
 }
 
 export function openBlogs() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/blogs";
+    return;
+  }
   window.location.hash = "#/blogs";
 }
 
 export function openSitemap() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/sitemap";
+    return;
+  }
   window.location.hash = "#/sitemap";
 }
 
 export function openAbout() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/about";
+    return;
+  }
   window.location.hash = "#/about";
 }
 
 export function openEventsPage() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/events";
+    return;
+  }
   window.location.hash = "#/events";
 }
 
 export function openSocial() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/social";
+    return;
+  }
   window.location.hash = "#/social";
 }
 
 export function openCareers() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/careers";
+    return;
+  }
   window.location.hash = "#/careers";
 }
 
 export function openContact() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/contact";
+    return;
+  }
   window.location.hash = "#/contact";
 }
 
 /** Close is always history-linear: strip the hash in place (never back()),
  *  so closing lands on the clean site even after hopping between pages. */
 export function closeView() {
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = "/";
+    return;
+  }
   window.history.replaceState(null, "", window.location.pathname + window.location.search);
   useViewRoute.getState()._set({ kind: "none" });
 }
@@ -108,6 +148,10 @@ export function closeView() {
 export function gotoSectionFromView(hash: string) {
   if (hash === "#contact" || hash === "#/contact") {
     openContact();
+    return;
+  }
+  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+    window.location.href = `/${hash}`;
     return;
   }
   closeView();

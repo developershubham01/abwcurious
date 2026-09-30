@@ -126,9 +126,8 @@ function ProductIndexCard({ product, index }: { product: Product; index: number 
       transition={{ duration: 0.6, delay: 0.08 * index, ease: EASE }}
     >
       <DepthCard maxTilt={6} lift={10} className="group h-full" ariaLabel={`${product.name} — open product page`}>
-        <button
-          type="button"
-          onClick={() => openProduct(product.slug)}
+        <a
+          href={`/products/${product.slug}`}
           className="flex h-full w-full flex-col border border-hairline bg-white text-left transition-colors duration-300 focus-carbon group-hover:border-primary"
         >
           <DepthLayer z={18}>
@@ -173,7 +172,7 @@ function ProductIndexCard({ product, index }: { product: Product; index: number 
               </span>
             </DepthLayer>
           </div>
-        </button>
+        </a>
       </DepthCard>
     </motion.div>
   );
@@ -293,6 +292,10 @@ export function ProductDetailPage({ product }: { product: Product }) {
 
   const requestAccess = () => {
     setPresetService(product.prefill);
+    if (typeof window !== "undefined" && window.location.pathname !== "/") {
+      window.location.href = `/contact?service=${encodeURIComponent(product.prefill)}`;
+      return;
+    }
     closeView();
     window.setTimeout(() => {
       document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
@@ -437,10 +440,7 @@ export function ProductDetailPage({ product }: { product: Product }) {
                   {relatedSlug && (
                     <RollButton
                       variant="outline-light"
-                      onClick={() => {
-                        closeView();
-                        window.setTimeout(() => openCategory(relatedSlug), 60);
-                      }}
+                      href={`/services/${relatedSlug}`}
                     >
                       Explore related services
                     </RollButton>
@@ -458,10 +458,9 @@ export function ProductDetailPage({ product }: { product: Product }) {
               { p: prev, dir: "Previous platform", Icon: ArrowLeft },
               { p: next, dir: "Next platform", Icon: ArrowRight },
             ].map(({ p, dir, Icon }) => (
-              <button
+              <a
                 key={dir}
-                type="button"
-                onClick={() => openProduct(p.slug)}
+                href={`/products/${p.slug}`}
                 className="group flex items-center gap-4 bg-background px-6 py-6 text-left transition-colors hover:bg-ibm-layer focus-carbon"
               >
                 <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" strokeWidth={1.5} aria-hidden="true" />
@@ -469,7 +468,7 @@ export function ProductDetailPage({ product }: { product: Product }) {
                   <span className="block text-xs text-ink-muted">{dir}</span>
                   <span className="mt-1 block truncate text-lg tracking-tight text-ink group-hover:text-primary">{p.name}</span>
                 </span>
-              </button>
+              </a>
             ))}
           </div>
         </nav>

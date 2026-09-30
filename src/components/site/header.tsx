@@ -231,7 +231,7 @@ export function Header({
                             {CATEGORIES.map((c) => (
                               <li key={c.slug}>
                                 <a
-                                  href={`#/services/${c.slug}`}
+                                  href={`/services/${c.slug}`}
                                   onClick={() => setMenu(null)}
                                   className={itemCls}
                                 >
@@ -250,14 +250,14 @@ export function Header({
                           <p className={groupLabelCls}>The product line</p>
                           <ul>
                             <li>
-                              <a href="#/products" onClick={() => setMenu(null)} className={cn(itemCls, "font-medium text-ink")}>
+                              <a href="/products" onClick={() => setMenu(null)} className={cn(itemCls, "font-medium text-ink")}>
                                 All products — overview
                               </a>
                             </li>
                             {PRODUCTS.map((p) => (
                               <li key={p.slug}>
                                 <a
-                                  href={`#/products/${p.slug}`}
+                                  href={`/products/${p.slug}`}
                                   onClick={() => setMenu(null)}
                                   className={itemCls}
                                 >
@@ -370,8 +370,8 @@ export function Header({
               {/* Primary */}
               <ul className="divide-y divide-hairline border-y border-hairline">
                 {[
-                  { label: "About", href: "#/about" },
-                  { label: "Contact us", href: "#contact" },
+                  { label: "About", href: "/about" },
+                  { label: "Contact us", href: "/contact" },
                 ].map((item, i) => (
                   <motion.li
                     key={item.href}
@@ -414,7 +414,7 @@ export function Header({
                   {CATEGORIES.map((c) => (
                     <li key={c.slug}>
                       <a
-                        href={`#/services/${c.slug}`}
+                        href={`/services/${c.slug}`}
                         onClick={() => setOpen(false)}
                         className="focus-carbon block px-2 py-3 text-sm text-ink-muted transition-colors hover:bg-ibm-layer hover:text-ink"
                       >
@@ -431,7 +431,7 @@ export function Header({
                 <ul className="mt-2 divide-y divide-hairline border-y border-hairline">
                   <li>
                     <a
-                      href="#/products"
+                      href="/products"
                       onClick={() => setOpen(false)}
                       className="focus-carbon block px-2 py-3 text-sm font-medium text-ink transition-colors hover:bg-ibm-layer"
                     >
@@ -441,7 +441,7 @@ export function Header({
                   {PRODUCTS.map((p) => (
                     <li key={p.slug}>
                       <a
-                        href={`#/products/${p.slug}`}
+                        href={`/products/${p.slug}`}
                         onClick={() => setOpen(false)}
                         className="focus-carbon block px-2 py-3 text-sm text-ink-muted transition-colors hover:bg-ibm-layer hover:text-ink"
                       >

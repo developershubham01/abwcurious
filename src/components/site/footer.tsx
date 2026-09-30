@@ -344,7 +344,7 @@ export function Footer() {
               </p>
             </div>
             <a
-              href="#/sitemap"
+              href="/sitemap"
               className="focus-carbon group inline-flex items-center gap-1.5 border border-white/40 px-4 py-2 text-sm text-white transition-colors hover:border-white hover:bg-white/10"
             >
               Open the full sitemap
