@@ -6,6 +6,7 @@ import { ViewShell } from "./view-shell";
 import { AboutPage } from "./about-page";
 import { Events } from "./events";
 import { Careers } from "./careers";
+import { ContactPage } from "./contact-page";
 import { SOCIALS, COMPANY, isPlaceholder, SAMPLE_NOTE } from "@/data/company";
 import { Reveal } from "./primitives";
 import { PLATFORM_ICONS } from "./social-row";
@@ -168,6 +169,13 @@ export function CompanyPagesPortal() {
     return (
       <ViewShell crumb="Company / Careers" label="Careers at ABWcurious" activeNav="#more" onClose={closeView}>
         <CareersPage />
+      </ViewShell>
+    );
+  }
+  if (route.kind === "contact") {
+    return (
+      <ViewShell crumb="Contact / Get in touch" label="Contact ABWcurious" activeNav="/contact" onClose={closeView}>
+        <ContactPage />
       </ViewShell>
     );
   }

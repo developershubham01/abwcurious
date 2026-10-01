@@ -50,7 +50,7 @@ export function TermsPage() {
     <div className="bg-background text-foreground">
 
       {/* ----------------- Hero header ----------------- */}
-      <header className="border-b border-hairline bg-white py-12 lg:py-16">
+      <header className="border-b border-hairline bg-white pt-28 pb-12 sm:pt-36 sm:pb-14 lg:pt-40 lg:pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-primary uppercase tracking-wider">
             <Shield className="size-3.5" />

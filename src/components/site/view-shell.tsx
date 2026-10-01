@@ -109,7 +109,7 @@ export function ViewShell({
 
   if (isStandalone) {
     return (
-      <div className="flex-1 flex flex-col pt-12 lg:pt-20">
+      <div className="flex-1 flex flex-col pt-0">
         {children}
       </div>
     );
@@ -127,7 +127,7 @@ export function ViewShell({
       transition={{ duration: 0.45, ease: EASE }}
     >
       <Header variant="view" activeNav={activeNav} onClose={onClose} />
-      <div className="flex-1 flex flex-col pt-12 lg:pt-20">
+      <div className="flex-1 flex flex-col pt-0">
         {children}
         <Footer />
       </div>

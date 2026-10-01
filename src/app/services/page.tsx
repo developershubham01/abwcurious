@@ -6,7 +6,7 @@ import { Eyebrow, RollButton } from "@/components/site/primitives";
 import { AllServicesCatalog } from "@/components/site/all-services-catalog";
 
 export const metadata: Metadata = {
-  title: "Services & Practices — ABWcurious | Engineering a Better Future",
+  title: "Services & Practices — ABWcurious | Engineering A Better World",
   description:
     "Explore our six specialized engineering practices and complete directory of 70 itemised services: Software Development, Mobile Apps, AI & Automation, Digital Marketing, Recruitment, and Cloud Solutions.",
 };
@@ -24,7 +24,7 @@ export default function ServicesPage() {
   }));
 
   return (
-    <main id="main" tabIndex={-1} className="flex-1 outline-none pt-12 sm:pt-20">
+    <main id="main" tabIndex={-1} className="flex-1 outline-none pt-16 sm:pt-20 lg:pt-24">
       {/* Hero */}
       <section className="border-b border-hairline bg-background py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-6">

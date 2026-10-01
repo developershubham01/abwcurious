@@ -293,15 +293,15 @@ export const CATEGORIES: Category[] = [
   {
     slug: "cloud-it-business-solutions",
     num: "06",
-    name: "Cloud, IT & Business Solutions",
-    short: "Cloud & Business IT",
-    tagline: "Infrastructure, ready-made business systems and support that never sleeps.",
+    name: "IT Support & Business Solutions",
+    short: "IT Support & Business Solutions",
+    tagline: "Infrastructure, ready-made business systems and 24/7 technical support.",
     description:
-      "The operational backbone: cloud deployment, domains, SSL, CI/CD and performance — plus business systems like ERP, HRMS, billing and booking, and a maintenance desk that keeps it all healthy.",
+      "The operational backbone: server deployment, domains, SSL, CI/CD and performance — plus business systems like ERP, HRMS, billing and booking, and a maintenance desk that keeps it all healthy.",
     image: "/images/cat-cloud.jpg",
-    imageAlt: "Isometric illustration of cloud infrastructure, servers and security shield — cloud and business IT",
+    imageAlt: "Isometric illustration of IT infrastructure, servers and security shield — IT support and business solutions",
     demo: "cloud",
-    typewriter: ["Cloud deployment", "ERP & CRM systems", "DevOps & CI/CD", "Security updates", "24/7 support"],
+    typewriter: ["IT Support", "ERP & CRM systems", "DevOps & CI/CD", "Security updates", "24/7 support"],
     stats: [
       { value: "99.98%", label: "Managed uptime" },
       { value: "80+", label: "Business systems delivered" },
@@ -309,9 +309,9 @@ export const CATEGORIES: Category[] = [
     ],
     groups: [
       {
-        label: "Cloud & Deployment",
+        label: "Infrastructure & Deployment",
         items: [
-          { name: "Cloud Deployment", blurb: "AWS / GCP / Azure architectures, sized right." },
+          { name: "Server & Infrastructure Deployment", blurb: "High-uptime server architectures and infrastructure, sized right." },
           { name: "Server Setup", blurb: "Hardened, monitored, documented from day one." },
           { name: "Cloudflare Setup", blurb: "CDN, WAF and DNS tuned for speed and safety." },
           { name: "Database Setup", blurb: "Schema, migrations, backups and recovery drills." },

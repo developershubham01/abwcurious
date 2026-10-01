@@ -22,25 +22,53 @@ import { cn } from "@/lib/utils";
 
 export function TrainingDetailPage({ track }: { track: TrainingTrack }) {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     experience: "Student / Recent Graduate",
     message: "",
+    _gotcha: "",
   });
 
   const otherTracks = TRAINING_TRACKS.filter((t) => t.slug !== track.slug);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
+    if (submitting) return;
+
+    setSubmitting(true);
+    setErrorMsg(null);
+
+    try {
+      const res = await fetch("/api/training", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          trackTitle: track.title,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error || "Unable to submit application.");
+      }
+
+      setFormSubmitted(true);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <article className="min-h-screen bg-ibm-layer text-ink selection:bg-ibm-blue selection:text-white">
       {/* ─── Hero Section ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-white border-b border-hairline py-12 md:py-20">
+      <section className="relative overflow-hidden bg-white border-b border-hairline pt-28 pb-16 sm:pt-36 sm:pb-20 lg:pt-40 lg:pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Content */}
@@ -295,6 +323,24 @@ export function TrainingDetailPage({ track }: { track: TrainingTrack }) {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+                {/* Honeypot field - hidden from view */}
+                <input
+                  type="text"
+                  name="_gotcha"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={formData._gotcha}
+                  onChange={(e) => setFormData({ ...formData, _gotcha: e.target.value })}
+                  className="hidden"
+                  aria-hidden="true"
+                />
+
+                {errorMsg && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                    {errorMsg}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-ink mb-1.5">Full Name *</label>
@@ -365,10 +411,11 @@ export function TrainingDetailPage({ track }: { track: TrainingTrack }) {
                   </p>
                   <button
                     type="submit"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-ibm-blue px-8 py-3 text-sm font-semibold text-white shadow-md hover:bg-ibm-blue/90 hover:shadow-lg transition-all"
+                    disabled={submitting}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-ibm-blue px-8 py-3 text-sm font-semibold text-white shadow-md hover:bg-ibm-blue/90 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="h-4 w-4" />
-                    <span>Submit Application</span>
+                    <span>{submitting ? "Submitting..." : "Submit Application"}</span>
                   </button>
                 </div>
               </form>

@@ -20,7 +20,7 @@ export async function GET() {
     "TEL;TYPE=WORK,VOICE:+919930338504",
     "URL:https://abwcurious.com",
     "ADR;TYPE=WORK:;;S07-05, Haware's Centurion, Sector 19A, Nerul (East);Navi Mumbai;Maharashtra;400706;India",
-    "NOTE:ABWcurious (OPC) Private Limited — Engineering a Better Future. Mon–Sat 9:00–19:00 IST.",
+    "NOTE:ABWcurious (OPC) Private Limited — Engineering A Better World. Mon–Sat 9:00–19:00 IST.",
     "REV:" + new Date().toISOString(),
     "END:VCARD",
   ].join("\r\n");

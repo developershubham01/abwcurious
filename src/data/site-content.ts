@@ -23,7 +23,7 @@ export interface Emph {
 
 export const HERO = {
   eyebrow: "AI. Technology. Education. Innovation.",
-  headline: "Engineering a Better Future.",
+  headline: "Engineering A Better World.",
   identity: "ABWcurious · Technology & innovation company",
   description:
     "ABWcurious is a technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",

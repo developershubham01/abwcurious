@@ -106,49 +106,36 @@ export function AchievementsPage() {
 
   return (
     <div className="bg-background">
-      {/* ================= Hero Section ================= */}
-      <section className="relative overflow-hidden border-b border-hairline bg-[#04101f] text-white pt-28 pb-16 sm:pt-36 sm:pb-20">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 40% 30%, rgba(95,208,225,0.22), transparent 70%), linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)",
-            backgroundSize: "100% 100%, 48px 48px, 48px 48px",
-          }}
-          aria-hidden="true"
-        />
-
-        <div className="relative mx-auto max-w-7xl px-6">
+      {/* ================= Hero Section — About Page Theme ================= */}
+      <section className="relative border-b border-hairline bg-background pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
+        <div className="mx-auto max-w-7xl px-6">
           <Reveal>
-            <p className="inline-flex items-center gap-2 border border-white/20 bg-black/40 px-3.5 py-1 text-xs font-medium tracking-wide text-[#79dce8] backdrop-blur-md">
-              <span className="size-1.5 rounded-full bg-[#5fd0e1] animate-pulse-dot" />
-              Company Milestones · Track Record of Impact
+            <p className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-primary sm:text-sm">
+              <span aria-hidden="true" className="h-px w-6 bg-current inline-block" />
+              Company Milestones & Track Record
             </p>
           </Reveal>
 
           <Reveal delay={0.08}>
-            <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-              <SplitText text="Milestones that define our" immediate />{" "}
-              <span className="bg-gradient-to-r from-[#79dce8] via-[#a6e5ff] to-white bg-clip-text text-transparent font-normal">
-                momentum.
-              </span>
+            <h1 className="mt-5 sm:mt-7 max-w-4xl text-balance text-4xl font-light leading-[1.12] tracking-tight text-ink sm:text-5xl lg:text-6xl">
+              Milestones that define our <span className="text-primary font-normal">momentum.</span>
             </h1>
           </Reveal>
 
           <Reveal delay={0.16}>
-            <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-white/80 sm:text-lg">
+            <p className="mt-6 sm:mt-8 max-w-3xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg lg:text-xl">
               From day one, ABWcurious has been driven by measurable output over marketing noise. Here is our story of steady growth, major technical breakthroughs, and industry recognition.
             </p>
           </Reveal>
 
-          {/* Metrics Grid */}
+          {/* Metrics Hairline Grid */}
           <Reveal delay={0.24}>
-            <div className="mt-12 grid grid-cols-2 gap-4 border border-white/10 bg-white/[0.04] p-6 backdrop-blur-md sm:grid-cols-4 sm:gap-8">
+            <div className="mt-10 grid grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-4">
               {METRICS.map((m) => (
-                <div key={m.label}>
-                  <div className="text-3xl font-light text-white sm:text-4xl">{m.value}</div>
-                  <div className="mt-1 text-sm font-medium text-[#79dce8]">{m.label}</div>
-                  <div className="text-xs text-white/50">{m.sub}</div>
+                <div key={m.label} className="bg-white p-6">
+                  <div className="text-3xl font-light text-ink tabular-nums">{m.value}</div>
+                  <div className="mt-1 text-xs font-mono uppercase text-primary">{m.label}</div>
+                  <div className="text-xs text-ink-muted mt-0.5">{m.sub}</div>
                 </div>
               ))}
             </div>

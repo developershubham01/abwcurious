@@ -126,11 +126,9 @@ export function openCareers() {
 }
 
 export function openContact() {
-  if (typeof window !== "undefined" && window.location.pathname !== "/") {
+  if (typeof window !== "undefined") {
     window.location.href = "/contact";
-    return;
   }
-  window.location.hash = "#/contact";
 }
 
 /** Close is always history-linear: strip the hash in place (never back()),
@@ -147,7 +145,9 @@ export function closeView() {
 /** Close the takeover, then glide to a landing-page section anchor, or route to contact page. */
 export function gotoSectionFromView(hash: string) {
   if (hash === "#contact" || hash === "#/contact") {
-    openContact();
+    if (typeof window !== "undefined") {
+      window.location.href = "/contact";
+    }
     return;
   }
   if (typeof window !== "undefined" && window.location.pathname !== "/") {

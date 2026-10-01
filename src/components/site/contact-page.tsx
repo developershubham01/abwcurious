@@ -44,7 +44,9 @@ const MAP_EMBED = (() => {
 })();
 
 const DIRECT_CHANNELS = [
-  { icon: Mail, label: "Direct Email", value: COMPANY.email, href: `mailto:${COMPANY.email}`, desc: "Monitored 24/7" },
+  { icon: Mail, label: "General Inquiries", value: COMPANY.email, href: `mailto:${COMPANY.email}`, desc: "General info & support" },
+  { icon: Mail, label: "Sales & Projects", value: COMPANY.emailSales, href: `mailto:${COMPANY.emailSales}`, desc: "New project proposals" },
+  { icon: Mail, label: "Careers & HR", value: COMPANY.emailHr, href: `mailto:${COMPANY.emailHr}`, desc: "Talent & job applications" },
   { icon: Phone, label: "Studio Phone", value: COMPANY.phone, href: COMPANY.phoneHref, desc: "Direct call & WhatsApp" },
   { icon: MapPin, label: "Studio Location", value: COMPANY.address, href: COMPANY.map.directionsUrl, desc: "OpenStreetMap verified" },
   { icon: Clock, label: "Operating Hours", value: COMPANY.hours, href: `mailto:${COMPANY.email}`, desc: "Indian Standard Time" },
@@ -56,7 +58,7 @@ const SERVICE_PRACTICES = [
   "AI & Automation",
   "Digital Marketing & Growth",
   "Recruitment & HR Solutions",
-  "Cloud, IT & Business Solutions",
+  "IT Support & Business Solutions",
   "Future-Ready Education",
   "General Partnership / Hello",
 ];
@@ -139,53 +141,41 @@ export function ContactPage() {
 
   return (
     <div className="flex-1 bg-background text-foreground">
-      {/* ================= Cinematic Hero Header ================= */}
-      <section className="relative overflow-hidden bg-[#04101f] text-white py-16 sm:py-24 border-b border-white/10">
-        {/* Subtle grid pattern & ambient blue lighting */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-25"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(15, 98, 254, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 98, 254, 0.15) 1px, transparent 1px)",
-            backgroundSize: "36px 36px",
-          }}
-          aria-hidden="true"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#04101f]/85 via-[#04101f]/50 to-[#04101f]" />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 text-center">
-          <div className="inline-flex items-center gap-2.5 border border-white/20 bg-black/55 px-4 py-1.5 text-xs sm:text-sm font-medium tracking-wide text-white/95 backdrop-blur-md shadow-lg shadow-black/30">
-            <span className="size-1.5 rounded-full bg-[#5fd0e1] animate-pulse-dot" aria-hidden="true" />
-            13 · GET IN TOUCH
-          </div>
-
-          <p className="mt-6 text-xs sm:text-sm font-semibold tracking-widest uppercase text-[#79dce8]">
-            Direct Technical Inquiry &amp; Client Onboarding
-          </p>
-
-          <h1 className="mt-4 max-w-4xl mx-auto text-balance text-4xl font-light leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-            <SplitText text="Start a conversation with our engineering team." immediate delay={0.15} />
-          </h1>
-
-          <p className="mt-6 max-w-2xl mx-auto text-pretty text-base leading-relaxed text-white/80 sm:text-lg">
-            Have a project in mind, need technical advisory, or want to discuss enterprise solutions?
-            Connect directly with our leadership and technical teams.
-          </p>
+      {/* ================= Header — About Page Theme ================= */}
+      <section className="relative border-b border-hairline bg-background pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <Reveal>
+            <p className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-primary sm:text-sm">
+              <span aria-hidden="true" className="h-px w-6 bg-current inline-block" />
+              Contact ABWcurious
+            </p>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <h1 className="mt-5 sm:mt-7 max-w-4xl text-balance text-4xl font-light leading-[1.12] tracking-tight text-ink sm:text-5xl lg:text-6xl">
+              Start a conversation with our <span className="text-primary font-normal">engineering team.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <p className="mt-6 sm:mt-8 max-w-3xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg lg:text-xl">
+              Have a project in mind, need technical advisory, or want to discuss enterprise solutions?
+              Connect directly with our leadership and technical teams in Navi Mumbai & globally.
+            </p>
+          </Reveal>
 
           {/* Quick Direct Channel Cards */}
-          <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto text-left">
+          <div className="mt-12 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-4">
             {DIRECT_CHANNELS.map((ch) => (
               <a
                 key={ch.label}
                 href={ch.href}
-                className="group border border-white/15 bg-white/5 backdrop-blur-md p-4 transition-all duration-200 hover:border-white/35 hover:bg-white/10"
+                className="group bg-white p-6 transition-colors hover:bg-ibm-layer"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/60">{ch.label}</span>
-                  <ch.icon className="size-4 text-[#5fd0e1] transition-transform duration-200 group-hover:scale-110" />
+                  <span className="text-xs font-mono text-ibm-subtle">{ch.label}</span>
+                  <ch.icon className="size-4 text-primary transition-transform duration-200 group-hover:scale-110" />
                 </div>
-                <p className="mt-2 text-sm font-medium text-white truncate">{ch.value}</p>
-                <p className="mt-1 text-xs text-white/50">{ch.desc}</p>
+                <p className="mt-3 text-sm font-medium text-ink truncate">{ch.value}</p>
+                <p className="mt-1 text-xs text-ink-muted">{ch.desc}</p>
               </a>
             ))}
           </div>
@@ -229,6 +219,7 @@ export function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="mt-8 space-y-6" noValidate={false}>
+                  <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="contact-name" className="text-sm font-medium">
@@ -372,14 +363,14 @@ export function ContactPage() {
               <div className="overflow-hidden border border-hairline bg-card shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline border-l-4 border-l-primary px-5 py-4">
                   <div>
-                    <h3 className="text-sm font-medium text-ink">Headquarters Studio</h3>
-                    <p className="text-xs text-muted-foreground">{COMPANY.address}</p>
+                    <h3 className="text-sm font-medium text-ink">Headquarters Studio — Full Address</h3>
+                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{COMPANY.fullAddress}</p>
                   </div>
                   <a
                     href={COMPANY.map.directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="focus-carbon group inline-flex h-9 items-center gap-2 bg-primary px-4 text-xs font-medium text-white transition-colors hover:bg-ibm-blue-hover"
+                    className="focus-carbon group inline-flex h-9 items-center gap-2 bg-primary px-4 text-xs font-medium text-white transition-colors hover:bg-ibm-blue-hover shrink-0"
                   >
                     <Navigation
                       className="size-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -390,9 +381,10 @@ export function ContactPage() {
                 </div>
                 <div className="relative aspect-[16/10] w-full">
                   <iframe
-                    src={MAP_EMBED}
-                    title={`Map — ABWcurious studio, ${COMPANY.address}`}
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5589.069098648515!2d73.0221279!3d19.0247909!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3d076147f7b%3A0xe421751ae4517f6d!2sABWcurious%20OPC%20Pvt.Ltd!5e1!3m2!1sen!2sin!4v1790846305053!5m2!1sen!2sin"
+                    title={`Google Map — ABWcurious studio, ${COMPANY.fullAddress}`}
                     loading="lazy"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     className="absolute inset-0 h-full w-full border-0"
                   />
                 </div>

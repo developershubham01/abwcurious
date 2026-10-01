@@ -165,18 +165,18 @@ export function BlogsPage() {
       onClose={closeView}
     >
       <main className="flex-1">
-        {/* hero */}
-        <section className="border-b border-hairline">
-          <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20">
-            <Eyebrow className="justify-start">Blog — the engineering journal</Eyebrow>
-            <h1 className="mt-7 max-w-4xl text-4xl font-light leading-[1.05] tracking-tight text-ink sm:text-6xl">
-              <SplitText text="Field notes from" immediate />
-              <br />
-              <SplitText text="the build floor." immediate delay={0.2} />
+        {/* hero — About Page Theme */}
+        <section className="relative border-b border-hairline bg-background pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <p className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-primary sm:text-sm">
+              <span aria-hidden="true" className="h-px w-6 bg-current inline-block" />
+              Blog & Field Notes
+            </p>
+            <h1 className="mt-5 sm:mt-7 max-w-4xl text-balance text-4xl font-light leading-[1.12] tracking-tight text-ink sm:text-5xl lg:text-6xl">
+              Field notes from <span className="text-primary font-normal">the build floor.</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted">
-              What we learn shipping AI products, SaaS platforms and stubborn
-              migrations — written by the engineers who did the work.
+            <p className="mt-6 sm:mt-8 max-w-3xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg lg:text-xl">
+              What we learn shipping AI products, SaaS platforms and stubborn migrations — written by the engineers who did the work.
             </p>
             <div className="mt-5 max-w-xl">
               <Typewriter

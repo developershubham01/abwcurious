@@ -16,12 +16,12 @@ import { cn } from "@/lib/utils";
 /* ------------------------- nav model ------------------------- */
 
 const MORE_LINKS = [
+  { label: "Industries", href: "/industries", desc: "Sectors we serve" },
   { label: "Careers", href: "/careers", desc: "Open roles at the studio" },
   { label: "Events", href: "/events", desc: "Summits, workshops, meetups" },
   { label: "Social media", href: "/social", desc: "Follow the journey" },
   { label: "Blog", href: "/blogs", desc: "Field notes from the bench" },
   { label: "Gallery", href: "/gallery", desc: "Life at the studio" },
-  { label: "Leadership", href: "/leadership", desc: "The people behind the products" },
   { label: "Achievements", href: "/achievements", desc: "Milestones on the timeline" },
   { label: "Sitemap", href: "/sitemap", desc: "Every page, one map" },
 ] as const;
@@ -177,6 +177,8 @@ export function Header({
                 {COMPANY.email}
               </a>
               <span aria-hidden="true" className="h-3 w-px bg-ink/25" />
+              <span>GST: {COMPANY.gst}</span>
+              <span aria-hidden="true" className="h-3 w-px bg-ink/25" />
               <span>{COMPANY.address}</span>
             </div>
           </div>
@@ -210,11 +212,11 @@ export function Header({
                             : "border-transparent text-ink-muted hover:border-primary/40 hover:text-ink"
                         )}
                       >
-                        About
+                        What we are
                       </a>
                     </li>
                     <li className="relative">
-                      {triggerCls("services", "Services")}
+                      {triggerCls("services", "What we do")}
                       {menu === "services" && (
                         <div id="nav-menu-services" className={panelCls} role="group" aria-label="Services menu">
                           <p className={groupLabelCls}>What we do — six playbooks</p>
@@ -317,7 +319,7 @@ export function Header({
                   href="/contact"
                   className="focus-carbon group ml-4 inline-flex h-10 items-center justify-center gap-2 bg-primary px-5 text-xs xl:text-sm font-medium text-white shadow-sm transition-all duration-150 hover:bg-ibm-blue-hover hover:shadow active:scale-[0.98]"
                 >
-                  <span>Start a project</span>
+                  <span>Request a consultation</span>
                   <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2} />
                 </a>
               </div>
@@ -370,7 +372,7 @@ export function Header({
               {/* Primary */}
               <ul className="divide-y divide-hairline border-y border-hairline">
                 {[
-                  { label: "About", href: "/about" },
+                  { label: "What we are", href: "/about" },
                   { label: "Contact us", href: "/contact" },
                 ].map((item, i) => (
                   <motion.li
@@ -400,7 +402,7 @@ export function Header({
 
               {/* Services group */}
               <div className="mt-8">
-                <p className="text-xs text-ibm-subtle">Services</p>
+                <p className="text-xs text-ibm-subtle">What we do</p>
                 <ul className="mt-2 divide-y divide-hairline border-y border-hairline">
                   <li>
                     <a
@@ -478,11 +480,11 @@ export function Header({
                 className="mt-8 space-y-5"
               >
                 <a
-                  href="#contact"
+                  href="/contact"
                   onClick={() => setOpen(false)}
                   className="focus-carbon flex h-12 items-center justify-center bg-primary text-sm text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active"
                 >
-                  Start a project
+                  Request a consultation
                 </a>
                 <div>
                   <p className="text-sm text-ink-muted">Follow the journey</p>

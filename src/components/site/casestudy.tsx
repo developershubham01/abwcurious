@@ -230,7 +230,7 @@ export function CaseStudy() {
 
                     <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
                       <a
-                        href="#contact"
+                        href="/contact"
                         onClick={() => setPresetService(c.service)}
                         className="inline-flex items-center gap-1.5 font-mono text-sm text-ibm-soft transition-colors hover:text-ibm-bright focus-carbon"
                       >

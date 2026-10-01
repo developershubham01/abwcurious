@@ -21,10 +21,9 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Logo } from "./logo";
 import { SocialRow } from "./social-row";
-import { LeaderDialog } from "./leader-dialog";
 import MaskedHeading from "@/components/reactbits/MaskedHeading";
 import { useToast } from "@/hooks/use-toast";
-import { COMPANY, ALL_LEADERS, type Leader } from "@/data/company";
+import { COMPANY } from "@/data/company";
 import { PRODUCTS } from "@/lib/products";
 import { CATEGORIES } from "@/lib/catalog";
 
@@ -83,6 +82,7 @@ function NewsletterForm() {
       onSubmit={handleSubmit}
       className="flex overflow-hidden border border-[#393939] bg-[#262626] transition-colors focus-within:border-[#78a9ff]"
     >
+      <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       <label htmlFor="newsletter-email" className="sr-only">
         Email address
       </label>
@@ -173,9 +173,11 @@ function LegalDialog({
 /* -------------------------------- footer --------------------------------- */
 
 const CONTACT_ITEMS = [
-  { icon: Mail, label: COMPANY.email, href: `mailto:${COMPANY.email}` },
+  { icon: Mail, label: `General: ${COMPANY.email}`, href: `mailto:${COMPANY.email}` },
+  { icon: Mail, label: `Sales: ${COMPANY.emailSales}`, href: `mailto:${COMPANY.emailSales}` },
+  { icon: Mail, label: `HR: ${COMPANY.emailHr}`, href: `mailto:${COMPANY.emailHr}` },
   { icon: Phone, label: COMPANY.phone, href: COMPANY.phoneHref },
-  { icon: MapPin, label: COMPANY.address, href: "#contact" },
+  { icon: MapPin, label: COMPANY.address, href: "/contact" },
 ];
 
 /* ------------------------------- sitemap -------------------------------- */
@@ -197,10 +199,10 @@ const SITEMAP_GROUPS: {
     links: [
       { label: "Home", href: "/" },
       { label: "About — company profile", href: "/about" },
+      { label: "Industries we serve", href: "/industries" },
       { label: "Careers", href: "/careers" },
       { label: "Events", href: "/events" },
       { label: "Social media", href: "/social" },
-      { label: "Leadership", href: "/leadership" },
       { label: "Achievements", href: "/achievements" },
       { label: "Gallery", href: "/gallery" },
       { label: "Contact", href: "/contact" },
@@ -248,7 +250,6 @@ const FOOTER_MASKED_IMAGES = [
 
 export function Footer() {
   const [legal, setLegal] = useState<"privacy" | "terms" | null>(null);
-  const [profile, setProfile] = useState<Leader | null>(null);
 
   return (
     <footer className="relative mt-auto overflow-hidden bg-canvas-inverse text-white">
@@ -256,46 +257,21 @@ export function Footer() {
       <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-12">
           {/* brand */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-6">
             <Logo onDark size="xl" />
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#c6c6c6]">
+            <div className="mt-4 space-y-1 text-xs text-[#a0a0a0] font-mono border-l-2 border-[#393939] pl-3 py-0.5">
+              <p className="font-semibold text-white font-sans">{COMPANY.legalFullName}</p>
+              <p>CIN NO : {COMPANY.cin}</p>
+              <p>GST NO : {COMPANY.gst}</p>
+            </div>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#c6c6c6]">
               {COMPANY.description}
             </p>
-            <SocialRow variant="dark" className="mt-6" />
+            <SocialRow variant="dark" className="mt-5" />
           </div>
 
-          {/* leadership — opens the full profile dialog per person */}
-          <nav aria-label="Leadership" className="lg:col-span-4">
-            <h3 className="text-sm font-medium text-white">
-              Leadership
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {ALL_LEADERS.map((leader) => (
-                <li key={leader.id}>
-                  <button
-                    type="button"
-                    onClick={() => setProfile(leader)}
-                    aria-haspopup="dialog"
-                    aria-label={`Open profile: ${leader.name} — ${leader.role}`}
-                    className="focus-carbon group flex w-full items-center gap-3 text-left text-sm text-[#c6c6c6] transition-colors hover:text-white"
-                  >
-                    <span className="flex size-7 shrink-0 items-center justify-center border border-[#393939] bg-[#262626] text-xs text-[#c6c6c6] transition-colors group-hover:border-[#8d8d8d] group-hover:text-white">
-                      {leader.monogram}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate group-hover:underline">{leader.name}</span>
-                      <span className="block truncate text-xs text-[#8d8d8d]">
-                        {leader.role}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
           {/* contact + newsletter */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-6">
             <h3 className="text-sm font-medium text-white">
               Contact
             </h3>
@@ -419,7 +395,7 @@ export function Footer() {
       {/* --------------------------- bottom bar --------------------------- */}
       <div className="relative border-t border-[#393939]">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-xs text-[#8d8d8d] sm:flex-row">
-          <p>© {new Date().getFullYear()} {COMPANY.name}™. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {COMPANY.legalFullName}. All rights reserved.</p>
 
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <a
@@ -450,7 +426,6 @@ export function Footer() {
       </div>
 
       <LegalDialog kind={legal} open={legal !== null} onClose={() => setLegal(null)} />
-      <LeaderDialog leader={profile} onClose={() => setProfile(null)} />
     </footer>
   );
 }

@@ -95,8 +95,8 @@ export function CategoryPage({ category }: { category: Category }) {
       onClose={closeCategory}
     >
       {/* ================= hero ================= */}
-      <div className="border-b border-hairline">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
+      <div className="relative border-b border-hairline bg-background pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <motion.div
               initial={{ opacity: 0, y: 16 }}

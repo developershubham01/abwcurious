@@ -162,7 +162,7 @@ export default async function ServiceDetailPage({
   const { prev, next, related } = getSiblingServices(category, item_slug);
 
   return (
-    <main id="main" tabIndex={-1} className="flex-1 outline-none pt-12 sm:pt-20 bg-background">
+    <main id="main" tabIndex={-1} className="flex-1 outline-none pt-16 sm:pt-20 lg:pt-24 bg-background">
       {/* Hero Section */}
       <section className="border-b border-hairline py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-6">

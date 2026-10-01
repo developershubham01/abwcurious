@@ -48,7 +48,7 @@ export function Faq() {
                 Write to us — a human replies within 24 hours.
               </p>
               <a
-                href="#contact"
+                href="/contact"
                 className="mt-6 inline-flex items-center gap-2 border border-hairline-strong px-5 py-3 font-mono text-sm text-foreground transition-colors hover:border-ibm-bright hover:text-ibm-bright focus-carbon"
               >
                 Ask us anything →

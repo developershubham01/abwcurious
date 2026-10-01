@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogsPage } from "@/components/site/blogs-page";
 
 export const metadata: Metadata = {
-  title: "Engineering Notes & Blog — ABWcurious | Engineering a Better Future",
+  title: "Engineering Notes & Blog — ABWcurious | Engineering A Better World",
   description:
     "Production engineering playbooks, architecture tear-downs, AI evaluations, and studio dispatches from the ABWcurious team.",
 };

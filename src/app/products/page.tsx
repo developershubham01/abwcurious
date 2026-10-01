@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ProductsIndexPage } from "@/components/site/product-page";
 
 export const metadata: Metadata = {
-  title: "Products & Platforms — ABWcurious | Engineering a Better Future",
+  title: "Products & Platforms — ABWcurious | Engineering A Better World",
   description:
     "Explore the ABWcurious SaaS line: intelligent, production-ready platforms built for enterprise scale, modern operations, and rapid deployment.",
 };

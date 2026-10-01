@@ -54,7 +54,6 @@ interface SitemapGroup {
 const LANDING_SECTIONS: { id: string; label: string; desc: string }[] = [
   { id: "top", label: "Home", desc: "The hero — where curiosity starts" },
   { id: "about", label: "About", desc: "Who ABWcurious is and what we build" },
-  { id: "leadership", label: "Leadership", desc: "The people behind the products" },
   { id: "achievements", label: "Achievements", desc: "Milestones on the journey timeline" },
   { id: "events", label: "Events", desc: "Summits, launches, offsites and workshops" },
   { id: "gallery", label: "Gallery", desc: "Moments from life at the studio" },
@@ -132,14 +131,6 @@ function buildGroups(): SitemapGroup[] {
           target: "/gallery",
           kind: "link",
           arg: "/gallery",
-        },
-        {
-          num: nextNum(),
-          label: "Leadership",
-          desc: "The people behind the products",
-          target: "/leadership",
-          kind: "link",
-          arg: "/leadership",
         },
         {
           num: nextNum(),

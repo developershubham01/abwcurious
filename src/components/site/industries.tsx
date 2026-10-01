@@ -1,9 +1,9 @@
-"use client";
-
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Eyebrow, Reveal, RollButton } from "./primitives";
 import { SplitText } from "./text-anim";
-import { INDUSTRIES_SECTION, INDUSTRIES } from "@/data/site-content";
+import { INDUSTRIES_SECTION } from "@/data/site-content";
+import { ALL_INDUSTRIES } from "@/lib/industries";
 
 /* --------------------------- 06 — Industries ------------------------------- */
 
@@ -29,19 +29,21 @@ export function Industries() {
         {/* industry tiles — hairline gap-px grid */}
         <Reveal delay={0.1}>
           <div className="mt-12 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-4">
-            {INDUSTRIES.map((name) => (
-              <a
-                key={name}
-                href={INDUSTRIES_SECTION.cta.href}
+            {ALL_INDUSTRIES.map((ind) => (
+              <Link
+                key={ind.slug}
+                href={`/industries/${ind.slug}`}
                 className="group flex min-h-24 items-center justify-between gap-3 bg-white p-5 transition-colors duration-200 hover:bg-ibm-layer"
               >
-                <span className="text-base font-medium text-ink">{name}</span>
+                <span className="text-base font-medium text-ink group-hover:text-primary transition-colors">
+                  {ind.name}
+                </span>
                 <ArrowUpRight
                   className="size-4 shrink-0 text-ink/30 transition-colors group-hover:text-primary"
                   strokeWidth={1.5}
                   aria-hidden="true"
                 />
-              </a>
+              </Link>
             ))}
           </div>
         </Reveal>
@@ -49,8 +51,8 @@ export function Industries() {
         {/* footer CTA */}
         <Reveal delay={0.15}>
           <div className="mt-10 flex justify-center">
-            <RollButton href={INDUSTRIES_SECTION.cta.href} variant="outline">
-              {INDUSTRIES_SECTION.cta.label}
+            <RollButton href="/industries" variant="outline">
+              Explore Industries
             </RollButton>
           </div>
         </Reveal>

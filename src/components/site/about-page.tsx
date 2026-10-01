@@ -15,23 +15,23 @@ export function AboutPage() {
   return (
     <div className="bg-background">
       {/* Page header */}
-      <section className="border-b border-hairline bg-background pt-14 pb-16 sm:pt-16">
+      <section className="relative border-b border-hairline bg-background pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
         <div className="mx-auto max-w-7xl px-6">
           <Reveal>
-            <p className="flex items-center gap-2.5 text-sm text-primary">
-              <span aria-hidden="true" className="h-px w-6 bg-current" />
+            <p className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-primary sm:text-sm">
+              <span aria-hidden="true" className="h-px w-6 bg-current inline-block" />
               About ABWcurious
             </p>
           </Reveal>
           <Reveal delay={0.08}>
-            <h1 className="mt-6 max-w-4xl text-balance text-4xl font-light leading-[1.15] tracking-tight text-ink sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 sm:mt-7 max-w-4xl text-balance text-4xl font-light leading-[1.12] tracking-tight text-ink sm:text-5xl lg:text-6xl">
               Curious minds.
               <br />
-              Intelligent software.
+              <span className="text-primary font-normal">Intelligent software.</span>
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
-            <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg">
+            <p className="mt-6 sm:mt-8 max-w-3xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg lg:text-xl">
               {COMPANY.tagline} {COMPANY.description}
             </p>
           </Reveal>
@@ -39,7 +39,7 @@ export function AboutPage() {
       </section>
 
       {/* Story — two-column: heading + paragraphs (Carbon editorial row) */}
-      <section className="border-b border-hairline bg-white py-16 sm:py-20">
+      <section className="border-b border-hairline bg-white py-16 sm:py-24">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">
             <h2 className="text-3xl font-light tracking-tight text-ink sm:text-4xl">
@@ -57,9 +57,6 @@ export function AboutPage() {
                 </p>
               </Reveal>
             ))}
-            <Reveal delay={0.2}>
-              <p className="text-xs text-ibm-subtle">{SAMPLE_NOTE}</p>
-            </Reveal>
           </div>
         </div>
       </section>
@@ -112,7 +109,6 @@ export function AboutPage() {
                 </div>
               ))}
             </dl>
-            <p className="mt-4 text-xs text-ibm-subtle">{SAMPLE_NOTE}</p>
           </div>
           <Reveal delay={0.1} className="lg:col-span-5">
             <div className="border border-hairline bg-white">

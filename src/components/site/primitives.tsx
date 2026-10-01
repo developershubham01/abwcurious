@@ -80,60 +80,46 @@ export function RollButton({
   arrow?: boolean;
   disabled?: boolean;
 }) {
-  const inner = (dark?: boolean) => (
-    <>
-      <span>{children}</span>
-      {arrow && (
-        <ArrowRight
-          className={cn(
-            "size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
-          )}
-          strokeWidth={1.75}
-        />
-      )}
-    </>
-  );
   const styles = cn(
-    "btn-roll group relative inline-flex items-center justify-center gap-2 focus-carbon text-sm px-5 h-12 select-none overflow-hidden",
-    /* Carbon button-primary: blue solid, hover blue-hover, pressed blue-80 */
+    "group relative inline-flex items-center justify-center gap-2 focus-carbon text-sm font-medium px-6 h-12 select-none transition-all duration-200 rounded-none",
+    /* Carbon button-primary: blue solid */
     variant === "primary" &&
-      "bg-primary text-primary-foreground hover:bg-ibm-blue-hover active:bg-ibm-blue-active",
+      "bg-primary text-white hover:bg-ibm-blue-hover active:bg-ibm-blue-active",
     /* Carbon button-secondary: charcoal solid */
     variant === "secondary" &&
       "bg-ink text-white hover:bg-ibm-inverse-hover active:bg-ink",
-    /* Carbon button-tertiary: white with 1px blue border + blue text */
+    /* Carbon button-tertiary: white with 1px blue border + blue text → fills on hover */
     variant === "outline" &&
-      "bg-white text-primary ring-1 ring-inset ring-primary hover:bg-primary hover:text-white active:bg-ibm-blue-active",
+      "bg-transparent text-primary ring-1 ring-inset ring-primary hover:bg-primary hover:text-white active:bg-ibm-blue-active active:text-white",
     /* Carbon button-ghost: plain blue text, blue-10 wash on hover */
     variant === "ghost" && "text-primary hover:bg-[#edf5ff] active:bg-ibm-blue-active active:text-white",
     /* white buttons for use on solid IBM blue surfaces */
-    variant === "light" && "bg-white text-ibm-blue-active hover:bg-white",
+    variant === "light" && "bg-white text-primary hover:bg-slate-100 active:bg-slate-200",
     variant === "outline-light" &&
-      "bg-transparent text-white ring-1 ring-inset ring-white/60 hover:bg-white/10 hover:ring-white",
+      "bg-transparent text-white ring-1 ring-inset ring-white/60 hover:bg-white hover:text-primary active:bg-white/80",
     disabled && "opacity-50 pointer-events-none",
     className
   );
   const track = (
-    <span className="btn-roll__viewport relative inline-block h-6 overflow-hidden leading-6 align-middle">
-      <span className="btn-roll__track flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1/2 group-focus-visible:-translate-y-1/2">
-        <span className="btn-roll__span flex h-6 shrink-0 items-center justify-center gap-2 overflow-hidden whitespace-nowrap leading-6">
-          {inner()}
-        </span>
-        <span className="btn-roll__span flex h-6 shrink-0 items-center justify-center gap-2 overflow-hidden whitespace-nowrap leading-6" aria-hidden="true">
-          {inner()}
-        </span>
-      </span>
+    <span className="inline-flex items-center gap-2">
+      <span>{children}</span>
+      {arrow && (
+        <ArrowRight
+          className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+          strokeWidth={1.75}
+        />
+      )}
     </span>
   );
   if (href) {
     return (
-      <a href={href} className={cn(styles, "group")} onClick={onClick}>
+      <a href={href} className={styles} onClick={onClick}>
         {track}
       </a>
     );
   }
   return (
-    <button type={type ?? "button"} onClick={onClick} className={cn(styles, "group")} disabled={disabled}>
+    <button type={type ?? "button"} onClick={onClick} className={styles} disabled={disabled}>
       {track}
     </button>
   );

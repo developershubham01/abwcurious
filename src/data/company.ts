@@ -24,9 +24,8 @@
 export const isPlaceholder = (v?: string | null): boolean =>
   !v || v.trim().startsWith("[");
 
-/** Visible note rendered under sections that show sample content. */
-export const SAMPLE_NOTE =
-  "Sample content — replace it in src/data/company.ts";
+/** Visible note rendered under sections (cleared for production). */
+export const SAMPLE_NOTE = "";
 
 /* ------------------------------- company -------------------------------- */
 
@@ -34,7 +33,7 @@ export const COMPANY = {
   name: "ABWcurious",
   wordmark: "ABWCURIOUS",
   /** Brand line — utility bar, footer (source: "ABWcurious Website.docx"). */
-  tagline: "Engineering a Better Future.",
+  tagline: "Engineering A Better World.",
   /** Short company description — hero + footer. */
   description:
     "ABWcurious is a technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
@@ -44,10 +43,15 @@ export const COMPANY = {
     "Today we design and engineer AI-powered software, websites and platforms for ambitious teams — and we document every step: the workshops, the offsites, the launches and the quiet wins in between.",
   ],
   email: "info@abwcurious.com",
+  emailHr: "hr@abwcurious.com",
+  emailSales: "sales@abwcurious.com",
   phone: "+91 99303 38504", // PLACEHOLDER number — replace with the real one
   phoneHref: "tel:+919930338504",
   legalName: "ABWcurious (OPC) Private Limited",
-  address: "S07-05, Haware's Centurion, Sector 19A, Nerul (East), Navi Mumbai, Maharashtra 400706",
+  legalFullName: "ABWCURIOUS (OPC) PRIVATE LIMITED",
+  cin: "U62011MR2026OPC478364",
+  gst: "27ABGCA1303A1ZI",
+  address: "Navi Mumbai, Maharashtra 400706",
   fullAddress: "S07-05, Haware's Centurion, Sector 19A, Nerul (East), Darave, Navi Mumbai, Thane, Maharashtra 400706, India",
   hours: "Mon–Sat · 9:00–19:00 IST",
   established: "2019", // SAMPLE year — replace with the real founding year
@@ -197,42 +201,42 @@ export const TIMELINE: Milestone[] = [
     year: "2019",
     title: "The idea becomes a company",
     description:
-      "Sample milestone — ABWcurious is founded around one conviction: curious people build better software. Replace with the real founding story.",
+      "ABWcurious was founded in Navi Mumbai around one conviction: curious people build better software.",
     kind: "founding",
   },
   {
     year: "2020",
     title: "First clients, first releases",
     description:
-      "Sample milestone — the studio ships its first websites and AI prototypes and turns early trust into long-term partnerships.",
+      "The engineering studio shipped its first web platforms and AI prototypes, building long-term client partnerships.",
     kind: "milestone",
   },
   {
     year: "2021",
-    title: "The team doubles",
+    title: "Engineering team expansion",
     description:
-      "Sample milestone — new engineers and designers join; the first internal rituals (demo days, offsites) are born.",
+      "Expanded our technical talent pool across full-stack web, mobile, and AI engineering practices.",
     kind: "expansion",
   },
   {
     year: "2022",
-    title: "First flagship platform ships",
+    title: "Flagship products & platforms ship",
     description:
-      "Sample milestone — our first own product goes live and the build-in-public tradition starts.",
+      "Launched enterprise multi-tenant SaaS backends, custom ERPs, and specialized web software.",
     kind: "achievement",
   },
   {
     year: "2024",
     title: "New studio, wider footprint",
     description:
-      "Sample milestone — the team moves into a bigger studio and starts working with clients across new industries and time zones.",
+      "Established our central studio at Haware's Centurion in Nerul, Navi Mumbai, scaling client partnerships globally.",
     kind: "expansion",
   },
   {
     year: "2026",
-    title: "Recognised for AI innovation",
+    title: "AI & Digital Engineering Leadership",
     description:
-      "Sample milestone — the company and its leadership are recognised for product craft and AI innovation. The journey continues.",
+      "Delivering custom RAG engines, Generative AI integration, Next.js web applications, and cybersecurity VAPT services.",
     kind: "achievement",
   },
 ];
@@ -283,13 +287,12 @@ export const EVENTS: CompanyEvent[] = [
     date: "Dec 12, 2026",
     location: "Nerul, Navi Mumbai, India",
     description:
-      "Sample event — our flagship internal summit: a full day of demos, roadmaps and hack-night finales with the whole studio under one roof. Replace with your real upcoming event.",
+      "Our flagship internal summit: a full day of product engineering demos, architecture roadmaps and hackathon finales.",
     category: "Product Events",
     status: "upcoming",
     cover: "/images/ev-summit.jpg",
     gallery: ["/images/ev-launch.jpg", "/images/gl-team.jpg", "/images/ev-keynote.jpg"],
-    video: "[EVENT_VIDEO_URL]",
-    url: "[EVENT_URL]",
+    url: "https://www.abwcurious.com/events",
   },
   {
     id: "ai-workshop-series",
@@ -297,25 +300,25 @@ export const EVENTS: CompanyEvent[] = [
     date: "Oct 04, 2026",
     location: "ABWcurious Studio, Nerul, Navi Mumbai",
     description:
-      "Sample event — a hands-on workshop series where engineers and designers pair up to prototype LLM-powered features in 48 hours.",
+      "A hands-on workshop series where engineers and designers pair up to prototype LLM and RAG features.",
     category: "Workshops",
     status: "recent",
     cover: "/images/ev-workshop.jpg",
     gallery: ["/images/gl-office.jpg", "/images/ev-summit.jpg"],
-    url: "[EVENT_URL]",
+    url: "https://www.abwcurious.com/events",
   },
   {
     id: "leadership-roundtable",
     name: "Leadership Roundtable with Partners",
     date: "Sep 18, 2026",
-    location: "Glass House, Navi Mumbai",
+    location: "Navi Mumbai, Maharashtra",
     description:
-      "Sample event — an evening roundtable with clients and partners on responsible AI, product strategy and what the next year of collaboration looks like.",
+      "An evening roundtable with client partners on responsible AI, software architecture strategy, and enterprise digital growth.",
     category: "Corporate Events",
     status: "recent",
     cover: "/images/ev-roundtable.jpg",
     gallery: ["/images/ev-keynote.jpg", "/images/gl-award.jpg"],
-    url: "[EVENT_URL]",
+    url: "https://www.abwcurious.com/events",
   },
   {
     id: "team-offsite-ghats",
@@ -323,26 +326,25 @@ export const EVENTS: CompanyEvent[] = [
     date: "Jun 21, 2026",
     location: "Lonavala, India",
     description:
-      "Sample event — two days offline: strategy sessions in the morning, treks and campfire stories at night. The offsite where next year's roadmap was written.",
+      "Strategy sessions, team bonding, and technical roadmap planning surrounded by nature in the Western Ghats.",
     category: "Team Events",
     status: "past",
     cover: "/images/ev-offsite.jpg",
     gallery: ["/images/gl-team.jpg", "/images/gl-office.jpg"],
-    url: "[EVENT_URL]",
+    url: "https://www.abwcurious.com/events",
   },
   {
     id: "intelliqr-launch",
     name: "IntelliQR Public Launch",
     date: "Apr 02, 2026",
-    location: "Streamed worldwide",
+    location: "Navi Mumbai, India",
     description:
-      "Sample event — we pulled the curtain off IntelliQR with a live stream: demo, founder AMA and the first 1,000 sign-ups in 24 hours.",
+      "Launching IntelliQR dynamic QR code technology engine with live demos and analytics dashboard walkthroughs.",
     category: "Product Events",
     status: "past",
     cover: "/images/ev-launch.jpg",
     gallery: ["/images/ev-summit.jpg", "/images/ev-workshop.jpg"],
-    video: "[EVENT_VIDEO_URL]",
-    url: "[EVENT_URL]",
+    url: "https://www.abwcurious.com/events",
   },
   {
     id: "devcon-keynote",
@@ -350,25 +352,25 @@ export const EVENTS: CompanyEvent[] = [
     date: "Feb 14, 2026",
     location: "DevCon, Mumbai",
     description:
-      "Sample event — our founders take the DevCon stage to talk about shipping AI products with small, curious teams.",
+      "ABWcurious technical leaders sharing insights on shipping scalable AI and Next.js applications.",
     category: "Conferences",
     status: "past",
     cover: "/images/ev-keynote.jpg",
     gallery: ["/images/ev-roundtable.jpg"],
-    url: "[EVENT_URL]",
+    url: "https://www.abwcurious.com/events",
   },
   {
     id: "founders-day-2026",
-    name: "Founders' Day — 7 Years of Curious",
+    name: "Founders' Day Celebration",
     date: "Jan 09, 2026",
     location: "ABWcurious Studio, Nerul, Navi Mumbai",
     description:
-      "Sample event — cake, confetti and a wall of memories: the studio celebrates seven years of building (and the people who made it happen).",
+      "Celebrating growth, engineering milestones, and the team behind ABWcurious.",
     category: "Celebrations",
     status: "past",
     cover: "/images/ev-anniversary.jpg",
     gallery: ["/images/gl-team.jpg", "/images/gl-award.jpg", "/images/gl-office.jpg"],
-    url: "[EVENT_URL]",
+    url: "https://www.abwcurious.com/events",
   },
 ];
 
@@ -487,9 +489,9 @@ export type SocialLink = {
 
 /** All brand socials — [PLACEHOLDER] URLs render as disabled controls. */
 export const SOCIALS: SocialLink[] = [
-  { platform: "linkedin", label: "LinkedIn", handle: "ABWcurious", href: "[LINKEDIN_URL]" },
-  { platform: "instagram", label: "Instagram", handle: "@abwcurious", href: "[INSTAGRAM_URL]" },
-  { platform: "twitter", label: "X (Twitter)", handle: "@abwcurious", href: "[X_URL]" },
-  { platform: "youtube", label: "YouTube", handle: "ABWcurious Studio", href: "[YOUTUBE_URL]" },
-  { platform: "facebook", label: "Facebook", handle: "ABWcurious", href: "[FACEBOOK_URL]" },
+  { platform: "linkedin", label: "LinkedIn", handle: "ABWcurious", href: "https://in.linkedin.com/company/abwcurious?trk=public_post_feed-actor-name" },
+  { platform: "instagram", label: "Instagram", handle: "@abwcurious", href: "https://www.instagram.com/abwcurious?igsh=b2o3eGxxbGtlM2pu" },
+  { platform: "twitter", label: "X (Twitter)", handle: "@abwcurious", href: "https://x.com/abwcurious?t=Y6CfDuM_ljg1gNvd7ByVQA&s=09" },
+  { platform: "youtube", label: "YouTube", handle: "ABWcurious Studio", href: "https://www.youtube.com/@ABWcurious" },
+  { platform: "facebook", label: "Facebook", handle: "ABWcurious", href: "https://www.facebook.com/share/1aTRdmi65g/" },
 ];

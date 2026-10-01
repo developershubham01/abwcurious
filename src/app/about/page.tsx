@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AboutPage } from "@/components/site/about-page";
 
 export const metadata: Metadata = {
-  title: "About Us — ABWcurious | Engineering a Better Future",
+  title: "About Us — ABWcurious | Engineering A Better World",
   description:
     "Learn about ABWcurious — our journey, core values, studio facts, and the engineering team delivering intelligent digital solutions.",
 };

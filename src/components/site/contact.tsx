@@ -186,6 +186,7 @@ export function Contact() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5" noValidate={false}>
+                    <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
                     <div className="grid gap-5 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="contact-name" className="text-sm text-ink">
@@ -306,15 +307,18 @@ export function Contact() {
         <Reveal delay={0.1}>
           <div className="relative mt-14 overflow-hidden border border-hairline bg-white">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline border-l-4 border-l-primary px-5 py-4 sm:px-7">
-              <p className="inline-flex items-center gap-2.5 text-sm text-ink-muted">
-                <MapPin className="size-3.5 text-ink-muted" strokeWidth={1.75} aria-hidden="true" />
-                Studio — {COMPANY.address}
-              </p>
+              <div>
+                <p className="inline-flex items-center gap-2 text-sm font-medium text-ink">
+                  <MapPin className="size-4 text-primary shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                  Studio — Full Address
+                </p>
+                <p className="mt-1 text-xs text-ink-muted leading-relaxed">{COMPANY.fullAddress}</p>
+              </div>
               <a
                 href={COMPANY.map.directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="focus-carbon group inline-flex h-9 items-center gap-2 rounded-none bg-primary px-4 text-sm text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active"
+                className="focus-carbon group inline-flex h-9 items-center gap-2 rounded-none bg-primary px-4 text-sm text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active shrink-0"
               >
                 <Navigation
                   className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -326,9 +330,10 @@ export function Contact() {
             </div>
             <div className="relative aspect-[16/10] w-full sm:aspect-[21/9]">
               <iframe
-                src={MAP_EMBED}
-                title={`Map — ABWcurious studio, ${COMPANY.address}`}
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5589.069098648515!2d73.0221279!3d19.0247909!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3d076147f7b%3A0xe421751ae4517f6d!2sABWcurious%20OPC%20Pvt.Ltd!5e1!3m2!1sen!2sin!4v1790846305053!5m2!1sen!2sin"
+                title={`Google Map — ABWcurious studio, ${COMPANY.fullAddress}`}
                 loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
                 className="absolute inset-0 h-full w-full border-0"
               />
             </div>

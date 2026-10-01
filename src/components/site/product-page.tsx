@@ -313,8 +313,8 @@ export function ProductDetailPage({ product }: { product: Product }) {
     >
       <main className="flex-1">
         {/* ================= hero ================= */}
-        <section className="border-b border-hairline">
-          <div className="mx-auto grid max-w-7xl gap-12 px-6 py-14 lg:grid-cols-2 lg:py-20">
+        <section className="relative border-b border-hairline bg-background pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
+          <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-2">
             <div>
               <Eyebrow className="justify-start">
                 {product.num} / SaaS platform — {product.statusLabel}

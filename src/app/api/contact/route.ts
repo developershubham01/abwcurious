@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { sendToGoogleSheets } from "@/lib/google-sheets";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(120),
   email: z.string().trim().email("Please provide a valid email address").max(200),
   phone: z.string().trim().max(40).optional().nullable(),
   service: z.string().trim().max(80).optional().nullable(),
-  message: z.string().trim().min(10, "Please tell us a little more (10+ characters)").max(600, "Message is limited to 600 characters"),
+  budget: z.string().trim().max(80).optional().nullable(),
+  message: z.string().trim().min(10, "Please tell us a little more (10+ characters)").max(800, "Message is limited to 800 characters"),
+  _gotcha: z.string().optional().nullable(),
 });
 
 export async function POST(request: NextRequest) {
@@ -26,7 +29,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, phone, service, message } = parsed.data;
+    const { name, email, phone, service, budget, message, _gotcha } = parsed.data;
+
+    // Honeypot check
+    if (_gotcha) {
+      return NextResponse.json(
+        { ok: true, id: "sp-drop", message: "Message received" },
+        { status: 201 }
+      );
+    }
 
     const saved = await db.contactMessage.create({
       data: {
@@ -37,6 +48,21 @@ export async function POST(request: NextRequest) {
         message,
       },
     });
+
+    // Forward to Google Sheets
+    sendToGoogleSheets({
+      formType: "contact",
+      data: {
+        name,
+        email,
+        phone: phone || "",
+        service: service || "General",
+        budget: budget || "Not specified",
+        message,
+      },
+      pageUrl: request.headers.get("referer") || "",
+      userAgent: request.headers.get("user-agent") || "",
+    }).catch((err) => console.error("[GoogleSheets] Contact error:", err));
 
     return NextResponse.json(
       { ok: true, id: saved.id, message: "Message received" },

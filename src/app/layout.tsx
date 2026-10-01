@@ -7,6 +7,13 @@ import { Footer } from "@/components/site/footer";
 import { ScrollProgress, BackToTop } from "@/components/site/chrome";
 import { ViewPortals } from "@/components/site/view-portals";
 import { ChatAssistant } from "@/components/site/chat-assistant";
+import { WhatsAppWidget } from "@/components/site/whatsapp-widget";
+import { SEO_CONFIG } from "@/lib/seo-config";
+import {
+  OrganizationSchema,
+  LocalBusinessSchema,
+  WebSiteSchema,
+} from "@/components/seo/JsonLd";
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
@@ -21,23 +28,26 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://abwcurious.com"),
-  title: "ABWcurious — Engineering a Better Future · AI. Technology. Education. Innovation.",
-  description:
-    "ABWcurious is a technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions. We help organizations innovate, transform, operate, and grow.",
+  metadataBase: new URL(SEO_CONFIG.canonicalBase),
+  title: {
+    default: SEO_CONFIG.defaultTitle,
+    template: `%s | ${SEO_CONFIG.siteName}`,
+  },
+  description: SEO_CONFIG.defaultDescription,
   keywords: [
     "ABWcurious",
-    "about ABWcurious",
-    "ABWcurious team",
-    "founders",
-    "co-founders",
-    "company events",
-    "company gallery",
-    "leadership",
-    "AI software studio",
-    "Nerul Navi Mumbai IT company",
+    "IT services company Navi Mumbai",
+    "custom software development company India",
+    "software development company in Mumbai",
+    "website development company in Mumbai",
+    "mobile app development company India",
+    "cybersecurity services Navi Mumbai",
+    "VAPT company Mumbai",
+    "AI development company India",
+    "cloud migration company India",
+    "digital marketing company Mumbai",
   ],
-  authors: [{ name: "ABWcurious" }],
+  authors: [{ name: SEO_CONFIG.companyName, url: SEO_CONFIG.canonicalBase }],
   icons: {
     icon: [
       { url: "/images/logo-abw-mark-512.png", type: "image/png", sizes: "512x512" },
@@ -48,32 +58,31 @@ export const metadata: Metadata = {
     apple: "/images/logo-abw-mark-512.png",
   },
   openGraph: {
-    title: "ABWcurious — Engineering a Better Future.",
-    description:
-      "AI. Technology. Education. Innovation. — intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
-    siteName: "ABWcurious",
+    title: SEO_CONFIG.defaultTitle,
+    description: SEO_CONFIG.defaultDescription,
+    siteName: SEO_CONFIG.siteName,
     type: "website",
-    url: "https://abwcurious.com",
+    url: SEO_CONFIG.canonicalBase,
     locale: "en_US",
     images: [
       {
-        url: "/og-image.png",
-        width: 1216,
-        height: 640,
-        alt: "ABWcurious — AI software development studio",
+        url: SEO_CONFIG.ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: "ABWcurious — Custom Software Development, AI, Cybersecurity & IT Services",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ABWcurious — Engineering a Better Future.",
-    description:
-      "AI. Technology. Education. Innovation. — intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
-    images: ["/og-image.png"],
+    title: SEO_CONFIG.defaultTitle,
+    description: SEO_CONFIG.defaultDescription,
+    images: [SEO_CONFIG.ogImageUrl],
   },
   robots: { index: true, follow: true },
   manifest: "/manifest.webmanifest",
   alternates: {
+    canonical: SEO_CONFIG.canonicalBase,
     types: { "application/rss+xml": "/api/rss" },
   },
 };
@@ -84,47 +93,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "https://abwcurious.com/#organization",
-  name: "ABWcurious",
-  url: "https://abwcurious.com",
-  logo: "https://abwcurious.com/images/logo-abw-mark-512.png",
-  description:
-    "ABWcurious — technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
-  slogan: "Engineering a Better Future.",
-  email: "hello@abwcurious.com",
-  knowsAbout: [
-    "AI software development",
-    "LLM integration",
-    "Web application development",
-    "UI/UX design",
-  ],
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Nerul, Navi Mumbai",
-    addressRegion: "Maharashtra",
-    addressCountry: "IN",
-  },
-  sameAs: [],
-};
-
-/* WebSite node ties the single-page document to the organization and
-   lets crawlers associate the RSS feed as the site's update channel. */
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": "https://abwcurious.com/#website",
-  name: "ABWcurious",
-  url: "https://abwcurious.com",
-  description:
-    "ABWcurious — engineering a better future with AI, digital engineering, cybersecurity, IT services, digital growth, talent, and future-ready education.",
-  inLanguage: "en",
-  publisher: { "@id": "https://abwcurious.com/#organization" },
-};
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -133,14 +101,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
+        <OrganizationSchema />
+        <LocalBusinessSchema />
+        <WebSiteSchema />
       </head>
       <body
         className={`${plexSans.variable} ${plexMono.variable} antialiased bg-background text-foreground font-sans`}
@@ -166,6 +129,8 @@ export default function RootLayout({
           <ViewPortals />
           {/* RAG AI floating chat assistant — persists across all pages */}
           <ChatAssistant />
+          {/* WhatsApp floating widget — left side */}
+          <WhatsAppWidget />
         </div>
         <Toaster />
       </body>

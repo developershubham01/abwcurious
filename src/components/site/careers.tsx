@@ -236,7 +236,7 @@ export function Careers() {
 
                     <div className="mt-7 flex flex-wrap items-center gap-5">
                       <RollButton
-                        href="#contact"
+                        href="/contact"
                         variant="primary"
                         arrow
                         className="h-10 px-5 text-xs"

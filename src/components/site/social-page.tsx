@@ -78,52 +78,26 @@ const EXTENDED_CHANNELS = [
 export function SocialMediaPage() {
   return (
     <div className="bg-background">
-      {/* ================= Hero Section ================= */}
-      <section className="relative overflow-hidden border-b border-hairline bg-[#04101f] text-white pt-28 pb-16 sm:pt-36 sm:pb-20">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 50% 30%, rgba(95,208,225,0.22), transparent 70%), linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)",
-            backgroundSize: "100% 100%, 48px 48px, 48px 48px",
-          }}
-          aria-hidden="true"
-        />
-
-        <div className="relative mx-auto max-w-7xl px-6">
+      {/* ================= Hero Section — About Page Theme ================= */}
+      <section className="relative border-b border-hairline bg-background pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
+        <div className="mx-auto max-w-7xl px-6">
           <Reveal>
-            <p className="inline-flex items-center gap-2 border border-white/20 bg-black/40 px-3.5 py-1 text-xs font-medium tracking-wide text-[#79dce8] backdrop-blur-md">
-              <span className="size-1.5 rounded-full bg-[#5fd0e1] animate-pulse-dot" />
-              Community & Dispatches · Official Social Hub
+            <p className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-primary sm:text-sm">
+              <span aria-hidden="true" className="h-px w-6 bg-current inline-block" />
+              Social Media & Community
             </p>
           </Reveal>
 
           <Reveal delay={0.08}>
-            <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-              <SplitText text="Follow the journey," immediate />{" "}
-              <span className="bg-gradient-to-r from-[#79dce8] via-[#a6e5ff] to-white bg-clip-text text-transparent font-normal">
-                wherever you build.
-              </span>
+            <h1 className="mt-5 sm:mt-7 max-w-4xl text-balance text-4xl font-light leading-[1.12] tracking-tight text-ink sm:text-5xl lg:text-6xl">
+              Follow the journey, <span className="text-primary font-normal">wherever you build.</span>
             </h1>
           </Reveal>
 
           <Reveal delay={0.16}>
-            <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-white/80 sm:text-lg">
+            <p className="mt-6 sm:mt-8 max-w-3xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg lg:text-xl">
               Launches, architectural deep-dives, live demo days, and studio dispatches. Pick your preferred platform and stay in the loop with {COMPANY.name}.
             </p>
-          </Reveal>
-
-          <Reveal delay={0.24}>
-            <div className="mt-8 flex flex-wrap gap-4 text-xs font-mono text-white/60">
-              <span className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-3 py-1.5">
-                <ShieldCheck className="size-3.5 text-[#5fd0e1]" />
-                All handles verified
-              </span>
-              <span className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-3 py-1.5">
-                <Sparkles className="size-3.5 text-[#5fd0e1]" />
-                Active community
-              </span>
-            </div>
           </Reveal>
         </div>
       </section>

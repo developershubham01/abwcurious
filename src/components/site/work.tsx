@@ -70,7 +70,7 @@ export function Work() {
               <span className="text-ibm-bright">4</span> continents
             </p>
             <a
-              href="#contact"
+              href="/contact"
               className="font-mono text-sm text-ibm-soft underline-offset-4 hover:underline focus-carbon"
             >
               Request the full case-study deck →

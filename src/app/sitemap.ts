@@ -1,81 +1,59 @@
 import type { MetadataRoute } from "next";
+import { SEO_CONFIG, DETAILED_SERVICES } from "@/lib/seo-config";
 import { PRODUCTS } from "@/lib/products";
-import { CATEGORIES } from "@/lib/catalog";
-
-/**
- * /sitemap.xml — an index of EVERY page on the site.
- *
- * The app intentionally stays a single Next.js route (`/`), so the
- * "pages" are fragment URLs: landing sections live on `#section`,
- * while products / product details / service categories / blog /
- * sitemap live on `#/...` hash routes rendered by the client portals.
- * Crawlers treat fragments as one document, but they are listed here
- * (and mirrored in the footer sitemap band + #/sitemap page) so every
- * destination has a canonical, shareable URL.
- *
- * RSS + vCard are APIs, not crawlable documents, so they stay out.
- */
-
-const SITE = "https://abwcurious.com";
+import { ALL_INDUSTRIES } from "@/lib/industries";
+import { LOCATIONS_DATA } from "@/lib/locations";
+import { JOBS_DATABASE } from "@/lib/jobs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+  const baseUrl = SEO_CONFIG.canonicalBase;
 
-  const page = (path: string, priority: number): MetadataRoute.Sitemap[number] => ({
-    url: `${SITE}${path}`,
+  const entry = (
+    path: string,
+    priority: number,
+    changeFreq: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never" = "weekly"
+  ): MetadataRoute.Sitemap[number] => ({
+    url: `${baseUrl}${path}`,
     lastModified: now,
-    changeFrequency: "weekly",
+    changeFrequency: changeFreq,
     priority,
   });
 
-  return [
-    // canonical entry
-    page("/", 1),
+  const routes: MetadataRoute.Sitemap = [
+    // Primary Landing & Corporate Pages
+    entry("/", 1.0, "daily"),
+    entry("/about", 0.9),
+    entry("/contact", 0.95, "daily"),
+    entry("/careers", 0.85, "daily"),
+    entry("/careers/apply", 0.8),
+    entry("/careers/submit-resume", 0.8),
+    ...JOBS_DATABASE.map((j) => entry(`/careers/${j.slug}`, 0.8, "daily")),
+    entry("/events", 0.8),
+    entry("/gallery", 0.8),
+    entry("/achievements", 0.8),
+    entry("/blogs", 0.85, "daily"),
+    entry("/sitemap", 0.5),
+    entry("/terms", 0.5, "monthly"),
+    entry("/privacy", 0.5, "monthly"),
 
-    // landing sections — DOCX chapters first, then the company profile
-    page("/#about", 0.9),
-    page("/#capabilities", 0.9),
-    page("/#products", 0.9),
-    page("/#approach", 0.8),
-    page("/#why", 0.8),
-    page("/#industries", 0.8),
-    page("/#vision", 0.7),
-    page("/#leadership", 0.9),
-    page("/#achievements", 0.8),
-    page("/#events", 0.9),
-    page("/#gallery", 0.8),
-    page("/#follow", 0.6),
+    // Services Landing & Individual Service Detail Pages
+    entry("/services", 0.95),
+    ...DETAILED_SERVICES.map((s) => entry(`/services/${s.slug}`, 0.9)),
 
-    // standalone pages
-    page("/contact", 0.95),
-    page("/about", 0.9),
-    page("/careers", 0.85),
-    page("/events", 0.85),
-    page("/social", 0.8),
-    page("/gallery", 0.85),
-    page("/leadership", 0.85),
-    page("/achievements", 0.85),
-    page("/blogs", 0.8),
-    page("/sitemap", 0.7),
-    page("/terms", 0.6),
-    page("/privacy", 0.6),
+    // Locations Landing & Individual Location Pages
+    entry("/locations", 0.9),
+    ...LOCATIONS_DATA.map((loc) => entry(`/locations/${loc.slug}`, 0.85)),
 
-    // hash-route pages — company
-    page("/#/about", 0.8),
-    page("/#/careers", 0.7),
-    page("/#/events", 0.7),
-    page("/#/social", 0.6),
-    page("/#/contact", 0.9),
+    // Industries Landing & Individual Industry Pages
+    entry("/industries", 0.9),
+    ...ALL_INDUSTRIES.map((ind) => entry(`/industries/${ind.slug}`, 0.85)),
 
-    // hash-route pages — products
-    page("/#/products", 0.9),
-    ...PRODUCTS.map((p) => page(`/#/products/${p.slug}`, 0.8)),
-
-    // hash-route pages — service categories
-    ...CATEGORIES.map((c) => page(`/#/services/${c.slug}`, 0.8)),
-
-    // hash-route pages — resources
-    page("/#/blogs", 0.7),
-    page("/#/sitemap", 0.5),
+    // Products Landing & Individual Product Detail Pages
+    entry("/products", 0.9),
+    ...PRODUCTS.map((p) => entry(`/products/${p.slug}`, 0.85)),
   ];
+
+  return routes;
 }
+

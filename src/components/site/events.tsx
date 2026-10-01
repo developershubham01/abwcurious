@@ -315,6 +315,7 @@ function WaitlistForm({ event }: { event: CompanyEvent }) {
       onSubmit={submit}
       className="flex overflow-hidden rounded-none border border-hairline bg-ibm-layer transition-colors focus-within:border-b-2 focus-within:border-primary"
     >
+      <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       <label htmlFor={`waitlist-${event.id}`} className="sr-only">
         Email for event reminders
       </label>

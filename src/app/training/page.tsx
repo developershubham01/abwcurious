@@ -13,7 +13,7 @@ export default function TrainingPage() {
   return (
     <main id="main" tabIndex={-1} className="flex-1 outline-none bg-ibm-layer">
       {/* Page Header Banner */}
-      <section className="bg-white border-b border-hairline py-16 md:py-24">
+      <section className="bg-white border-b border-hairline pt-28 pb-16 sm:pt-36 sm:pb-20 lg:pt-40 lg:pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-ibm-blue/20 bg-ibm-blue/5 px-3.5 py-1 text-xs font-semibold text-ibm-blue">
