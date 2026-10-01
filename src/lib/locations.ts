@@ -30,7 +30,7 @@ export const LOCATIONS_DATA: LocationDetail[] = [
     email: "info@abwcurious.com",
     metaTitle: "IT Services & Software Development Company in Navi Mumbai | ABWcurious",
     metaDescription:
-      "ABWcurious Pvt. Ltd. is a leading IT services and custom software development company in Navi Mumbai (Nerul), offering web apps, AI, cybersecurity, IT support & digital marketing.",
+      "ABWcurious Pvt. Ltd. is a leading IT services and custom software development company in Navi Mumbai (Nerul), offering web apps, AI, cybersecurity, IT support & Marketing.",
     heroTitle: "IT Services & Software Development Company in Navi Mumbai",
     heroSubtitle:
       "Headquartered in Nerul East, Navi Mumbai. Delivering enterprise custom software, web apps, AI automation, cybersecurity, and IT support & business solutions.",
@@ -72,7 +72,7 @@ export const LOCATIONS_DATA: LocationDetail[] = [
       },
       {
         q: "What IT services does ABWcurious provide in Navi Mumbai?",
-        a: "We offer custom software development, Next.js web development, mobile apps (React Native/Flutter), AI & RAG development, VAPT cybersecurity, IT support & AMC services, and digital marketing.",
+        a: "We offer custom software development, Next.js web development, mobile apps (React Native/Flutter), AI & RAG development, VAPT cybersecurity, IT support & AMC services, and Marketing.",
       },
     ],
   },
@@ -88,7 +88,7 @@ export const LOCATIONS_DATA: LocationDetail[] = [
     heroSubtitle:
       "Partnering with Mumbai's leading financial institutions, enterprises, healthcare providers, and startups for digital transformation.",
     introText:
-      "ABWcurious provides high-performance custom software development, mobile apps, cybersecurity audits, and digital marketing services to businesses throughout Mumbai.",
+      "ABWcurious provides high-performance custom software development, mobile apps, cybersecurity audits, and Marketing services to businesses throughout Mumbai.",
     keyAreas: ["BKC (Bandra Kurla Complex)", "Andheri East & West", "Lower Parel", "Nariman Point", "Powai", "Worli", "Goregaon"],
     featuredServices: [
       {

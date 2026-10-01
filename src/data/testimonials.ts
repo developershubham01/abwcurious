@@ -21,7 +21,7 @@ export const TESTIMONIALS_DATA: Testimonial[] = [
     name: "Suyogy Shah",
     role: "Business Owner",
     company: "Client Partner",
-    industry: "Web & Digital Marketing",
+    industry: "Web & Marketing",
     rating: 5,
     quote:
       "I was needed website for business and they provided me very professional and effective website at very reasonable price and really quick. They also handle my social media for marketing.",

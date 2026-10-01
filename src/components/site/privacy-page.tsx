@@ -87,11 +87,10 @@ export function PrivacyPage() {
                     <li key={s.id}>
                       <a
                         href={`#${s.id}`}
-                        className={`group flex items-center justify-between border-l-2 px-3 py-2 text-xs transition-colors ${
-                          activeSection === s.id
+                        className={`group flex items-center justify-between border-l-2 px-3 py-2 text-xs transition-colors ${activeSection === s.id
                             ? "border-primary bg-ibm-layer font-medium text-primary"
                             : "border-transparent text-ink-muted hover:border-hairline hover:bg-ibm-layer hover:text-ink"
-                        }`}
+                          }`}
                       >
                         <span className="truncate">
                           <span className="font-mono text-ibm-subtle mr-2">{s.num}.</span>
@@ -275,7 +274,7 @@ export function PrivacyPage() {
                     </div>
                     <div className="flex items-start gap-2 text-ink-muted">
                       <MapPin className="size-3.5 shrink-0 text-primary mt-0.5" />
-                      <span>{COMPANY.address} · Jurisdiction: Nerul, Navi Mumbai, MH, India</span>
+                      <span>{COMPANY.address} · Jurisdiction: Navi Mumbai, MH, India</span>
                     </div>
                   </div>
                 </div>

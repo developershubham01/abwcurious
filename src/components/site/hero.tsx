@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Magnetic } from "./primitives";
 import { SplitText, Ticker } from "./text-anim";
 import { HERO } from "@/data/site-content";
 
@@ -95,14 +94,6 @@ export function Hero() {
         style={{ opacity: fade }}
         className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 pb-24 pt-32 text-center sm:pt-36 lg:pt-40"
       >
-        {/* Identity Badge */}
-        <motion.div {...entrance(0.05)} className="flex flex-col items-center">
-          <p className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm text-cyan-200 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-            <span className="size-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#5fd0e1] animate-pulse" aria-hidden="true" />
-            {HERO.identity}
-          </p>
-        </motion.div>
-
         {/* Eyebrow */}
         <motion.p
           {...entrance(0.2)}
@@ -151,23 +142,19 @@ export function Hero() {
           {...entrance(0.68)}
           className="mt-9 flex flex-wrap items-center justify-center gap-4"
         >
-          <Magnetic>
-            <a
-              href="#/contact"
-              className="group inline-flex h-12 min-w-[155px] items-center justify-center gap-2.5 border border-white bg-white px-7 text-sm font-medium text-[#0f62fe] transition-all duration-200 hover:bg-slate-100 hover:shadow-lg active:scale-[0.98] sm:text-base"
-            >
-              <span>Talk to Us</span>
-              <ArrowRight className="size-4.5 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={2} />
-            </a>
-          </Magnetic>
-          <Magnetic>
-            <a
-              href="#capabilities"
-              className="inline-flex h-12 min-w-[175px] items-center justify-center border border-white bg-transparent px-7 text-sm font-medium text-white transition-all duration-200 hover:bg-white/15 hover:shadow-lg active:scale-[0.98] sm:text-base"
-            >
-              <span>Explore Capabilities</span>
-            </a>
-          </Magnetic>
+          <a
+            href="#/contact"
+            className="inline-flex h-12 min-w-[155px] items-center justify-center gap-2.5 border border-white bg-white px-7 text-sm font-medium text-[#0f62fe] transition-colors duration-200 hover:bg-slate-100 sm:text-base"
+          >
+            <span>Talk to Us</span>
+            <ArrowRight className="size-4.5 shrink-0" strokeWidth={2} />
+          </a>
+          <a
+            href="#capabilities"
+            className="inline-flex h-12 min-w-[175px] items-center justify-center border border-white bg-transparent px-7 text-sm font-medium text-white transition-colors duration-200 hover:bg-white/15 sm:text-base"
+          >
+            <span>Explore Capabilities</span>
+          </a>
         </motion.div>
       </motion.div>
 

@@ -45,17 +45,18 @@ export const metadata: Metadata = {
     "VAPT company Mumbai",
     "AI development company India",
     "cloud migration company India",
-    "digital marketing company Mumbai",
+    "Marketing company Mumbai",
   ],
   authors: [{ name: SEO_CONFIG.companyName, url: SEO_CONFIG.canonicalBase }],
   icons: {
     icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico", type: "image/x-icon" },
       { url: "/images/logo-abw-mark-512.png", type: "image/png", sizes: "512x512" },
       { url: "/images/logo-abw-mark.png", type: "image/png", sizes: "240x240" },
-      { url: "/logo-mark.svg", type: "image/svg+xml" },
     ],
-    shortcut: "/images/logo-abw-mark-512.png",
-    apple: "/images/logo-abw-mark-512.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
   openGraph: {
     title: SEO_CONFIG.defaultTitle,

@@ -34,7 +34,7 @@ function buildKnowledgeBase(): KnowledgeChunk[] {
       title: "About ABWcurious",
       tags: ["about", "company", "who", "abwcurious", "story", "values", "experience", "navi mumbai", "nerul", "mumbai", "darave", "location", "headquarters", "team", "founder", "ceo", "cto", "address"],
       content: `ABWcurious (OPC) Private Limited is a technology and innovation company headquartered at Haware's Centurion, Nerul (East), Navi Mumbai, Maharashtra, India.
-Founded in 2019, we have 7+ years of experience engineering digital platforms, intelligent AI solutions, enterprise websites, mobile apps, and business systems.
+Our journey began in 2025, and ABWcurious was officially founded in 2026 around one conviction: curious people build better software.
 Our registered office is located at S07-05, Haware's Centurion, Sector 19A, Nerul (East), Darave, Navi Mumbai, Thane, Maharashtra 400706, India.
 Our team consists of 24 senior in-house engineers, designers, and AI specialists. We have successfully completed 86+ projects for 40+ happy clients worldwide and hosted 32 tech events.
 Our Core Values:
@@ -423,7 +423,7 @@ We are a technology & innovation company headquartered at **Haware's Centurion, 
 - 📱 **Mobile App Development** (iOS, Android, Flutter)
 - 🤖 **Enterprise AI & Automation** (Custom RAG systems, chatbots, workflow AI)
 - 🎓 **Future-Ready Training** (Student pathways, foundational & professional engineering tracks)
-- 📈 **Digital Marketing & Growth** (SEO, PPC, lead gen)
+- 📈 **Marketing & Growth** (SEO, PPC, lead gen)
 - 👥 **Recruitment & HR Solutions** (Tech hiring, staffing pods)
 - ☁️ **Cloud, IT & Business Solutions** (DevOps, CRM, ERP)
 
@@ -507,7 +507,7 @@ Every engagement includes **100% IP & code transfer** to your repositories and f
   } else if (primary.id === "company-overview") {
     responseBody = `**About ABWcurious (OPC) Private Limited:**
 
-Founded in **2019**, ABWcurious is an engineering and innovation studio headquartered at **Haware's Centurion, Sector 19A, Nerul (East), Navi Mumbai, Maharashtra, India**.
+Founded in **2026** (journey started in 2025), ABWcurious is an engineering and innovation studio headquartered at **Haware's Centurion, Sector 19A, Nerul (East), Navi Mumbai, Maharashtra, India**.
 
 - 📍 **Registered Office:** S07-05, Haware's Centurion, Sector 19A, Nerul (East), Darave, Navi Mumbai, Thane, Maharashtra 400706, India
 - 🗺️ **Google Maps:** [Open on Google Maps](https://www.google.com/maps/place/ABWcurious+OPC+Pvt.Ltd/@19.0247909,73.0221279,17z/data=!3m1!4b1!4m6!3m5!1s0x3be7c3d076147f7b:0xe421751ae4517f6d!8m2!3d19.0247909!4d73.0221279!16s%2Fg%2F11zchgx3cf?entry=ttu)

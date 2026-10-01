@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "./primitives";
 
 /**
@@ -36,6 +38,17 @@ export function MotionVideoSection() {
                 className="w-full h-auto max-h-[720px] object-cover block select-none"
               />
             </div>
+          </div>
+
+          {/* Connect Button Just Below Video */}
+          <div className="mt-8 flex items-center justify-center">
+            <Link
+              href="/contact"
+              className="inline-flex h-12 items-center justify-center gap-2.5 border border-[#0f62fe] bg-[#0f62fe] px-8 text-sm font-medium text-white transition-colors hover:bg-[#0043ce] shadow-sm"
+            >
+              <span>Let&apos;s connect with us</span>
+              <ArrowRight className="size-4 shrink-0" strokeWidth={2} />
+            </Link>
           </div>
         </Reveal>
       </div>

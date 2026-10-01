@@ -212,7 +212,7 @@ export function Header({
                             : "border-transparent text-ink-muted hover:border-primary/40 hover:text-ink"
                         )}
                       >
-                        What we are
+                        Who we are
                       </a>
                     </li>
                     <li className="relative">
@@ -372,7 +372,7 @@ export function Header({
               {/* Primary */}
               <ul className="divide-y divide-hairline border-y border-hairline">
                 {[
-                  { label: "What we are", href: "/about" },
+                  { label: "Who we are", href: "/about" },
                   { label: "Contact us", href: "/contact" },
                 ].map((item, i) => (
                   <motion.li

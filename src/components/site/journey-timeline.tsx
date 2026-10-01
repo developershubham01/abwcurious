@@ -66,8 +66,7 @@ export function JourneyTimeline() {
           </h2>
           <Reveal delay={0.15}>
             <p className="mt-5 text-pretty text-base leading-relaxed text-ink-muted sm:text-lg">
-              From a two-person idea to a studio with its own products — the moments that shaped
-              ABWcurious, revealed as you scroll.
+              Our journey began in 2025 with a vision to solve real challenges in education and business — leading to the founding of ABWcurious in 2026.
             </p>
           </Reveal>
         </div>

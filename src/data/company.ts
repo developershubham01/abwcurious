@@ -39,8 +39,9 @@ export const COMPANY = {
     "ABWcurious is a technology and innovation company delivering intelligent digital solutions, future-ready education, cybersecurity, software engineering, IT services, and talent solutions.",
   /** Longer story paragraphs for the About section. */
   story: [
-    "We started ABWcurious with a simple belief: great products come from curious people who enjoy building together. From the first whiteboard sketch to the latest launch, our journey has always been about the humans behind the work.",
-    "Today we design and engineer AI-powered software, websites and platforms for ambitious teams — and we document every step: the workshops, the offsites, the launches and the quiet wins in between.",
+    "Our journey began in 2025 with a simple vision: to solve real challenges in education and business through technology and innovation.",
+    "We started with a small idea and faced challenges in turning our concept into reality. Those challenges helped us learn, improve, and better understand the needs of students and business owners.",
+    "That journey led to ABWcurious — a step toward building practical digital solutions that empower individuals and businesses. This is just the beginning of our journey.",
   ],
   email: "info@abwcurious.com",
   emailHr: "hr@abwcurious.com",
@@ -54,7 +55,7 @@ export const COMPANY = {
   address: "Navi Mumbai, Maharashtra 400706",
   fullAddress: "S07-05, Haware's Centurion, Sector 19A, Nerul (East), Darave, Navi Mumbai, Thane, Maharashtra 400706, India",
   hours: "Mon–Sat · 9:00–19:00 IST",
-  established: "2019", // SAMPLE year — replace with the real founding year
+  established: "2026", // SAMPLE year — replace with the real founding year
   /**
    * Studio location on the map. The embed is an OpenStreetMap iframe built
    * from these coords (no API key needed); `directionsUrl` opens a maps
@@ -198,46 +199,18 @@ export type Milestone = {
 
 export const TIMELINE: Milestone[] = [
   {
-    year: "2019",
-    title: "The idea becomes a company",
+    year: "2025",
+    title: "Our Journey Begins",
     description:
-      "ABWcurious was founded in Navi Mumbai around one conviction: curious people build better software.",
-    kind: "founding",
-  },
-  {
-    year: "2020",
-    title: "First clients, first releases",
-    description:
-      "The engineering studio shipped its first web platforms and AI prototypes, building long-term client partnerships.",
+      "Our journey began in 2025 with a simple vision: to solve real challenges in education and business through technology and innovation. Overcoming early concept challenges helped us learn, improve, and better understand student and business needs.",
     kind: "milestone",
   },
   {
-    year: "2021",
-    title: "Engineering team expansion",
-    description:
-      "Expanded our technical talent pool across full-stack web, mobile, and AI engineering practices.",
-    kind: "expansion",
-  },
-  {
-    year: "2022",
-    title: "Flagship products & platforms ship",
-    description:
-      "Launched enterprise multi-tenant SaaS backends, custom ERPs, and specialized web software.",
-    kind: "achievement",
-  },
-  {
-    year: "2024",
-    title: "New studio, wider footprint",
-    description:
-      "Established our central studio at Haware's Centurion in Nerul, Navi Mumbai, scaling client partnerships globally.",
-    kind: "expansion",
-  },
-  {
     year: "2026",
-    title: "AI & Digital Engineering Leadership",
+    title: "The idea becomes a company",
     description:
-      "Delivering custom RAG engines, Generative AI integration, Next.js web applications, and cybersecurity VAPT services.",
-    kind: "achievement",
+      "ABWcurious was founded in Navi Mumbai around one conviction: curious people build better software. A step toward building practical digital solutions that empower individuals and businesses.",
+    kind: "founding",
   },
 ];
 
@@ -469,11 +442,11 @@ export type CompanyStat = { value: number; suffix?: string; label: string };
 
 /** SAMPLE figures — replace with real numbers before going live. */
 export const STATS: CompanyStat[] = [
-  { value: 7, suffix: "+", label: "Years of Experience" },
-  { value: 24, suffix: "", label: "Team Members" },
+  { value: 5, suffix: "+", label: "Years of Experience" },
+  { value: 50, suffix: "+", label: "Team Members" },
   { value: 86, suffix: "+", label: "Projects Completed" },
   { value: 40, suffix: "+", label: "Happy Clients" },
-  { value: 32, suffix: "", label: "Events Hosted" },
+  { value: 10, suffix: "+", label: "Events Hosted" },
 ];
 
 /* -------------------------------- socials -------------------------------- */

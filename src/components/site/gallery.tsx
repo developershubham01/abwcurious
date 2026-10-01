@@ -117,14 +117,13 @@ export function Gallery() {
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 className="relative"
               >
-                <div className="relative flex max-h-[76dvh] items-center justify-center bg-ibm-inverse">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-black flex items-center justify-center p-2">
                   <Image
                     src={GALLERY[index].src}
                     alt={GALLERY[index].alt}
-                    width={GALLERY[index].width}
-                    height={GALLERY[index].height}
+                    fill
                     priority
-                    className="max-h-[76dvh] w-auto max-w-full object-contain"
+                    className="object-contain"
                   />
                 </div>
 

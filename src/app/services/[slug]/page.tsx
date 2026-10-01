@@ -22,6 +22,25 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  
+  const category = CATEGORY_BY_SLUG.get(slug);
+  if (category) {
+    return {
+      title: `${category.name} Services | ${SEO_CONFIG.siteName}`,
+      description: category.description,
+      alternates: {
+        canonical: `${SEO_CONFIG.canonicalBase}/services/${category.slug}`,
+      },
+      openGraph: {
+        title: `${category.name} Services | ${SEO_CONFIG.siteName}`,
+        description: category.description,
+        url: `${SEO_CONFIG.canonicalBase}/services/${category.slug}`,
+        siteName: SEO_CONFIG.siteName,
+        type: "website",
+      },
+    };
+  }
+
   const detailed = getDetailedServiceBySlug(slug);
   if (detailed) {
     return {
@@ -41,24 +60,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const category = CATEGORY_BY_SLUG.get(slug);
-  if (category) {
-    return {
-      title: `${category.name} Services | ${SEO_CONFIG.siteName}`,
-      description: category.description,
-      alternates: {
-        canonical: `${SEO_CONFIG.canonicalBase}/services/${category.slug}`,
-      },
-    };
-  }
-
   return {};
 }
 
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
 
-  // Check detailed SEO service first
+  // Prioritize Catalog Category page if slug matches a main category (e.g. software-web-development, mobile-app-development, digital-marketing)
+  const category = CATEGORY_BY_SLUG.get(slug);
+  if (category) {
+    return (
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
+        <CategoryPage category={category} />
+      </main>
+    );
+  }
+
+  // Check detailed SEO sub-service
   const service = getDetailedServiceBySlug(slug);
   if (service) {
     const breadcrumbItems = [
@@ -68,95 +86,101 @@ export default async function Page({ params }: PageProps) {
     ];
 
     return (
-      <main id="main" tabIndex={-1} className="min-h-screen bg-slate-950 text-slate-100 pt-28 pb-20 px-4 sm:px-6 lg:px-8 outline-none">
+      <main id="main" tabIndex={-1} className="min-h-screen bg-background text-ink pt-28 pb-20 px-4 sm:px-6 lg:px-8 outline-none">
         <BreadcrumbSchema items={breadcrumbItems} />
         <ServiceSchema service={service} />
         <FAQSchema faqs={service.faqs} />
 
-        <div className="max-w-5xl mx-auto space-y-12">
+        <div className="max-w-6xl mx-auto space-y-12">
           {/* Breadcrumb Navigation */}
-          <nav aria-label="Breadcrumb" className="text-sm text-slate-400">
+          <nav aria-label="Breadcrumb" className="text-xs font-mono text-ink-muted">
             <ol className="flex items-center space-x-2 flex-wrap">
               <li>
-                <Link href="/" className="hover:text-cyan-400 transition-colors">
+                <Link href="/" className="hover:text-primary transition-colors">
                   Home
                 </Link>
               </li>
               <li>/</li>
               <li>
-                <Link href="/services" className="hover:text-cyan-400 transition-colors">
+                <Link href="/services" className="hover:text-primary transition-colors">
                   Services
                 </Link>
               </li>
               <li>/</li>
-              <li className="text-cyan-400 font-medium" aria-current="page">
+              <li className="text-primary font-medium" aria-current="page">
                 {service.name}
               </li>
             </ol>
           </nav>
 
           {/* Service Hero */}
-          <header className="space-y-6">
-            <span className="inline-block bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold px-3.5 py-1.5 rounded-full">
+          <header className="space-y-5 border-b border-hairline pb-10">
+            <p className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-primary sm:text-sm">
+              <span aria-hidden="true" className="h-px w-6 bg-current inline-block" />
               {service.category}
-            </span>
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            </p>
+            <h1 className="text-3xl sm:text-5xl font-light tracking-tight text-ink leading-[1.12]">
               {service.heroTitle}
             </h1>
-            <p className="text-lg text-slate-300 leading-relaxed max-w-3xl">
+            <p className="text-base sm:text-lg text-ink-muted leading-relaxed max-w-3xl">
               {service.heroSubtitle}
             </p>
           </header>
 
-          {/* Answer-First / GEO Direct Answer Box */}
-          <section className="bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-6 sm:p-8 space-y-4">
+          {/* Answer-First / Summary Box (Carbon border-l-4 style) */}
+          <section className="bg-white border border-hairline border-l-4 border-l-primary p-6 sm:p-8 space-y-4">
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-cyan-400"></span>
-              <h2 className="text-xl font-bold text-white">
-                Quick Summary: What ABWcurious Delivers
+              <span className="w-2.5 h-2.5 rounded-full bg-primary"></span>
+              <h2 className="text-lg font-medium text-ink">
+                Executive Overview: What ABWcurious Delivers
               </h2>
             </div>
-            <p className="text-slate-200 text-base leading-relaxed">
+            <p className="text-ink-muted text-base leading-relaxed">
               {service.solutionOverview}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-800 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-hairline text-sm">
               <div>
-                <strong className="text-slate-400 block text-xs uppercase tracking-wider">Business Impact</strong>
-                <p className="text-slate-300 mt-1">{service.problemStatement}</p>
+                <strong className="text-ibm-subtle block text-xs font-mono uppercase tracking-wider">Business Impact</strong>
+                <p className="text-ink mt-1">{service.problemStatement}</p>
               </div>
               <div>
-                <strong className="text-slate-400 block text-xs uppercase tracking-wider">Target Locations</strong>
-                <p className="text-cyan-400 mt-1">{service.targetLocations.join(", ")}</p>
+                <strong className="text-ibm-subtle block text-xs font-mono uppercase tracking-wider">Target Locations & Deployment</strong>
+                <p className="text-primary font-mono text-xs mt-1">{service.targetLocations.join(" · ")}</p>
               </div>
             </div>
           </section>
 
           {/* Deliverables / Included Services */}
           <section className="space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              What Is Included in Our {service.name} Services
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-xs font-mono uppercase tracking-wider text-primary">Practice Deliverables</p>
+              <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-ink mt-1">
+                What is included in our {service.name} services
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px border border-hairline bg-hairline">
               {service.includedServices.map((inc, idx) => (
                 <div
                   key={idx}
-                  className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 space-y-2 hover:border-slate-700 transition-colors"
+                  className="bg-white p-6 space-y-2 hover:bg-ibm-layer transition-colors"
                 >
-                  <h3 className="text-lg font-semibold text-white">{inc.title}</h3>
-                  <p className="text-sm text-slate-300 leading-relaxed">{inc.desc}</p>
+                  <span className="text-xs font-mono text-ibm-subtle tabular-nums">0{idx + 1}</span>
+                  <h3 className="text-lg font-normal text-ink">{inc.title}</h3>
+                  <p className="text-sm text-ink-muted leading-relaxed">{inc.desc}</p>
                 </div>
               ))}
             </div>
           </section>
 
           {/* Technology Stack */}
-          <section className="space-y-4 bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white">Technologies & Tools We Work With</h2>
-            <div className="flex flex-wrap gap-2.5">
+          <section className="space-y-4 bg-ibm-layer border border-hairline p-6 sm:p-8">
+            <p className="text-xs font-mono uppercase tracking-wider text-primary">Technical Stack</p>
+            <h2 className="text-xl font-light text-ink">Technologies & Frameworks We Engineer With</h2>
+            <div className="flex flex-wrap gap-2 pt-2">
               {service.technologies.map((tech) => (
                 <span
                   key={tech}
-                  className="bg-slate-800 text-cyan-300 border border-slate-700 text-sm font-mono px-3 py-1.5 rounded-lg"
+                  className="bg-white border border-hairline text-ink font-mono text-xs font-medium px-3 py-1.5"
                 >
                   {tech}
                 </span>
@@ -166,13 +190,16 @@ export default async function Page({ params }: PageProps) {
 
           {/* Development Process */}
           <section className="space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Our 4-Step Execution Process</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <p className="text-xs font-mono uppercase tracking-wider text-primary">Execution Model</p>
+              <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-ink mt-1">Our 4-Step Engineering Process</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px border border-hairline bg-hairline">
               {service.processSteps.map((step) => (
-                <div key={step.step} className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2">
-                  <span className="text-xs font-bold text-cyan-400 font-mono">{step.step}</span>
-                  <h3 className="text-base font-semibold text-white">{step.title}</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
+                <div key={step.step} className="bg-white p-6 space-y-2">
+                  <span className="text-xs font-mono font-bold text-primary">{step.step}</span>
+                  <h3 className="text-base font-normal text-ink">{step.title}</h3>
+                  <p className="text-xs text-ink-muted leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -180,13 +207,13 @@ export default async function Page({ params }: PageProps) {
 
           {/* Use Cases */}
           {service.useCases && service.useCases.length > 0 && (
-            <section className="space-y-4">
-              <h2 className="text-2xl font-bold text-white">Real-World Case Studies & Outcomes</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section className="space-y-6">
+              <h2 className="text-2xl font-light text-ink">Real-World Case Studies & Outcomes</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px border border-hairline bg-hairline">
                 {service.useCases.map((uc, idx) => (
-                  <div key={idx} className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 space-y-2">
-                    <h3 className="text-lg font-semibold text-white">{uc.title}</h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">{uc.desc}</p>
+                  <div key={idx} className="bg-white p-6 space-y-2">
+                    <h3 className="text-lg font-normal text-ink">{uc.title}</h3>
+                    <p className="text-sm text-ink-muted leading-relaxed">{uc.desc}</p>
                   </div>
                 ))}
               </div>
@@ -195,68 +222,42 @@ export default async function Page({ params }: PageProps) {
 
           {/* FAQs */}
           {service.faqs && service.faqs.length > 0 && (
-            <section className="space-y-6 border-t border-slate-800 pt-10">
-              <h2 className="text-2xl font-bold text-white">
+            <section className="space-y-6 border-t border-hairline pt-10">
+              <h2 className="text-2xl font-light text-ink">
                 Frequently Asked Questions — {service.name}
               </h2>
-              <div className="space-y-4">
+              <div className="divide-y divide-hairline border border-hairline bg-white">
                 {service.faqs.map((faq, idx) => (
-                  <div key={idx} className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 space-y-2">
-                    <h3 className="text-base font-semibold text-white">{faq.q}</h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">{faq.a}</p>
+                  <div key={idx} className="p-6 space-y-2">
+                    <h3 className="text-base font-normal text-ink">{faq.q}</h3>
+                    <p className="text-sm text-ink-muted leading-relaxed">{faq.a}</p>
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {/* Related Services */}
-          <section className="space-y-4 border-t border-slate-800 pt-8">
-            <h2 className="text-xl font-bold text-white">Explore Related Practice Verticals</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {DETAILED_SERVICES.filter((s) => s.slug !== service.slug)
-                .slice(0, 4)
-                .map((s) => (
-                  <Link
-                    key={s.slug}
-                    href={`/services/${s.slug}`}
-                    className="bg-slate-900 border border-slate-800 hover:border-cyan-500/40 rounded-lg p-3 text-xs font-medium text-slate-300 hover:text-white transition-colors"
-                  >
-                    {s.name} &rarr;
-                  </Link>
-                ))}
-            </div>
-          </section>
-
           {/* CTA Banner */}
-          <section className="bg-gradient-to-r from-slate-900 via-cyan-950/50 to-slate-900 border border-cyan-500/40 rounded-2xl p-8 text-center space-y-4">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Ready to Discuss Your {service.name} Project?
-            </h2>
-            <p className="text-slate-300 max-w-xl mx-auto text-sm sm:text-base">
-              Speak directly with our senior engineers in Navi Mumbai. We provide scoping, technical assessment, and fixed-timeline proposals.
-            </p>
-            <div className="pt-2">
-              <Link
-                href="/contact"
-                className="inline-block px-8 py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm transition-colors"
-              >
-                Request a Free Consultation
-              </Link>
+          <section className="bg-primary text-white p-8 sm:p-12 space-y-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-light text-white">
+                Ready to Discuss Your {service.name} Project?
+              </h2>
+              <p className="text-white/80 max-w-xl text-sm sm:text-base mt-2">
+                Speak directly with our senior engineers in Navi Mumbai. We provide scoping, technical assessment, and fixed-timeline proposals.
+              </p>
             </div>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-6 py-3 border border-white bg-white text-primary text-sm font-medium hover:bg-slate-100 transition-colors shrink-0"
+            >
+              Request a Free Consultation
+            </Link>
           </section>
         </div>
       </main>
     );
   }
 
-  // Fallback to Catalog Category page
-  const category = CATEGORY_BY_SLUG.get(slug);
-  if (!category) notFound();
-
-  return (
-    <main id="main" tabIndex={-1} className="flex-1 outline-none">
-      <CategoryPage category={category} />
-    </main>
-  );
+  notFound();
 }

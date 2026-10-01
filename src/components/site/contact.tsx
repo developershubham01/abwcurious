@@ -277,19 +277,19 @@ export function Contact() {
 
                     <RollButton type="submit" disabled={submitting} className="w-full sm:w-auto sm:px-10">
                       {submitting ? (
-                        <>
-                          Sending
-                          <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-                        </>
+                        <span className="inline-flex items-center justify-center gap-2">
+                          <span>Sending</span>
+                          <LoaderCircle className="size-4 shrink-0 animate-spin" aria-hidden="true" />
+                        </span>
                       ) : (
-                        <>
-                          Send message
+                        <span className="inline-flex items-center justify-center gap-2">
+                          <span>Send message</span>
                           <Send
-                            className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                            className="size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                             strokeWidth={1.75}
                             aria-hidden="true"
                           />
-                        </>
+                        </span>
                       )}
                     </RollButton>
                     <p className="text-xs leading-relaxed text-ink-muted">

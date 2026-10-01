@@ -1,0 +1,41 @@
+<svg viewBox="0 0 300 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Computer Monitor Base & Stand -->
+  <rect x="90" y="10" width="120" height="84" rx="8" stroke="#131943" stroke-width="5" fill="#FFFFFF"/>
+  <path d="M130 94 L122 112 H178 L170 94 Z" fill="#131943"/>
+  <rect x="100" y="112" width="100" height="14" rx="3" fill="#131943"/>
+  <rect x="110" y="116" width="80" height="6" rx="1.5" fill="#FFFFFF" opacity="0.3"/>
+
+  <!-- Center Circle in Monitor -->
+  <circle cx="150" cy="52" r="32" fill="#131943"/>
+
+  <!-- Wrench Tool (Orange) -->
+  <path d="M132 46 L168 22 C172 20 176 22 178 26 C180 30 178 34 174 36 L148 54 Z" fill="#FF7A00"/>
+  <circle cx="173" cy="27" r="5" fill="#FFFFFF"/>
+  
+  <!-- Pencil Tool (Green) -->
+  <path d="M122 36 L172 62 C174 63 175 66 174 69 C172 71 169 72 167 70 L117 45 Z" fill="#00A859"/>
+  <polygon points="117,45 110,42 115,49" fill="#131943"/>
+
+  <!-- Hand Silhouette (White) -->
+  <path d="M135 42 C132 38 126 38 122 42 C118 46 118 52 122 56 L134 68 C138 72 145 72 149 68 C153 64 152 58 147 54 Z" fill="#FFFFFF"/>
+  <path d="M130 46 C128 44 124 44 122 47 C120 50 120 54 123 56 C126 58 130 57 132 54 Z" fill="#131943"/>
+
+  <!-- Main Brand Title: Skill India -->
+  <g fill="#131943" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900">
+    <text x="15" y="176" font-size="44" letter-spacing="-1">Sk</text>
+    
+    <!-- 3 Ascending Arrows above 'i' -->
+    <path d="M72 148 L78 132 L84 148 Z" fill="#FF7A00"/>
+    <path d="M84 144 L90 124 L96 144 Z" fill="#00A859"/>
+    <path d="M96 140 L102 116 L108 140 Z" fill="#131943"/>
+
+    <text x="72" y="176" font-size="44" letter-spacing="-0.5">
+      <tspan fill="#131943">i</tspan>ll India
+    </text>
+  </g>
+
+  <!-- Tagline Hindi Text: कौशल भारत - कुशल भारत -->
+  <text x="150" y="218" text-anchor="middle" fill="#131943" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="18" letter-spacing="0.2">
+    कौशल भारत - कुशल भारत
+  </text>
+</svg>

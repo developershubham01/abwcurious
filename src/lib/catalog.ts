@@ -186,13 +186,13 @@ export const CATEGORIES: Category[] = [
   {
     slug: "digital-marketing",
     num: "04",
-    name: "Digital Marketing",
-    short: "Digital Marketing",
+    name: "Marketing",
+    short: "Marketing",
     tagline: "SEO, ads and content systems that turn attention into a pipeline.",
     description:
       "Full-funnel growth under one roof — technical SEO, paid media on Google and Meta, social and email programmes. Every rupee tracked from click to closed deal.",
     image: "/images/cat-marketing.jpg",
-    imageAlt: "Isometric illustration of rising analytics charts and campaign icons — digital marketing",
+    imageAlt: "Isometric illustration of rising analytics charts and campaign icons — Marketing",
     demo: "marketing",
     typewriter: ["SEO & Local SEO", "Google Ads", "Meta Ads", "Email journeys", "Lead generation"],
     stats: [
@@ -229,7 +229,7 @@ export const CATEGORIES: Category[] = [
       {
         label: "Strategy",
         items: [
-          { name: "Digital Marketing Strategy", blurb: "Channel plan, budgets and targets in one roadmap." },
+          { name: "Marketing Strategy", blurb: "Channel plan, budgets and targets in one roadmap." },
         ],
       },
     ],
@@ -293,65 +293,121 @@ export const CATEGORIES: Category[] = [
   {
     slug: "cloud-it-business-solutions",
     num: "06",
-    name: "IT Support & Business Solutions",
-    short: "IT Support & Business Solutions",
-    tagline: "Infrastructure, ready-made business systems and 24/7 technical support.",
+    name: "IT Infrastructure Services",
+    short: "IT Infrastructure Services",
+    tagline: "24×7 Monitoring, Managed IT, Incident Management & Infrastructure Optimization.",
     description:
-      "The operational backbone: server deployment, domains, SSL, CI/CD and performance — plus business systems like ERP, HRMS, billing and booking, and a maintenance desk that keeps it all healthy.",
+      "A strong IT infrastructure is the foundation of a reliable, secure, and high-performing business. At ABWcurious, we help organizations build, manage, monitor, and optimize their IT infrastructure to support business continuity and long-term growth. From infrastructure planning and implementation to proactive monitoring and incident management, our team provides the expertise and support required to keep your critical IT systems running smoothly.",
     image: "/images/cat-cloud.jpg",
-    imageAlt: "Isometric illustration of IT infrastructure, servers and security shield — IT support and business solutions",
+    imageAlt: "Isometric illustration of IT infrastructure, servers, monitoring and security shield — Managed IT Services",
     demo: "cloud",
-    typewriter: ["IT Support", "ERP & CRM systems", "DevOps & CI/CD", "Security updates", "24/7 support"],
+    typewriter: [
+      "24×7 Infrastructure Monitoring",
+      "Proactive Issue Detection & Resolution",
+      "Full Infrastructure Management",
+      "Incident & Problem Management",
+      "Performance Optimization & Reduced Downtime",
+      "Scalable IT Support for Growing Businesses",
+    ],
     stats: [
-      { value: "99.98%", label: "Managed uptime" },
-      { value: "80+", label: "Business systems delivered" },
-      { value: "<1 hr", label: "Support response SLA" },
+      { value: "24×7", label: "Infrastructure Monitoring" },
+      { value: "99.98%", label: "Managed Uptime SLA" },
+      { value: "<15 min", label: "Incident Response SLA" },
     ],
     groups: [
       {
-        label: "Infrastructure & Deployment",
+        label: "Managed IT Infrastructure Services",
         items: [
-          { name: "Server & Infrastructure Deployment", blurb: "High-uptime server architectures and infrastructure, sized right." },
-          { name: "Server Setup", blurb: "Hardened, monitored, documented from day one." },
-          { name: "Cloudflare Setup", blurb: "CDN, WAF and DNS tuned for speed and safety." },
-          { name: "Database Setup", blurb: "Schema, migrations, backups and recovery drills." },
-          { name: "Domain & DNS Configuration", blurb: "Registrar to resolver, zero-downtime migrations." },
-          { name: "SSL & Security Setup", blurb: "Certificates, headers, scanning and hardening." },
-          { name: "CI/CD & Deployment", blurb: "Pipelines that make releases boring." },
-          { name: "Website Performance Optimization", blurb: "Core Web Vitals in the green, every page." },
+          {
+            name: "Full Infrastructure Management",
+            blurb:
+              "Comprehensive oversight of your IT environment. We manage and optimize critical infrastructure components to ensure availability, performance, scalability, and business continuity.",
+          },
+          {
+            name: "Incident Management",
+            blurb:
+              "Structured and efficient approach to identifying, troubleshooting, and resolving IT issues quickly to minimize disruption, restore services, and maintain a stable IT environment.",
+          },
+          {
+            name: "Proactive Monitoring",
+            blurb:
+              "Continuous 24×7 monitoring of critical systems, infrastructure, and applications to detect performance issues, availability concerns, and potential failures before they impact business.",
+          },
+          {
+            name: "End-to-End Lifecycle Support",
+            blurb:
+              "From planning and implementation to monitoring, maintenance, troubleshooting, and optimization, ensuring your IT environment remains secure and performance-driven.",
+          },
         ],
       },
       {
-        label: "Business Systems",
+        label: "Cloud Migration & Core Operations",
         items: [
-          { name: "CRM Solutions", blurb: "Pipeline, follow-ups and reporting out of the box." },
-          { name: "HRMS Solutions", blurb: "Attendance, payroll and leave on one dashboard." },
-          { name: "ERP Solutions", blurb: "Inventory to accounts, one source of truth." },
-          { name: "Inventory Management Systems", blurb: "Live stock, GST-ready billing, low-stock alerts." },
-          { name: "Billing & Invoice Systems", blurb: "Quotes to payment reconciliation, automated." },
-          { name: "Restaurant Management Systems", blurb: "KOT, tables, menu and daily sales in one place." },
-          { name: "Appointment Management Systems", blurb: "Booking pages, reminders and no-show control." },
-          { name: "Custom Business Automation", blurb: "Your quirky process, turned into software." },
+          {
+            name: "Cloud Migration & Infrastructure",
+            blurb:
+              "Seamless migration to secure, scalable multi-cloud environments with automated CI/CD pipelines, containerization, and infrastructure as code.",
+          },
+          {
+            name: "Server Setup & Hardening",
+            blurb:
+              "High-uptime server architectures, hardened operating environments, database backups, and zero-downtime DNS migrations.",
+          },
+          {
+            name: "Performance Monitoring & Optimization",
+            blurb:
+              "System profiling, query tuning, caching, and resource scaling to detect bottlenecks and reduce operational risk.",
+          },
+          {
+            name: "Security Governance & Compliance",
+            blurb:
+              "Continuous regulatory compliance auditing, automated risk scoring, real-time security logging, and patch management.",
+          },
         ],
       },
       {
-        label: "Maintenance & Support",
+        label: "Business Systems & Automation",
         items: [
-          { name: "Website Bug Fixing", blurb: "Fast triage and fixes for live issues." },
-          { name: "Software Maintenance", blurb: "Dependency upgrades, refactors, health reports." },
-          { name: "Performance Optimization", blurb: "Profiling, caching and query tuning." },
-          { name: "Security Updates", blurb: "Patches applied and verified on a schedule." },
-          { name: "Technical Support", blurb: "A named engineer, not a ticket black hole." },
-          { name: "Third-Party Integration", blurb: "Payment, WhatsApp, shipping, accounting — connected." },
-          { name: "Existing Website Modernization", blurb: "Legacy stacks rebuilt without losing SEO." },
+          {
+            name: "Enterprise ERP & HRMS Systems",
+            blurb:
+              "Integrated business management systems connecting attendance, payroll, inventory, and accounts into one source of truth.",
+          },
+          {
+            name: "CRM & Sales Pipeline Systems",
+            blurb:
+              "Lead tracking, proposal generation, client communication vaults, and automated revenue analytics out of the box.",
+          },
+          {
+            name: "Custom Intelligent Process Automation",
+            blurb:
+              "Transforming complex, manual, repetitive operational processes into streamlined, intelligent software workflows.",
+          },
+          {
+            name: "Dedicated Technical Support Desk",
+            blurb:
+              "A named team of experienced senior IT professionals providing ongoing technical support, triage, and system maintenance.",
+          },
         ],
       },
     ],
     process: [
-      { title: "Assess", desc: "Infrastructure and process audit with a priority list." },
-      { title: "Stabilize", desc: "Backups, security and monitoring before anything else." },
-      { title: "Deploy / Automate", desc: "Systems live in staged, reversible steps." },
-      { title: "Support", desc: "SLA-backed desk with monthly health reporting." },
+      {
+        title: "Assess & Audit",
+        desc: "Identify infrastructure requirements, audit current IT systems, and resolve operational challenges.",
+      },
+      {
+        title: "Implement & Deploy",
+        desc: "Hardened server setup, 24×7 monitoring configuration, and seamless infrastructure migration.",
+      },
+      {
+        title: "Monitor & Manage",
+        desc: "Proactive 24×7 infrastructure tracking, incident management, and rapid issue resolution.",
+      },
+      {
+        title: "Optimize & Scale",
+        desc: "Performance tuning, security patches, and continuous operational optimization for business growth.",
+      },
     ],
   },
 ];

@@ -194,7 +194,7 @@ export const PRODUCTS: Product[] = [
       { value: "99.99%", label: "Redirect uptime SLA" },
       { value: "180ms", label: "Global redirect latency" },
     ],
-    prefill: "Digital Marketing",
+    prefill: "Marketing",
     cta: "Join the waitlist",
     demo: "qr",
     demoLabel: "Scan intelligence — the matrix, the sweep and the live counters",

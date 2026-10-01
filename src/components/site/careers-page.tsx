@@ -149,11 +149,10 @@ export function CareersPage() {
                   key={btn.val}
                   type="button"
                   onClick={() => setSelectedExp(btn.val)}
-                  className={`px-3 py-1.5 text-xs font-mono transition-colors border ${
-                    selectedExp === btn.val
+                  className={`px-3 py-1.5 text-xs font-mono transition-colors border ${selectedExp === btn.val
                       ? "bg-primary text-white border-primary"
                       : "bg-white text-ink-muted border-hairline hover:bg-ibm-layer hover:text-ink"
-                  }`}
+                    }`}
                 >
                   {btn.label}
                 </button>
@@ -289,7 +288,7 @@ export function CareersPage() {
                 Internship & Entry-Level Hiring Programs
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-ink-muted max-w-3xl">
-                Are you a recent graduate or student with 0 to 1 years of experience? ABWcurious offers structured 3-to-6 month internship drives in Software Engineering, HR Sourcing, UI/UX, and Digital Marketing with real stipend compensation and PPO conversions.
+                Are you a recent graduate or student with 0 to 1 years of experience? ABWcurious offers structured 3-to-6 month internship drives in Software Engineering, HR Sourcing, UI/UX, and Marketing with real stipend compensation and PPO conversions.
               </p>
             </div>
             <div className="grid gap-px border border-hairline bg-hairline sm:grid-cols-2">

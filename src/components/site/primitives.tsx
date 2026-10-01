@@ -101,8 +101,8 @@ export function RollButton({
     className
   );
   const track = (
-    <span className="inline-flex items-center gap-2">
-      <span>{children}</span>
+    <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
+      <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">{children}</span>
       {arrow && (
         <ArrowRight
           className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1"

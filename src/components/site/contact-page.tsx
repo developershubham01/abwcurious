@@ -56,7 +56,7 @@ const SERVICE_PRACTICES = [
   "Software & Web Development",
   "Mobile App Development",
   "AI & Automation",
-  "Digital Marketing & Growth",
+  "Marketing & Growth",
   "Recruitment & HR Solutions",
   "IT Support & Business Solutions",
   "Future-Ready Education",
@@ -333,19 +333,19 @@ export function ContactPage() {
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <RollButton type="submit" disabled={submitting} className="w-full sm:w-auto px-8">
                       {submitting ? (
-                        <>
-                          Transmitting
+                        <span className="inline-flex items-center justify-center gap-2">
+                          <span>Transmitting</span>
                           <LoaderCircle className="size-4 shrink-0 animate-spin" aria-hidden="true" />
-                        </>
+                        </span>
                       ) : (
-                        <>
-                          Submit Inquiry
+                        <span className="inline-flex items-center justify-center gap-2">
+                          <span>Submit Inquiry</span>
                           <Send
                             className="size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                             strokeWidth={1.75}
                             aria-hidden="true"
                           />
-                        </>
+                        </span>
                       )}
                     </RollButton>
                     <p className="text-xs text-muted-foreground">
@@ -363,7 +363,7 @@ export function ContactPage() {
               <div className="overflow-hidden border border-hairline bg-card shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline border-l-4 border-l-primary px-5 py-4">
                   <div>
-                    <h3 className="text-sm font-medium text-ink">Headquarters Studio — Full Address</h3>
+                    <h3 className="text-sm font-medium text-ink">Head office</h3>
                     <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{COMPANY.fullAddress}</p>
                   </div>
                   <a

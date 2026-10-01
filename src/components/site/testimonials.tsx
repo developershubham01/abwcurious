@@ -103,13 +103,17 @@ export function Testimonials() {
         {/* Header with Google Logo */}
         <div className="mx-auto max-w-3xl text-center">
           <Reveal>
-            <div className="inline-flex items-center justify-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 shadow-sm mb-4">
-              <GoogleLogo className="size-5" />
-              <span className="font-mono text-xs font-medium text-ink">5.0 ★★★★★ Google Reviews</span>
+            <div className="flex flex-col items-center justify-center gap-3">
+              <div>
+                <Eyebrow tone="blue" className="justify-center">
+                  Verified Client Reviews
+                </Eyebrow>
+              </div>
+              <div className="inline-flex items-center justify-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 shadow-sm">
+                <GoogleLogo className="size-5" />
+                <span className="font-mono text-xs font-medium text-ink">5.0 ★★★★★ Google Reviews</span>
+              </div>
             </div>
-            <Eyebrow tone="blue" className="justify-center">
-              Verified Client Reviews
-            </Eyebrow>
           </Reveal>
 
           <h2 className="mt-4 text-balance text-4xl font-light leading-[1.1] tracking-tight text-ink sm:text-5xl">

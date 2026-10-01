@@ -132,14 +132,27 @@ export function TrainingSection({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Column: Heading */}
           {showHeading && (
-            <div className="lg:col-span-3 pt-2">
-              <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-light leading-[1.12] tracking-tight text-ink font-sans">
-                Training for <br className="hidden sm:inline" />
-                what&apos;s next
-              </h2>
-              <p className="mt-4 text-sm text-ink-muted leading-relaxed">
-                Empowering students, developers, and enterprise engineering teams with future-ready curricula, verified capstones, and direct mentorship from ABWcurious tech leads.
-              </p>
+            <div className="lg:col-span-3 pt-2 flex flex-col justify-between h-full">
+              <div>
+                <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-light leading-[1.12] tracking-tight text-ink font-sans">
+                  Training for <br className="hidden sm:inline" />
+                  what&apos;s next
+                </h2>
+                <p className="mt-4 text-sm text-ink-muted leading-relaxed">
+                  Empowering students, developers, and enterprise engineering teams through future-ready curricula, industry-verified capstone projects, and direct mentorship from experienced ABWcurious technology leaders, in collaboration with <b>Skill India</b>.
+                </p>
+              </div>
+
+              {/* Skill India Collaboration Square Card Tile */}
+              <div className="mt-6 w-full max-w-[220px] aspect-square rounded-2xl border border-slate-200/90 bg-slate-50/70 p-5 flex items-center justify-center shadow-2xs hover:bg-slate-50 hover:border-slate-300/90 transition-all">
+                <Image
+                  src="/images/skill-india-logo.svg"
+                  alt="Skill India — Kaushal Bharat Kushal Bharat"
+                  width={220}
+                  height={175}
+                  className="w-full h-auto max-h-[140px] object-contain drop-shadow-2xs"
+                />
+              </div>
             </div>
           )}
 

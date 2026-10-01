@@ -36,9 +36,9 @@ interface Message {
 const INITIAL_SUGGESTIONS = [
   "What services does ABWcurious offer?",
   "Tell me about mobile app development",
-  "How can AI help my business?",
+  "How can SI help my business?",
   "What is your pricing and timeline?",
-  "Tell me about training pathways",
+  "Tell me about training pathways & Skill India",
   "Where are you located in Nerul Navi Mumbai?",
 ];
 
@@ -46,7 +46,7 @@ const WELCOME_MESSAGE: Message = {
   id: "welcome",
   role: "assistant",
   content:
-    "Hello! I'm **Aria**, your AI assistant for **ABWcurious**.\n\nI can help you explore our services, products, training pathways, pricing models, and engineering processes. How can I assist you today?",
+    "Hello! I'm **Aria**, your **SI** assistant for **ABWcurious**.\n\nI can help you explore our services, products, Skill India training pathways, pricing models, company hiring requirements, and engineering processes. How can I assist you today?",
   timestamp: new Date(),
   suggestions: INITIAL_SUGGESTIONS,
   sources: [
@@ -280,8 +280,8 @@ export function ChatAssistant() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: "spring", stiffness: 320, damping: 22 }}
             onClick={() => setIsOpen(true)}
-            aria-label="Open AI Assistant"
-            title="Chat with ABWcurious AI"
+            aria-label="Open SI Assistant"
+            title="Chat with ABWcurious SI"
             className="fixed bottom-[88px] right-6 z-50 flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#0f62fe] hover:bg-[#0043ce] text-white shadow-xl shadow-blue-600/35 ring-4 ring-white hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
           >
             {/* Clean Message Icon */}
@@ -307,7 +307,7 @@ export function ChatAssistant() {
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="fixed bottom-6 right-6 z-[9999] flex flex-col w-[380px] sm:w-[420px] h-[580px] sm:h-[620px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-2xl shadow-black/25"
             role="dialog"
-            aria-label="ABWcurious AI Chat"
+            aria-label="ABWcurious SI Chat"
           >
             {/* ── 1. Top Header Bar ── */}
             <div className="flex shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-4 py-3">
@@ -321,10 +321,10 @@ export function ChatAssistant() {
                 <Menu className="h-5 w-5" />
               </button>
 
-              {/* Center/Right: AI Badge, Rotate icon, Minimize icon */}
+              {/* Center/Right: SI Badge, Rotate icon, Minimize icon */}
               <div className="flex items-center gap-3.5">
                 <div className="border border-neutral-900 rounded px-1.5 py-0.5 text-xs font-mono font-bold tracking-wider text-neutral-900">
-                  AI
+                  SI
                 </div>
 
                 <button

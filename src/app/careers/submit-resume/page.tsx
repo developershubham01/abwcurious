@@ -226,7 +226,7 @@ export default function SubmitGeneralResumePage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. React.js, Python, Node.js, Digital Marketing, Sales"
+                    placeholder="e.g. React.js, Python, Node.js, Marketing, Sales"
                     value={formData.primarySkills}
                     onChange={(e) => setFormData({ ...formData, primarySkills: e.target.value })}
                     className="w-full bg-white border border-hairline text-ink text-sm px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-ibm-subtle"
@@ -255,13 +255,12 @@ export default function SubmitGeneralResumePage() {
                   placeholder="https://drive.google.com/file/d/123456789/view?usp=sharing"
                   value={formData.resumeUrl}
                   onChange={(e) => handleResumeUrlChange(e.target.value)}
-                  className={`w-full bg-white border text-ink text-sm px-4 py-3 focus:outline-none font-mono transition-colors ${
-                    driveUrlValid === true
-                      ? "border-[#0e8345] ring-1 ring-[#0e8345]"
-                      : driveUrlValid === false
+                  className={`w-full bg-white border text-ink text-sm px-4 py-3 focus:outline-none font-mono transition-colors ${driveUrlValid === true
+                    ? "border-[#0e8345] ring-1 ring-[#0e8345]"
+                    : driveUrlValid === false
                       ? "border-ibm-danger ring-1 ring-ibm-danger"
                       : "border-hairline focus:border-primary focus:ring-1 focus:ring-primary"
-                  }`}
+                    }`}
                 />
                 {driveUrlValid === true && (
                   <p className="text-xs text-[#0e8345] font-mono mt-1.5">

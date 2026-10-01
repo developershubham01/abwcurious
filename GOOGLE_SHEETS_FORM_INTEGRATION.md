@@ -18,7 +18,7 @@ Every website form uses a predefined `formType` identifier mapped internally to 
 | `career` | `Career Applications` | `Timestamp`, `Page URL`, `Form Type`, `name`, `email`, `phone`, `role`, `message`, `User Agent`, `Referrer` | Careers page role applications (`#careers`) & `/careers` |
 | `recruitment` | `Recruitment Partner` | `Timestamp`, `Page URL`, `Form Type`, `company`, `name`, `email`, `phone`, `requirements`, `User Agent`, `Referrer` | Partner & corporate inquiry forms |
 | `internship` | `Internship Applications` | `Timestamp`, `Page URL`, `Form Type`, `name`, `email`, `phone`, `college`, `domain`, `User Agent`, `Referrer` | Student / Internship application portals |
-| `digital_marketing` | `Digital Marketing Inquiry` | `Timestamp`, `Page URL`, `Form Type`, `name`, `email`, `phone`, `goals`, `budget`, `User Agent`, `Referrer` | Service inquiry form for Digital Marketing |
+| `digital_marketing` | `Marketing Inquiry` | `Timestamp`, `Page URL`, `Form Type`, `name`, `email`, `phone`, `goals`, `budget`, `User Agent`, `Referrer` | Service inquiry form for Marketing |
 | `website_development` | `Website Development Inquiry` | `Timestamp`, `Page URL`, `Form Type`, `name`, `email`, `phone`, `techStack`, `timeline`, `User Agent`, `Referrer` | Service inquiry form for Web & App Dev |
 | `quote` | `Quote Requests` | `Timestamp`, `Page URL`, `Form Type`, `name`, `email`, `phone`, `projectType`, `estimatedBudget`, `User Agent`, `Referrer` | Project Estimator / Start Project CTA |
 | `general` | `General Inquiry` | `Timestamp`, `Page URL`, `Form Type`, `name`, `email`, `phone`, `message`, `User Agent`, `Referrer` | General inquiries |
@@ -44,7 +44,7 @@ var FORM_CONFIG = {
   career: "Career Applications",
   recruitment: "Recruitment Partner",
   internship: "Internship Applications",
-  digital_marketing: "Digital Marketing Inquiry",
+  digital_marketing: "Marketing Inquiry",
   website_development: "Website Development Inquiry",
   quote: "Quote Requests",
   general: "General Inquiry",

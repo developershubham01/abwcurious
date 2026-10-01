@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUpRight, Building2, Clock3, Mail, MapPin } from "lucid
 import { Reveal, RollButton } from "./primitives";
 import { COMPANY, SAMPLE_NOTE, STATS, VALUES } from "@/data/company";
 import { CATEGORIES } from "@/lib/catalog";
+import { VisionMission } from "./vision-mission";
 
 /**
  * About page (#/about) — the company profile, IBM-Carbon style:
@@ -61,6 +62,9 @@ export function AboutPage() {
         </div>
       </section>
 
+      {/* Vision & Mission */}
+      <VisionMission />
+
       {/* Values — feature-card grid on surface-1 */}
       <section className="border-b border-hairline bg-ibm-layer py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-6">
@@ -89,13 +93,13 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Stats + studio facts */}
+      {/* Stats Company facts */}
       <section className="border-b border-hairline bg-white py-16 sm:py-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <Reveal>
               <h2 className="text-3xl font-light tracking-tight text-ink sm:text-4xl">
-                The studio in numbers
+                Our Journey in numbers
               </h2>
             </Reveal>
             <dl className="mt-10 grid grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-3">
@@ -113,7 +117,7 @@ export function AboutPage() {
           <Reveal delay={0.1} className="lg:col-span-5">
             <div className="border border-hairline bg-white">
               <div className="border-b border-hairline border-l-4 border-l-primary px-6 py-4">
-                <h2 className="text-lg font-normal text-ink">Studio facts</h2>
+                <h2 className="text-lg font-normal text-ink">Company Facts</h2>
               </div>
               <ul className="divide-y divide-hairline">
                 {[

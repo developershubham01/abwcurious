@@ -8,7 +8,7 @@ export const FORM_WORK_MAPPINGS: Record<string, string> = {
   career: "Career Applications",
   recruitment: "Recruitment Partner",
   internship: "Internship Applications",
-  digital_marketing: "Digital Marketing Inquiry",
+  digital_marketing: "Marketing Inquiry",
   website_development: "Website Development Inquiry",
   quote: "Quote Requests",
   general: "General Inquiry",
@@ -68,7 +68,8 @@ export async function sendToGoogleSheets(
 
   const webhookUrl =
     process.env.GOOGLE_SHEETS_WEBHOOK_URL ||
-    process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL;
+    process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL ||
+    "https://script.google.com/macros/s/AKfycbzptnYHHvEsOua7NG0bYYWcRkAknrYJ1hdPJCBKIPoRNHtSN2Qp4dL6vT11B_25Mc0q/exec";
 
   if (!webhookUrl) {
     console.warn(

@@ -6,7 +6,7 @@ export const SEO_CONFIG = {
   canonicalBase: "https://www.abwcurious.com",
   defaultTitle: "ABWcurious | IT Services & Software Development Company in India",
   defaultDescription:
-    "ABWcurious provides custom software development, website and mobile app development, AI solutions, cybersecurity, IT support & business solutions, digital marketing, and IT consulting for businesses in Navi Mumbai, Mumbai, India, and globally.",
+    "ABWcurious provides custom software development, website and mobile app development, AI solutions, cybersecurity, IT support & business solutions, Marketing, and IT consulting for businesses in Navi Mumbai, Mumbai, India, and globally.",
   tagline: "Engineering A Better World.",
   cin: "U62011MR2026OPC478364",
   gst: "27ABGCA1303A1ZI",
@@ -321,21 +321,21 @@ export const DETAILED_SERVICES: ServiceDetail[] = [
   },
   {
     slug: "digital-marketing",
-    name: "Digital Marketing & SEO",
+    name: "Marketing & SEO",
     shortName: "Digital Growth",
     category: "Digital Growth",
-    heroTitle: "Digital Marketing & SEO Company in Mumbai",
+    heroTitle: "Marketing & SEO Company in Mumbai",
     heroSubtitle: "Driving organic traffic, search engine rankings, qualified leads, and brand authority through data-driven SEO and performance marketing.",
-    targetKeyword: "digital marketing company in Mumbai",
+    targetKeyword: "Marketing company in Mumbai",
     secondaryKeywords: [
       "SEO company in Navi Mumbai",
       "SEO services Mumbai",
       "performance marketing agency India",
       "social media marketing company",
     ],
-    metaTitle: "Digital Marketing & SEO Company in Mumbai & Navi Mumbai | ABWcurious",
+    metaTitle: "Marketing & SEO Company in Mumbai & Navi Mumbai | ABWcurious",
     metaDescription:
-      "ABWcurious is a digital marketing and SEO company in Navi Mumbai & Mumbai delivering search engine optimization, lead generation, and performance marketing.",
+      "ABWcurious is a Marketing and SEO company in Navi Mumbai & Mumbai delivering search engine optimization, lead generation, and performance marketing.",
     problemStatement:
       "Without technical SEO and targeted growth strategies, businesses waste marketing budgets without reaching ready-to-buy customers.",
     solutionOverview:

@@ -31,30 +31,34 @@ export const ALL_INDUSTRIES: Industry[] = [
         desc: "Sophisticated fraudulent transactions requiring sub-second AI detection and continuous perimeter defense.",
       },
       {
-        title: "Complex Regulatory Compliance",
-        desc: "Navigating RBI, PCI-DSS, GDPR, ISO 27001, and open banking protocols without sacrificing agility.",
+        title: "IT Infrastructure Complexity",
+        desc: "Modernize and manage complex IT environments across on-premise, cloud, and hybrid infrastructure.",
       },
     ],
     solutions: [
       {
-        name: "Core Banking Modernization & Microservices",
-        desc: "Decoupling legacy core systems into cloud-native APIs, enabling instant payments and mobile-first banking.",
+        name: "Cybersecurity threats, vulnerabilities, and incident response",
+        desc: "Proactive threat intelligence, vulnerability assessments, zero-trust architecture, and 24/7 rapid incident mitigation.",
       },
       {
-        name: "AI Fraud Detection & AML Engines",
-        desc: "Machine learning algorithms that analyze transaction telemetry in real time to stop fraudulent activity instantly.",
+        name: "Legacy-system modernization and digital transformation",
+        desc: "Refactoring monolithic legacy applications into agile, cloud-native microservices and modern API architectures.",
       },
       {
-        name: "Payment Gateway & Multi-Currency Processing",
-        desc: "Secure, high-volume checkout systems supporting UPI, cards, wallets, and cross-border remittances.",
+        name: "Manual processes through intelligent automation",
+        desc: "Streamlining repetitive operational workflows using AI-driven automation, robotic process automation (RPA), and smart data extraction.",
       },
       {
-        name: "Wealthtech & Automated Dashboards",
-        desc: "Intuitive portfolio management tools, automated advisory algorithms, and real-time market data visualizers.",
+        name: "Cloud migration, infrastructure, and security",
+        desc: "Seamless migration to secure, scalable multi-cloud environments with automated CI/CD pipelines and infrastructure as code.",
       },
       {
-        name: "Insurtech Claims Automation",
-        desc: "Digital policy processing, automated claims verification, and OCR-based document extraction for insurers.",
+        name: "Compliance, risk management, and security monitoring",
+        desc: "Continuous regulatory compliance auditing, automated risk scoring, real-time security logging, and threat governance.",
+      },
+      {
+        name: "Technology skill gaps through industry-focused training and mentorship",
+        desc: "Upskilling engineering teams and students with hands-on technical training, industry-aligned curricula, and expert mentorship.",
       },
     ],
     outcomes: [

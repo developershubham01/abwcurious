@@ -18,6 +18,8 @@ import {
   Newspaper,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Logo } from "./logo";
 import { SocialRow } from "./social-row";
@@ -192,50 +194,50 @@ const SITEMAP_GROUPS: {
   icon: LucideIcon;
   links: { label: string; href: string; external?: boolean }[];
 }[] = [
-  {
-    id: "sections",
-    label: "Company",
-    icon: Compass,
-    links: [
-      { label: "Home", href: "/" },
-      { label: "About — company profile", href: "/about" },
-      { label: "Industries we serve", href: "/industries" },
-      { label: "Careers", href: "/careers" },
-      { label: "Events", href: "/events" },
-      { label: "Social media", href: "/social" },
-      { label: "Achievements", href: "/achievements" },
-      { label: "Gallery", href: "/gallery" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    id: "products",
-    label: "Products",
-    icon: Package,
-    links: [
-      { label: "All products", href: "/products" },
-      ...PRODUCTS.map((p) => ({ label: p.name, href: `/products/${p.slug}` })),
-    ],
-  },
-  {
-    id: "services",
-    label: "Services",
-    icon: Layers,
-    links: CATEGORIES.map((c) => ({ label: c.name, href: `/services/${c.slug}` })),
-  },
-  {
-    id: "resources",
-    label: "Resources",
-    icon: Newspaper,
-    links: [
-      { label: "Blog — field notes", href: "/blogs" },
-      { label: "Full sitemap", href: "/sitemap" },
-      { label: "vCard — contact card", href: "/api/vcard", external: true },
-      { label: "RSS feed", href: "/api/rss", external: true },
-      { label: "Sitemap XML", href: "/sitemap.xml", external: true },
-    ],
-  },
-];
+    {
+      id: "sections",
+      label: "Company",
+      icon: Compass,
+      links: [
+        { label: "Home", href: "/" },
+        { label: "About — company profile", href: "/about" },
+        { label: "Industries we serve", href: "/industries" },
+        { label: "Careers", href: "/careers" },
+        { label: "Events", href: "/events" },
+        { label: "Social media", href: "/social" },
+        { label: "Achievements", href: "/achievements" },
+        { label: "Gallery", href: "/gallery" },
+        { label: "Contact", href: "/contact" },
+      ],
+    },
+    {
+      id: "products",
+      label: "Products",
+      icon: Package,
+      links: [
+        { label: "All products", href: "/products" },
+        ...PRODUCTS.map((p) => ({ label: p.name, href: `/products/${p.slug}` })),
+      ],
+    },
+    {
+      id: "services",
+      label: "Services",
+      icon: Layers,
+      links: CATEGORIES.map((c) => ({ label: c.name, href: `/services/${c.slug}` })),
+    },
+    {
+      id: "resources",
+      label: "Resources",
+      icon: Newspaper,
+      links: [
+        { label: "Blog — field notes", href: "/blogs" },
+        { label: "Full sitemap", href: "/sitemap" },
+        { label: "vCard — contact card", href: "/api/vcard", external: true },
+        { label: "RSS feed", href: "/api/rss", external: true },
+        { label: "Sitemap XML", href: "/sitemap.xml", external: true },
+      ],
+    },
+  ];
 
 const FOOTER_MASKED_IMAGES = [
   "/images/footer-abw.jpg",
@@ -258,7 +260,16 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-12">
           {/* brand */}
           <div className="lg:col-span-6">
-            <Logo onDark size="xl" />
+            <Link href="/" className="inline-block">
+              <Image
+                src="/images/footer-logo.png"
+                alt="ABWcurious"
+                width={380}
+                height={120}
+                className="h-28 sm:h-36 w-auto object-contain -ml-1"
+                priority
+              />
+            </Link>
             <div className="mt-4 space-y-1 text-xs text-[#a0a0a0] font-mono border-l-2 border-[#393939] pl-3 py-0.5">
               <p className="font-semibold text-white font-sans">{COMPANY.legalFullName}</p>
               <p>CIN NO : {COMPANY.cin}</p>

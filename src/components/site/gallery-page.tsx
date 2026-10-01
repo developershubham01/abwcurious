@@ -270,13 +270,12 @@ export function GalleryPage() {
           {activeItem && (
             <div className="relative flex flex-col">
               {/* Media viewer */}
-              <div className="relative flex max-h-[75vh] min-h-[350px] w-full items-center justify-center overflow-hidden bg-black/60 p-4">
+              <div className="relative aspect-[16/9] w-full items-center justify-center overflow-hidden bg-black p-2">
                 <Image
                   src={activeItem.src}
                   alt={activeItem.alt}
-                  width={activeItem.width}
-                  height={activeItem.height}
-                  className="max-h-[70vh] w-auto max-w-full object-contain"
+                  fill
+                  className="object-contain"
                   priority
                 />
 

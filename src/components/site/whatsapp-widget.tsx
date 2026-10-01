@@ -1,73 +1,90 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Send } from "lucide-react";
 import { COMPANY } from "@/data/company";
 
 export function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const waNumber = COMPANY.phone.replace(/[^0-9]/g, "");
   const defaultMessage = encodeURIComponent(
-    "Hello ABWcurious! I have a question regarding your IT services, solutions, and career opportunities."
+    "Hello ABWcurious! I have a question regarding your IT services, solutions, and opportunities."
   );
   const waUrl = `https://wa.me/${waNumber}?text=${defaultMessage}`;
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-3">
-      {/* Expanded Message Callout Bubble */}
+    <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-3 select-none">
+      {/* Expanded Message Callout Card */}
       {isOpen && (
-        <div className="w-72 bg-white border border-hairline shadow-2xl p-4 text-ink animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <div className="flex items-center justify-between border-b border-hairline pb-2.5 mb-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#25D366] animate-pulse" />
-              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
-                WhatsApp Assistant
-              </span>
+        <div className="w-80 overflow-hidden rounded-2xl bg-white border border-slate-200/80 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-200">
+          {/* WhatsApp Header */}
+          <div className="bg-[#075E54] text-white p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[#25D366] text-white shadow-md">
+                <WhatsAppIcon className="w-5 h-5 fill-current" />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#075E54]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold leading-snug">ABWcurious Support</h4>
+                <p className="text-[11px] text-emerald-100 opacity-90">Typically replies instantly</p>
+              </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-ink-muted hover:text-ink transition-colors p-1"
-              aria-label="Close message window"
+              className="text-white/80 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/10"
+              aria-label="Close WhatsApp window"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <p className="text-xs text-ink-muted leading-relaxed mb-3">
-            Need help with custom software development, IT solutions, or career queries? Send us a direct message on WhatsApp!
-          </p>
+          {/* Chat Preview Body */}
+          <div className="p-4 bg-[#E5DDD5]/40 min-h-[120px] flex flex-col justify-end">
+            <div className="bg-white rounded-2xl rounded-tl-xs p-3.5 shadow-sm text-xs text-slate-700 leading-relaxed border border-slate-200/60 max-w-[90%]">
+              <p className="font-medium text-slate-900 mb-1">Hi there! 👋</p>
+              How can we help you with custom software, IT solutions, or project inquiries today?
+              <span className="block text-[10px] text-slate-400 text-right mt-1.5 font-mono">Just now</span>
+            </div>
+          </div>
 
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-mono font-semibold uppercase tracking-wider transition-colors shadow-sm"
-          >
-            <WhatsAppIcon className="w-4 h-4 fill-current" />
-            Chat on WhatsApp
-          </a>
+          {/* Action Footer */}
+          <div className="p-3 bg-white border-t border-slate-100">
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2.5 w-full py-2.5 px-4 bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+            >
+              <WhatsAppIcon className="w-4 h-4 fill-current" />
+              <span>Start Chat on WhatsApp</span>
+              <Send className="w-3.5 h-3.5 ml-0.5" />
+            </a>
+          </div>
         </div>
       )}
 
-      {/* Floating Trigger Button */}
-      <div className="flex items-center gap-2.5 group">
+      {/* Floating Trigger Button & Pill */}
+      <div className="flex items-center gap-3 group">
         <a
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with ABWcurious on WhatsApp"
-          className="relative flex items-center justify-center w-12 h-12 rounded-full bg-[#25D366] text-white shadow-xl hover:bg-[#20bd5a] hover:scale-105 transition-all duration-200"
+          className="relative flex items-center justify-center w-13 h-13 rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgba(37,211,102,0.4)] hover:bg-[#20bd5a] hover:scale-108 active:scale-95 transition-all duration-200 group"
         >
-          <WhatsAppIcon className="w-6 h-6 fill-current" />
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-primary border-2 border-white rounded-full" />
+          {/* Subtle Outer Ping Wave */}
+          <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-30 animate-ping pointer-events-none" />
+          
+          {/* Official WhatsApp Icon */}
+          <WhatsAppIcon className="w-7 h-7 fill-current relative z-10 drop-shadow-sm" />
         </a>
 
         {/* Desktop Callout Pill */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-white border border-hairline shadow-md text-xs font-mono font-medium text-ink hover:text-primary transition-colors"
+          className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-full shadow-lg text-xs font-semibold text-slate-800 hover:text-[#25D366] hover:border-[#25D366]/40 transition-all duration-200 active:scale-97"
         >
-          <span className="w-2 h-2 rounded-full bg-[#25D366]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#25D366] animate-pulse" />
           <span>Need help? Chat on WhatsApp</span>
         </button>
       </div>
@@ -75,15 +92,19 @@ export function WhatsAppWidget() {
   );
 }
 
-function WhatsAppIcon({ className }: { className?: string }) {
+/**
+ * Official FontAwesome Crisp WhatsApp Icon SVG
+ */
+export function WhatsAppIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
     <svg
       className={className}
-      viewBox="0 0 24 24"
+      viewBox="0 0 448 512"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.445 4.43-9.874 9.877-9.874 2.635 0 5.112 1.027 6.974 2.89a9.82 9.82 0 012.88 6.984c.001 5.447-4.428 9.877-9.87 9.877m0-18.067C6.065 3.719 1.25 8.534 1.25 14.536c0 2.112.6 4.12 1.733 5.864L1 23l4.735-1.242a11.234 11.234 0 005.312 1.34h.005c5.998 0 10.813-4.815 10.813-10.818 0-2.89-1.126-5.606-3.171-7.652a10.74 10.74 0 00-7.647-3.167" />
+      <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3 18.6-68.1-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
     </svg>
   );
 }
+

@@ -8,7 +8,7 @@ import { AllServicesCatalog } from "@/components/site/all-services-catalog";
 export const metadata: Metadata = {
   title: "Services & Practices — ABWcurious | Engineering A Better World",
   description:
-    "Explore our six specialized engineering practices and complete directory of 70 itemised services: Software Development, Mobile Apps, AI & Automation, Digital Marketing, Recruitment, and Cloud Solutions.",
+    "Explore our six specialized engineering practices and complete directory of 70 itemised services: Software Development, Mobile Apps, AI & Automation, Marketing, Recruitment, and Cloud Solutions.",
 };
 
 export default function ServicesPage() {

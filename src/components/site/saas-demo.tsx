@@ -646,13 +646,24 @@ export function SaasDemo({ demo }: { demo: DemoKind }) {
   const reduced = useReducedMotion();
   const meta = DEMO_META[demo];
   return (
-    <DemoWindow url={meta.url} status={meta.status} label={meta.label}>
-      {demo === "web" && <WebDemo reduced={!!reduced} />}
-      {demo === "mobile" && <MobileDemo reduced={!!reduced} />}
-      {demo === "ai" && <AiDemo reduced={!!reduced} />}
-      {demo === "marketing" && <MarketingDemo reduced={!!reduced} />}
-      {demo === "hr" && <HrDemo reduced={!!reduced} />}
-      {demo === "cloud" && <CloudDemo reduced={!!reduced} />}
-    </DemoWindow>
+    <div className="flex flex-col gap-6">
+      <DemoWindow url={meta.url} status={meta.status} label={meta.label}>
+        {demo === "web" && <WebDemo reduced={!!reduced} />}
+        {demo === "mobile" && <MobileDemo reduced={!!reduced} />}
+        {demo === "ai" && <AiDemo reduced={!!reduced} />}
+        {demo === "marketing" && <MarketingDemo reduced={!!reduced} />}
+        {demo === "hr" && <HrDemo reduced={!!reduced} />}
+        {demo === "cloud" && <CloudDemo reduced={!!reduced} />}
+      </DemoWindow>
+      <div className="flex items-center justify-center pt-2">
+        <a
+          href="/contact"
+          className="inline-flex h-12 items-center justify-center gap-2.5 border border-[#0f62fe] bg-[#0f62fe] px-8 text-sm font-medium text-white transition-colors hover:bg-[#0043ce] shadow-sm"
+        >
+          <span>Let&apos;s connect with us</span>
+          <ArrowRight className="size-4 shrink-0" strokeWidth={2} />
+        </a>
+      </div>
+    </div>
   );
 }
