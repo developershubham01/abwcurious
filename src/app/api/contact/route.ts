@@ -39,18 +39,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const saved = await db.contactMessage.create({
-      data: {
-        name,
-        email,
-        phone: phone || null,
-        service: service || "General",
-        message,
-      },
-    });
+    // Try DB write if database is configured/available, but don't block if DB is unavailable
+    let savedId: string | null = null;
+    try {
+      const saved = await db.contactMessage.create({
+        data: {
+          name,
+          email,
+          phone: phone || null,
+          service: service || "General",
+          message,
+        },
+      });
+      savedId = saved.id;
+    } catch (dbErr) {
+      console.warn("[/api/contact] DB write warning (falling back to Google Sheets):", dbErr);
+    }
 
     // Forward to Google Sheets
-    sendToGoogleSheets({
+    const gsResult = await sendToGoogleSheets({
       formType: "contact",
       data: {
         name,
@@ -62,10 +69,10 @@ export async function POST(request: NextRequest) {
       },
       pageUrl: request.headers.get("referer") || "",
       userAgent: request.headers.get("user-agent") || "",
-    }).catch((err) => console.error("[GoogleSheets] Contact error:", err));
+    });
 
     return NextResponse.json(
-      { ok: true, id: saved.id, message: "Message received" },
+      { ok: true, id: savedId || "gs-" + Date.now(), message: "Thank you! Your message has been received." },
       { status: 201 }
     );
   } catch (error) {

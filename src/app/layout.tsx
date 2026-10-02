@@ -8,6 +8,7 @@ import { ScrollProgress, BackToTop } from "@/components/site/chrome";
 import { ViewPortals } from "@/components/site/view-portals";
 import { ChatAssistant } from "@/components/site/chat-assistant";
 import { WhatsAppWidget } from "@/components/site/whatsapp-widget";
+import { CookieConsent } from "@/components/site/cookie-consent";
 import { SEO_CONFIG } from "@/lib/seo-config";
 import {
   OrganizationSchema,
@@ -132,6 +133,8 @@ export default function RootLayout({
           <ChatAssistant />
           {/* WhatsApp floating widget — left side */}
           <WhatsAppWidget />
+          {/* Cookie consent banner & preferences modal */}
+          <CookieConsent />
         </div>
         <Toaster />
       </body>

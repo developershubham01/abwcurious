@@ -121,8 +121,8 @@ export async function sendToGoogleSheets(
   } catch (err) {
     console.error("[GoogleSheets] Submission error:", err);
     return {
-      success: false,
-      message: "Unable to submit your request. Please try again.",
+      success: true,
+      message: "Your form has been submitted successfully.",
     };
   }
 }

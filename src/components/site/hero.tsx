@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { SplitText, Ticker } from "./text-anim";
@@ -8,25 +8,31 @@ import { HERO } from "@/data/site-content";
 
 const TICKER_ITEMS: string[] = [...HERO.ticker];
 
-const EARTH_CLIP =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202422_3ffb4889-c520-432d-8458-038009eb40df.mp4";
-const EARTH_POSTER =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_508c64b8-a31e-4290-bdfc-1187df70e0a6.png";
+const EARTH_CLIP = "/videos/hero-earth-bg.mp4";
+const EARTH_POSTER = "/images/hero-earth-poster.png";
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : 120]);
   const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
+    setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      const p = videoRef.current.play();
+      if (p !== undefined) {
+        p.catch(() => {});
+      }
+    }
+  }, [mounted]);
 
   const entrance = (delay: number) => ({
     initial: reduced ? undefined : { opacity: 0, y: 22 },
@@ -44,30 +50,28 @@ export function Hero() {
       {/* ---------- Cinematic Space Earth Video Backdrop ---------- */}
       <motion.div
         style={{ y: bgY }}
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#04101f]"
         aria-hidden="true"
       >
-        {/* Fallback image (Earth poster) */}
+        {/* Fallback image (Earth poster space visual) */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${EARTH_POSTER})` }}
         />
 
         {/* Looping Earth Video */}
-        {!reduced && (
-          <video
-            ref={videoRef}
-            src={EARTH_CLIP}
-            poster={EARTH_POSTER}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        )}
+        <video
+          ref={videoRef}
+          src={EARTH_CLIP}
+          poster={EARTH_POSTER}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
 
         {/* Blueprint grid matrix overlay */}
         <div

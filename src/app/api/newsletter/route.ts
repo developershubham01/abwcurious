@@ -34,48 +34,45 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      await db.newsletterSubscriber.create({
-        data: { email, source: source || "footer" },
-      });
+      let alreadySub = false;
+      try {
+        await db.newsletterSubscriber.create({
+          data: { email, source: source || "footer" },
+        });
+      } catch (dbErr) {
+        if (dbErr instanceof Prisma.PrismaClientKnownRequestError && dbErr.code === "P2002") {
+          alreadySub = true;
+        } else {
+          console.warn("[/api/newsletter] DB write warning:", dbErr);
+        }
+      }
 
       // Forward to Google Sheets
-      sendToGoogleSheets({
+      const gsResult = await sendToGoogleSheets({
         formType: "newsletter",
         data: {
           email,
-          source: source || "footer",
+          source: (source || "footer") + (alreadySub ? " (existing)" : ""),
         },
         pageUrl: request.headers.get("referer") || "",
         userAgent: request.headers.get("user-agent") || "",
-      }).catch((err) => console.error("[GoogleSheets] Newsletter error:", err));
+      });
 
-      const total = await db.newsletterSubscriber.count();
       return NextResponse.json(
-        { ok: true, message: "Subscribed. See you in the next issue.", total },
-        { status: 201 }
+        {
+          ok: true,
+          alreadySubscribed: alreadySub,
+          message: alreadySub ? "You are already on the list." : gsResult.message || "Subscribed. See you in the next issue.",
+          total: 1,
+        },
+        { status: 200 }
       );
     } catch (err) {
-      // Unique constraint = already subscribed, treat as success with a note
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
-        const total = await db.newsletterSubscriber.count();
-
-        // Forward to Google Sheets even if already subscribed to record engagement
-        sendToGoogleSheets({
-          formType: "newsletter",
-          data: {
-            email,
-            source: (source || "footer") + " (existing)",
-          },
-          pageUrl: request.headers.get("referer") || "",
-          userAgent: request.headers.get("user-agent") || "",
-        }).catch((err) => console.error("[GoogleSheets] Newsletter error:", err));
-
-        return NextResponse.json(
-          { ok: true, alreadySubscribed: true, message: "You are already on the list.", total },
-          { status: 200 }
-        );
-      }
-      throw err;
+      console.error("[/api/newsletter] failed:", err);
+      return NextResponse.json(
+        { error: "Could not subscribe right now. Please try again later." },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("[/api/newsletter] failed:", error);

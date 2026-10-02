@@ -28,6 +28,7 @@ import { useToast } from "@/hooks/use-toast";
 import { COMPANY } from "@/data/company";
 import { PRODUCTS } from "@/lib/products";
 import { CATEGORIES } from "@/lib/catalog";
+import { openCookiePreferencesModal } from "./cookie-consent";
 
 /* ----------------------------- newsletter ------------------------------- */
 
@@ -421,6 +422,13 @@ export function Footer() {
             >
               Terms &amp; Conditions
             </a>
+            <button
+              type="button"
+              onClick={() => openCookiePreferencesModal()}
+              className="focus-carbon transition-colors hover:text-white hover:underline"
+            >
+              Cookie Preferences
+            </button>
             <a
               href="#top"
               className="focus-carbon group inline-flex items-center gap-1.5 transition-colors hover:text-white hover:underline"

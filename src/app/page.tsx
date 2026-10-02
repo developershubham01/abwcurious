@@ -10,7 +10,6 @@ import { WhyAbw } from "@/components/site/why-abw";
 import { Testimonials } from "@/components/site/testimonials";
 import { Industries } from "@/components/site/industries";
 import { VisionMission } from "@/components/site/vision-mission";
-import { JourneyTimeline } from "@/components/site/journey-timeline";
 import { Events } from "@/components/site/events";
 import { Gallery } from "@/components/site/gallery";
 import { JourneySocial } from "@/components/site/journey-social";
@@ -19,7 +18,7 @@ import { JourneySocial } from "@/components/site/journey-social";
  * Landing composition — "ABWcurious Website.docx" structure:
  * hero → who we are → capabilities → products → training for what's next
  * → approach → why → industries → vision/mission, followed by the company-profile
- * chapters (journey, events, gallery) and the closing CTA banner.
+ * chapters (events, gallery) and the closing CTA banner.
  * Contact is a separate dedicated page on #/contact and /contact.
  */
 export default function Home() {
@@ -37,7 +36,6 @@ export default function Home() {
       <TechLogoLoopSection />
       <Industries />
       <VisionMission />
-      <JourneyTimeline />
       <Events />
       <Gallery />
       <JourneySocial />

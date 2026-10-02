@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChevronRight, FileText, Lock, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { COMPANY } from "@/data/company";
+import { openCookiePreferencesModal } from "./cookie-consent";
 
 interface Section {
   id: string;
@@ -218,11 +219,20 @@ export function PrivacyPage() {
               <h2 className="mt-2 text-2xl font-normal text-ink">7. Cookies &amp; Telemetry</h2>
               <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink-muted">
                 <p>
-                  We use minimal, essential cookies necessary for site navigation, security verification, and anonymous performance analytics. We do not use third-party behavioral advertising cookies.
+                  ABWcurious categorizes cookies into 4 distinct areas: <strong>Essential Cookies</strong> (security, CSRF, layout state), <strong>Analytics &amp; Performance Cookies</strong> (anonymized page stats), <strong>Functional Cookies</strong> (AI assistant state, form drafts), and <strong>Marketing &amp; Media Telemetry</strong> (video showcase analytics).
                 </p>
                 <p>
-                  You may configure your browser settings to decline or clear cookies at any time without impacting your core browsing experience.
+                  You can inspect, accept, decline, or customize your cookie consent options at any time.
                 </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => openCookiePreferencesModal()}
+                    className="inline-flex h-10 items-center justify-center gap-2 border border-primary bg-primary px-5 text-xs font-medium text-white transition-colors hover:bg-ibm-blue-hover"
+                  >
+                    <span>Manage Cookie Preferences</span>
+                  </button>
+                </div>
               </div>
             </section>
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { validateGoogleDriveUrl, saveApplication } from "@/lib/applications";
+import { sendToGoogleSheets } from "@/lib/google-sheets";
 
 export async function POST(req: Request) {
   try {
@@ -96,22 +97,30 @@ export async function POST(req: Request) {
       type: jobId ? "JOB_APPLICATION" : "TALENT_POOL",
     });
 
-    // Option: Forward to Google Sheets if GOOGLE_SHEETS_SCRIPT_URL is set
-    const googleScriptUrl = process.env.GOOGLE_SHEETS_SCRIPT_URL;
-    if (googleScriptUrl) {
-      try {
-        await fetch(googleScriptUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sheet: "Job Applications",
-            ...newApplication,
-          }),
-        });
-      } catch (e) {
-        console.error("Google Sheets forward error:", e);
-      }
-    }
+    // Forward to Google Sheets
+    sendToGoogleSheets({
+      formType: "career",
+      data: {
+        jobId: jobId || "GEN-POOL",
+        jobTitle: jobTitle || body.applyingFor || "General Talent Pool",
+        fullName,
+        email,
+        phone,
+        whatsapp: whatsapp || "",
+        location: location || city || "",
+        experienceLevel: experienceLevel || "",
+        currentJobTitle: currentJobTitle || "",
+        currentCompany: currentCompany || "",
+        noticePeriod: noticePeriod || "",
+        expectedSalary: expectedSalary || "",
+        primarySkills: primarySkills || "",
+        highestQualification: highestQualification || "",
+        resumeUrl: resumeUrl || "",
+        coverMessage: coverMessage || "",
+      },
+      pageUrl: req.headers.get("referer") || "",
+      userAgent: req.headers.get("user-agent") || "",
+    }).catch((e) => console.error("Google Sheets forward error:", e));
 
     return NextResponse.json({
       success: true,
