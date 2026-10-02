@@ -265,7 +265,7 @@ export const EVENTS: CompanyEvent[] = [
     status: "upcoming",
     cover: "/images/ev-summit.jpg",
     gallery: ["/images/ev-launch.jpg", "/images/gl-team.jpg", "/images/ev-keynote.jpg"],
-    url: "https://www.abwcurious.com/events",
+    url: "/contact",
   },
   {
     id: "ai-workshop-series",
@@ -278,7 +278,7 @@ export const EVENTS: CompanyEvent[] = [
     status: "recent",
     cover: "/images/ev-workshop.jpg",
     gallery: ["/images/gl-office.jpg", "/images/ev-summit.jpg"],
-    url: "https://www.abwcurious.com/events",
+    url: "/contact",
   },
   {
     id: "leadership-roundtable",
@@ -291,7 +291,7 @@ export const EVENTS: CompanyEvent[] = [
     status: "recent",
     cover: "/images/ev-roundtable.jpg",
     gallery: ["/images/ev-keynote.jpg", "/images/gl-award.jpg"],
-    url: "https://www.abwcurious.com/events",
+    url: "/contact",
   },
   {
     id: "team-offsite-ghats",
@@ -304,7 +304,7 @@ export const EVENTS: CompanyEvent[] = [
     status: "past",
     cover: "/images/ev-offsite.jpg",
     gallery: ["/images/gl-team.jpg", "/images/gl-office.jpg"],
-    url: "https://www.abwcurious.com/events",
+    url: "/contact",
   },
   {
     id: "intelliqr-launch",
@@ -317,7 +317,7 @@ export const EVENTS: CompanyEvent[] = [
     status: "past",
     cover: "/images/ev-launch.jpg",
     gallery: ["/images/ev-summit.jpg", "/images/ev-workshop.jpg"],
-    url: "https://www.abwcurious.com/events",
+    url: "/contact",
   },
   {
     id: "devcon-keynote",
@@ -330,7 +330,7 @@ export const EVENTS: CompanyEvent[] = [
     status: "past",
     cover: "/images/ev-keynote.jpg",
     gallery: ["/images/ev-roundtable.jpg"],
-    url: "https://www.abwcurious.com/events",
+    url: "/contact",
   },
   {
     id: "founders-day-2026",
@@ -343,7 +343,7 @@ export const EVENTS: CompanyEvent[] = [
     status: "past",
     cover: "/images/ev-anniversary.jpg",
     gallery: ["/images/gl-team.jpg", "/images/gl-award.jpg", "/images/gl-office.jpg"],
-    url: "https://www.abwcurious.com/events",
+    url: "/contact",
   },
 ];
 

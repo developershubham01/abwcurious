@@ -37,15 +37,17 @@ export async function POST(req: Request) {
       source,
     } = body;
 
+    const privacyConsentChecked = privacyConsent ?? body.privacyAccepted;
+
     // Validation
-    if (!fullName || !email || !phone || !location || !highestQualification || !primarySkills) {
+    if (!fullName || !email || !phone) {
       return NextResponse.json(
-        { error: "Please fill in all mandatory fields marked with *" },
+        { error: "Please fill in all mandatory fields (Name, Email, Phone)" },
         { status: 400 }
       );
     }
 
-    if (!privacyConsent) {
+    if (!privacyConsentChecked) {
       return NextResponse.json(
         { error: "You must agree to the recruitment privacy consent to submit your application." },
         { status: 400 }

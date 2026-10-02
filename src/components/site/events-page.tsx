@@ -500,14 +500,23 @@ export function EventsPage() {
 
                 {/* Footer Buttons */}
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-hairline">
-                  <button
-                    type="button"
-                    onClick={(e) => handleDownloadICS(e, selected)}
-                    className="inline-flex items-center gap-2 border border-hairline bg-white px-4 py-2 text-xs sm:text-sm font-medium text-ink transition-colors hover:border-hairline-strong hover:bg-ibm-layer focus-carbon"
-                  >
-                    <CalendarPlus className="size-4 text-primary" />
-                    Download .ics calendar
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={(e) => handleDownloadICS(e, selected)}
+                      className="inline-flex items-center gap-2 border border-hairline bg-white px-4 py-2 text-xs sm:text-sm font-medium text-ink transition-colors hover:border-hairline-strong hover:bg-ibm-layer focus-carbon"
+                    >
+                      <CalendarPlus className="size-4 text-primary" />
+                      Download .ics calendar
+                    </button>
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center gap-2 bg-primary px-4 py-2 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-ibm-blue-hover focus-carbon"
+                    >
+                      View Event
+                      <ArrowUpRight className="size-4" />
+                    </Link>
+                  </div>
                   <button
                     type="button"
                     onClick={() => setSelected(null)}

@@ -29,7 +29,7 @@ export function MotionVideoSection() {
             {/* Video Player */}
             <div className="relative overflow-hidden bg-black">
               <video
-                src="/MotionGraphicAbwcurious.mp4"
+                src="/abwcurious-services-explainer.mp4"
                 autoPlay
                 loop
                 muted

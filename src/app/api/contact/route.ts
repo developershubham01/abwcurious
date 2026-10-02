@@ -6,10 +6,10 @@ import { sendToGoogleSheets } from "@/lib/google-sheets";
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(120),
   email: z.string().trim().email("Please provide a valid email address").max(200),
-  phone: z.string().trim().max(40).optional().nullable(),
-  service: z.string().trim().max(80).optional().nullable(),
-  budget: z.string().trim().max(80).optional().nullable(),
-  message: z.string().trim().min(10, "Please tell us a little more (10+ characters)").max(800, "Message is limited to 800 characters"),
+  phone: z.string().trim().max(50).optional().nullable(),
+  service: z.string().trim().max(200).optional().nullable(),
+  budget: z.string().trim().max(200).optional().nullable(),
+  message: z.string().trim().min(5, "Please tell us a little more").max(4000, "Message is limited to 4000 characters"),
   _gotcha: z.string().optional().nullable(),
 });
 

@@ -3,6 +3,7 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import {
   CalendarDays,
   MapPin,
@@ -523,29 +524,17 @@ function EventDialog({ event, onClose }: { event: CompanyEvent | null; onClose: 
                       ))}
                     </ul>
                   </div>
-                  {hasUrl ? (
-                    <a
-                      href={event.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="focus-carbon group inline-flex h-12 shrink-0 items-center gap-2 bg-primary px-4 text-sm text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active"
-                    >
-                      View Event
-                      <ArrowUpRight
-                        className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                        strokeWidth={1.75}
-                        aria-hidden="true"
-                      />
-                    </a>
-                  ) : (
-                    <span
-                      title="Add the real event URL in src/data/company.ts"
-                      className="inline-flex h-12 shrink-0 cursor-default items-center gap-2 border border-dashed border-hairline px-4 text-sm text-ibm-subtle"
-                    >
-                      <Link2 className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
-                      Event link — placeholder
-                    </span>
-                  )}
+                  <Link
+                    href="/contact"
+                    className="focus-carbon group inline-flex h-12 shrink-0 items-center gap-2 bg-primary px-5 text-sm font-medium text-white transition-colors hover:bg-ibm-blue-hover active:bg-ibm-blue-active"
+                  >
+                    View Event
+                    <ArrowUpRight
+                      className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                  </Link>
                 </div>
               </div>
             </div>
